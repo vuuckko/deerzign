@@ -1,0 +1,1042 @@
+<!doctype html>
+<html lang="sr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deerzign — Upit za izradu sajta</title>
+<meta name="description" content="Kratak brif za izradu sajta. Odgovorite na nekoliko pitanja i javljamo se sa predlogom narednog koraka i okvirnom procenom.">
+<meta name="robots" content="noindex,follow">
+<meta name="theme-color" content="#14150F">
+<link rel="icon" href="deer.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   TOKENS — same set as index.html
+   ============================================================ */
+:root{
+  --warm:#F2F0E9;
+  --warm-2:#ECE7DA;
+  --ink:#151815;
+  --ink-2:#1B1E1B;
+  --forest:#263D32;
+  --forest-deep:#16241D;
+  --brown:#756B5E;
+  --text-dim:#AAA99F;
+  --line:rgba(20,21,15,.14);
+  --line-lt:rgba(242,240,233,.18);
+  --err:#9A3B2B;
+
+  --display:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --text:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
+
+  --d2:clamp(1.75rem,3.4vw,2.8rem);
+  --d3:clamp(1.35rem,2.1vw,1.9rem);
+
+  --pad:clamp(1.25rem,4vw,3.25rem);
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--warm);color:var(--ink);
+  font-family:var(--text);font-size:16px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+h1,h2,h3,h4{font-family:var(--display);font-weight:600;margin:0;letter-spacing:-.032em;line-height:1.06}
+p{margin:0}
+ul,ol{margin:0;padding:0;list-style:none}
+::selection{background:var(--forest);color:var(--warm)}
+:focus-visible{outline:2px solid var(--forest);outline-offset:3px;border-radius:3px}
+.on-dark :focus-visible{outline-color:var(--warm)}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+.eyebrow{font-family:var(--text);font-size:.6875rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--brown)}
+.on-dark .eyebrow{color:var(--text-dim)}
+.small{font-size:.9375rem;line-height:1.6;color:rgba(20,21,15,.68)}
+.on-dark .small{color:var(--text-dim)}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  padding:14px 26px;border-radius:999px;font-size:.9rem;font-weight:600;
+  letter-spacing:-.01em;border:1px solid transparent;white-space:nowrap;
+  transition:background .45s var(--ease),color .45s var(--ease),opacity .3s var(--ease);
+}
+.btn-dark{background:var(--ink);color:var(--warm)}
+.btn-dark:hover{background:var(--forest)}
+.btn-quiet{border-color:var(--line);color:var(--ink)}
+.btn-quiet:hover{background:var(--warm-2)}
+.btn[disabled]{opacity:.45;pointer-events:none}
+/* the .btn class's own display:inline-flex otherwise beats the browser's
+   default [hidden] rule, since an author-stylesheet class always wins over
+   a same-specificity UA-stylesheet attribute selector */
+.btn[hidden]{display:none}
+
+/* ============================================================
+   LAYOUT — a dark rail with the trail, the form beside it
+   ============================================================ */
+.wrap{display:grid;grid-template-columns:clamp(290px,25vw,392px) 1fr;min-height:100vh}
+
+.rail{
+  position:sticky;top:0;height:100vh;overflow:hidden;
+  background:var(--ink);color:var(--warm);
+  padding:clamp(1.6rem,2.6vw,2.6rem);
+  display:flex;flex-direction:column;gap:2rem;
+}
+/* the mark, large and quiet, the way it sits in the dark panels on the site */
+.rail::after{
+  content:"";position:absolute;right:-16%;bottom:-8%;width:78%;aspect-ratio:1;
+  background:url(deer.png) center/contain no-repeat;
+  filter:brightness(0) invert(1);opacity:.06;pointer-events:none;
+}
+.rail>*{position:relative;z-index:1}
+
+.brand{display:flex;align-items:center;gap:11px}
+.brand img{height:28px;width:auto;filter:brightness(0) invert(1)}
+.brand span{font-family:var(--display);font-weight:600;font-size:1.0625rem;letter-spacing:-.02em}
+
+.rail-title{font-size:clamp(1.5rem,1.9vw,1.9rem);margin-top:.9rem}
+.rail-sub{margin-top:.85rem;max-width:30ch}
+
+/* ---- the trail: tracks pressed in one after another ---- */
+.trail{margin-top:auto;position:relative;display:flex;flex-direction:column;gap:6px}
+.trail::before{
+  content:"";position:absolute;left:15px;top:18px;bottom:18px;width:1px;
+  background:linear-gradient(rgba(244,241,233,0),rgba(244,241,233,.22),rgba(244,241,233,0));
+}
+.tstep{position:relative;padding:9px 0 9px 46px;display:flex;flex-direction:column;gap:2px}
+.tstep .track{
+  position:absolute;left:0;top:8px;width:31px;height:31px;display:grid;place-items:center;
+  background:var(--ink);border-radius:50%;
+}
+.tstep .track svg{width:22px;height:22px;color:var(--warm);opacity:.24;transition:opacity .5s var(--ease),transform .5s var(--ease)}
+.tstep:nth-child(even) .track svg{transform:rotate(9deg)}
+.tstep:nth-child(odd) .track svg{transform:rotate(-7deg)}
+.tstep.done .track svg{opacity:.6}
+.tstep.now .track svg{opacity:1}
+.tstep .n{font-size:.625rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--text-dim)}
+.tstep .t{font-size:.9375rem;font-weight:600;color:var(--text-dim);transition:color .5s var(--ease)}
+.tstep.done .t{color:rgba(244,241,233,.72)}
+.tstep.now .t{color:var(--warm)}
+
+.rail-foot{display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding-top:1.25rem;border-top:1px solid var(--line-lt)}
+
+/* ---- language switch ---- */
+.lang{display:inline-flex;border:1px solid var(--line-lt);border-radius:999px;overflow:hidden}
+.lang button{padding:6px 13px;font-size:.75rem;font-weight:600;letter-spacing:.08em;color:rgba(244,241,233,.6)}
+.lang button[aria-pressed="true"]{background:var(--warm);color:var(--ink)}
+.stage .lang{border-color:var(--line)}
+.stage .lang button{color:var(--brown)}
+.stage .lang button[aria-pressed="true"]{background:var(--ink);color:var(--warm)}
+
+/* ---- mobile head: the rail folds into a bar ---- */
+.mhead{display:none;position:sticky;top:0;z-index:30;background:var(--ink);color:var(--warm);
+  padding:12px var(--pad) 0}
+.mhead-in{display:flex;align-items:center;justify-content:space-between;gap:14px}
+.mhead .meta{font-size:.75rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim)}
+.mbar{margin-top:12px;height:2px;background:var(--line-lt);position:relative}
+.mbar i{position:absolute;inset:0 auto 0 0;background:var(--warm);width:25%;transition:width .5s var(--ease)}
+
+/* ============================================================
+   FORM
+   ============================================================ */
+.stage{padding:clamp(2.2rem,5vw,4.5rem) var(--pad) clamp(4rem,8vw,6rem)}
+.stage-in{max-width:760px;margin-inline:auto}
+
+.step[hidden]{display:none}
+.step{animation:rise .55s var(--ease) both}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.step{animation:none}}
+
+.step-head{padding-bottom:1.6rem;margin-bottom:2.2rem;border-bottom:1px solid var(--line)}
+.step-head h2{font-size:var(--d2);margin-top:.7rem}
+.step-head .small{margin-top:.85rem;max-width:56ch}
+
+.q{padding:2.3rem 0;border-bottom:1px solid var(--line)}
+.q:last-of-type{border-bottom:0}
+/* each real question gets a quiet outlined index mark, echoing the numerals
+   used for services/pricing/process on the main site — :has() skips the
+   contact-details block, which has no .q-t and so isn't really "a question" */
+.step{counter-reset:qnum}
+.q:has(.q-t){counter-increment:qnum}
+.q-t::before{
+  content:counter(qnum,decimal-leading-zero);
+  display:block;font-family:var(--display);font-weight:700;
+  font-size:1.5rem;line-height:1;letter-spacing:-.02em;margin-bottom:.6rem;
+  color:transparent;-webkit-text-stroke:1px rgba(20,21,15,.32);
+}
+.q-t{font-family:var(--display);font-size:clamp(1.3rem,1.9vw,1.6rem);font-weight:600;letter-spacing:-.02em;line-height:1.22;display:block}
+.q-t .req{color:var(--brown);font-weight:500}
+.q-h{margin-top:.5rem;font-size:.9375rem;line-height:1.55;color:rgba(20,21,15,.56);max-width:52ch}
+.q-body{margin-top:1.3rem}
+
+/* two fields side by side */
+.row{display:grid;grid-template-columns:1fr 1fr;gap:1.9rem 1.6rem}
+.stack{display:flex;flex-direction:column;gap:.7rem}
+
+label.f{display:block}
+label.f .lb{display:block;font-size:.8125rem;font-weight:600;color:var(--brown);margin-bottom:.45rem}
+
+input[type=text],input[type=email],input[type=tel],input[type=url],input[type=number],textarea,select{
+  width:100%;font:inherit;color:var(--ink);background:rgba(255,255,255,.55);
+  border:1px solid var(--line);border-radius:12px;padding:13px 15px;
+  transition:border-color .3s var(--ease),background .3s var(--ease);
+}
+textarea{resize:vertical;min-height:104px;line-height:1.6}
+input::placeholder,textarea::placeholder{color:rgba(20,21,15,.34)}
+input:hover,textarea:hover,select:hover{border-color:rgba(20,21,15,.26)}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--forest);background:#fff;box-shadow:0 0 0 3px rgba(38,61,50,.1)}
+.invalid input,.invalid textarea,.invalid select,input.invalid,textarea.invalid{border-color:var(--err)}
+.num{max-width:170px}
+
+/* ---- choices: pills ---- */
+.chips{display:flex;flex-wrap:wrap;gap:9px;border:0;padding:0;margin:0}
+.chips legend{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.chip{position:relative}
+/* the real control sits over the pill rather than being sized to nothing —
+   a 0×0 input drops out of the accessibility tree in some browsers */
+.chip input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
+.chip span{
+  display:inline-flex;align-items:center;gap:8px;cursor:pointer;
+  padding:10px 17px;border:1px solid var(--line);border-radius:999px;
+  font-size:.9rem;font-weight:500;background:rgba(255,255,255,.5);
+  transition:background .3s var(--ease),color .3s var(--ease),border-color .3s var(--ease);
+}
+.chip span::before{
+  content:"";width:7px;height:7px;border-radius:50%;background:transparent;
+  border:1px solid rgba(20,21,15,.34);flex:none;transition:background .3s var(--ease),border-color .3s var(--ease);
+}
+.chip input[type=checkbox]+span::before{border-radius:2px}
+.chip span:hover{border-color:rgba(20,21,15,.3)}
+.chip input:checked+span{background:var(--ink);color:var(--warm);border-color:var(--ink)}
+.chip input:checked+span::before{background:var(--warm);border-color:var(--warm)}
+.chip input:focus-visible+span{outline:2px solid var(--forest);outline-offset:3px}
+.chips.invalid .chip span{border-color:var(--err)}
+
+/* ---- file drop ---- */
+.drop{
+  display:flex;align-items:center;gap:14px;width:100%;text-align:left;
+  padding:15px 18px;border:1px dashed rgba(20,21,15,.26);border-radius:14px;
+  background:rgba(255,255,255,.4);transition:border-color .3s var(--ease),background .3s var(--ease);
+}
+.drop:hover,.drop.over{border-color:var(--forest);background:#fff}
+.drop svg{width:19px;height:19px;color:var(--brown);flex:none}
+.drop .dt{font-size:.9rem;font-weight:600}
+.drop .dh{font-size:.8125rem;color:rgba(20,21,15,.55)}
+.files{margin-top:.7rem;display:flex;flex-direction:column;gap:6px}
+.file{display:flex;align-items:center;gap:10px;font-size:.85rem;color:rgba(20,21,15,.72)}
+.file b{font-weight:600}
+.file button{color:var(--brown);font-size:.8125rem;text-decoration:underline;margin-left:auto}
+
+/* ---- consent ---- */
+.consent{display:flex;gap:12px;align-items:flex-start;font-size:.9rem;line-height:1.55;cursor:pointer}
+.consent input{margin-top:4px;accent-color:var(--forest);width:17px;height:17px;flex:none}
+
+/* ---- errors ---- */
+.err{display:none;margin-top:.6rem;font-size:.8125rem;font-weight:600;color:var(--err)}
+.err.on{display:block}
+.summary{display:none;margin-bottom:1.6rem;padding:14px 18px;border-radius:12px;
+  background:rgba(154,59,43,.08);border:1px solid rgba(154,59,43,.25);color:var(--err);
+  font-size:.9rem;font-weight:600}
+.summary.on{display:block}
+
+/* ---- nav row ---- */
+.nav-row{display:flex;align-items:center;gap:14px;margin-top:2.4rem;padding-top:1.9rem;border-top:1px solid var(--line)}
+.nav-row .save{margin-left:auto;font-size:.8125rem;color:var(--brown);opacity:0;transition:opacity .4s var(--ease)}
+.nav-row .save.on{opacity:1}
+#send .spin{display:none;width:15px;height:15px;border:2px solid currentColor;border-right-color:transparent;
+  border-radius:50%;animation:spin .7s linear infinite;flex:none}
+#send.is-sending .spin{display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+.sending-note{display:none;font-size:.8125rem;color:var(--brown);margin-top:12px;line-height:1.5}
+.sending-note.on{display:block}
+
+@media (max-width:980px){
+  .wrap{grid-template-columns:1fr}
+  .rail{display:none}
+  .mhead{display:block}
+  .stage{padding-top:2.2rem}
+}
+@media (max-width:620px){
+  .row{grid-template-columns:1fr;gap:1.2rem}
+  .num{max-width:none}
+}
+</style>
+
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1056070890490241');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1056070890490241&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- ============================ RAIL ============================ -->
+  <aside class="rail on-dark">
+    <div>
+      <a class="brand" href="index.html" aria-label="Deerzign">
+        <img src="deer.png" alt="" aria-hidden="true">
+        <span>Deerzign</span>
+      </a>
+      <h1 class="rail-title" data-sr="Upit za izradu sajta" data-en="Project brief">Upit za izradu sajta</h1>
+      <p class="small rail-sub" data-sr="Tri kratka koraka, oko 2 minuta. Odgovori se čuvaju u vašem pregledaču, možete nastaviti kasnije."
+         data-en="Three short steps, about 2 minutes. Your answers are saved in this browser, so you can finish later.">Tri kratka koraka, oko 2 minuta. Odgovori se čuvaju u vašem pregledaču, možete nastaviti kasnije.</p>
+    </div>
+
+    <ol class="trail" id="trail">
+      <li class="tstep now" data-step="1">
+        <span class="track"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.4 3.2c1.6 0 2.6 2 2.4 4.6-.2 2.6-1.3 4.4-2.8 4.3-1.6-.1-2.6-2.1-2.4-4.7.2-2.5 1.3-4.2 2.8-4.2Z"/><path d="M15.6 4.6c1.5.2 2.3 2.2 1.9 4.7-.4 2.5-1.7 4.2-3.2 3.9-1.5-.3-2.3-2.3-1.9-4.8.4-2.4 1.7-4 3.2-3.8Z"/><path d="M11 15.4c2.2 0 4 1.5 4 3.3s-1.8 2.6-4 2.6-4-.8-4-2.6 1.8-3.3 4-3.3Z" opacity=".55"/></svg></span>
+        <span class="n">01</span>
+        <span class="t" data-sr="Osnovno" data-en="The basics">Osnovno</span>
+      </li>
+      <li class="tstep" data-step="2">
+        <span class="track"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.4 3.2c1.6 0 2.6 2 2.4 4.6-.2 2.6-1.3 4.4-2.8 4.3-1.6-.1-2.6-2.1-2.4-4.7.2-2.5 1.3-4.2 2.8-4.2Z"/><path d="M15.6 4.6c1.5.2 2.3 2.2 1.9 4.7-.4 2.5-1.7 4.2-3.2 3.9-1.5-.3-2.3-2.3-1.9-4.8.4-2.4 1.7-4 3.2-3.8Z"/><path d="M11 15.4c2.2 0 4 1.5 4 3.3s-1.8 2.6-4 2.6-4-.8-4-2.6 1.8-3.3 4-3.3Z" opacity=".55"/></svg></span>
+        <span class="n">02</span>
+        <span class="t" data-sr="Biznis" data-en="Business">Biznis</span>
+      </li>
+      <li class="tstep" data-step="3">
+        <span class="track"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.4 3.2c1.6 0 2.6 2 2.4 4.6-.2 2.6-1.3 4.4-2.8 4.3-1.6-.1-2.6-2.1-2.4-4.7.2-2.5 1.3-4.2 2.8-4.2Z"/><path d="M15.6 4.6c1.5.2 2.3 2.2 1.9 4.7-.4 2.5-1.7 4.2-3.2 3.9-1.5-.3-2.3-2.3-1.9-4.8.4-2.4 1.7-4 3.2-3.8Z"/><path d="M11 15.4c2.2 0 4 1.5 4 3.3s-1.8 2.6-4 2.6-4-.8-4-2.6 1.8-3.3 4-3.3Z" opacity=".55"/></svg></span>
+        <span class="n">03</span>
+        <span class="t" data-sr="Materijali" data-en="Materials">Materijali</span>
+      </li>
+    </ol>
+
+    <div class="rail-foot">
+      <a class="small" href="mailto:team@deerzign.com">team@deerzign.com</a>
+      <div class="lang" role="group" aria-label="Jezik / Language">
+        <button type="button" data-lang="en" aria-pressed="true">EN</button>
+        <button type="button" data-lang="sr" aria-pressed="false">SR</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ============================ MOBILE HEAD ============================ -->
+  <div class="mhead on-dark">
+    <div class="mhead-in">
+      <a class="brand" href="index.html" aria-label="Deerzign">
+        <img src="deer.png" alt="" aria-hidden="true">
+        <span>Deerzign</span>
+      </a>
+      <div class="lang" role="group" aria-label="Jezik / Language">
+        <button type="button" data-lang="en" aria-pressed="true">EN</button>
+        <button type="button" data-lang="sr" aria-pressed="false">SR</button>
+      </div>
+    </div>
+    <div class="mhead-in" style="margin-top:14px">
+      <span class="meta"><span id="mStepName">Osnovno</span></span>
+      <span class="meta"><span id="mStepNum">1</span>/3</span>
+    </div>
+    <div class="mbar"><i id="mBar"></i></div>
+  </div>
+
+  <!-- ============================ FORM ============================ -->
+  <main class="stage">
+    <div class="stage-in">
+
+      <div class="summary" id="summary" role="alert"
+           data-sr="Molimo popunite obavezna polja označena zvezdicom."
+           data-en="Please fill in the required fields marked with an asterisk.">Molimo popunite obavezna polja označena zvezdicom.</div>
+
+      <form id="brief" novalidate>
+
+        <!-- ---------------- STEP 1 ---------------- -->
+        <section class="step" data-step="1" aria-labelledby="h1">
+          <header class="step-head">
+            <span class="eyebrow" data-sr="Korak 01 — Osnovno" data-en="Step 01 — The basics">Korak 01 — Osnovno</span>
+            <h2 id="h1" data-sr="Ko ste i šta vam treba" data-en="Who you are and what you need">Ko ste i šta vam treba</h2>
+            <p class="small" data-sr="Ovaj deo je najbrži. Na osnovu njega znamo koga zovemo i o kakvom poslu pričamo."
+               data-en="The quickest part. It tells us who to call back and what kind of job we are talking about.">Ovaj deo je najbrži. Na osnovu njega znamo koga zovemo i o kakvom poslu pričamo.</p>
+            <p class="small" id="paketNote" hidden style="margin-top:.7rem;font-weight:600;color:var(--ink)"></p>
+          </header>
+
+          <div class="q">
+            <div class="row">
+              <label class="f">
+                <span class="lb" data-sr="Ime i prezime *" data-en="Full name *">Ime i prezime *</span>
+                <input type="text" name="ime" required data-col="Ime i prezime" autocomplete="name">
+              </label>
+              <label class="f">
+                <span class="lb" data-sr="Naziv firme *" data-en="Company name *">Naziv firme *</span>
+                <input type="text" name="firma" required data-col="Naziv firme" autocomplete="organization">
+              </label>
+              <label class="f">
+                <span class="lb" data-sr="Broj telefona *" data-en="Phone number *">Broj telefona *</span>
+                <input type="tel" name="telefon" required data-col="Telefon" autocomplete="tel" placeholder="+381 6x xxx xxxx">
+              </label>
+              <label class="f">
+                <span class="lb" data-sr="Email adresa *" data-en="Email address *">Email adresa *</span>
+                <input type="email" name="email" required data-col="Email" autocomplete="email" placeholder="ime@firma.rs">
+              </label>
+            </div>
+            <div class="err" id="e-kontakt" data-sr="Popunite ime, firmu, telefon i ispravnu email adresu." data-en="Please add your name, company, phone and a valid email.">Popunite ime, firmu, telefon i ispravnu email adresu.</div>
+          </div>
+
+          <div class="q">
+            <span class="q-t" data-sr="Šta vam je potrebno? *" data-en="What do you need? *">Šta vam je potrebno? *</span>
+            <div class="q-body">
+              <fieldset class="chips group" data-required data-col="Šta vam je potrebno" id="g-potreba">
+                <legend data-sr="Šta vam je potrebno?" data-en="What do you need?">Šta vam je potrebno?</legend>
+                <label class="chip"><input type="radio" name="potreba" value="Novi sajt" data-en-val="New website"><span data-sr="Novi sajt" data-en="New website">Novi sajt</span></label>
+                <label class="chip"><input type="radio" name="potreba" value="Redizajn postojećeg" data-en-val="Redesign of an existing site"><span data-sr="Redizajn postojećeg" data-en="Redesign of an existing site">Redizajn postojećeg</span></label>
+                <label class="chip"><input type="radio" name="potreba" value="Landing stranica" data-en-val="Landing page"><span data-sr="Landing stranica" data-en="Landing page">Landing stranica</span></label>
+                <label class="chip"><input type="radio" name="potreba" value="Onlajn prodavnica" data-en-val="Online shop"><span data-sr="Onlajn prodavnica" data-en="Online shop">Onlajn prodavnica</span></label>
+                <label class="chip"><input type="radio" name="potreba" value="Nisam siguran/na" data-en-val="Not sure yet"><span data-sr="Nisam siguran/na" data-en="Not sure yet">Nisam siguran/na</span></label>
+              </fieldset>
+              <div class="err" id="e-potreba" data-sr="Izaberite jednu opciju." data-en="Please choose one option.">Izaberite jednu opciju.</div>
+            </div>
+          </div>
+
+          <div class="q">
+            <span class="q-t" data-sr="Kada želite da sajt bude online? *" data-en="When do you want to be live? *">Kada želite da sajt bude online? *</span>
+            <div class="q-body">
+              <fieldset class="chips group" data-required data-col="Željeni rok" id="g-rok">
+                <legend data-sr="Željeni rok" data-en="Timeline">Željeni rok</legend>
+                <label class="chip"><input type="radio" name="rok" value="Što pre — do 30 dana" data-en-val="As soon as possible — within 30 days"><span data-sr="Što pre — do 30 dana" data-en="ASAP — within 30 days">Što pre — do 30 dana</span></label>
+                <label class="chip"><input type="radio" name="rok" value="1–2 meseca" data-en-val="1–2 months"><span data-sr="1–2 meseca" data-en="1–2 months">1–2 meseca</span></label>
+                <label class="chip"><input type="radio" name="rok" value="2–3 meseca" data-en-val="2–3 months"><span data-sr="2–3 meseca" data-en="2–3 months">2–3 meseca</span></label>
+                <label class="chip"><input type="radio" name="rok" value="Nije hitno, planiramo unapred" data-en-val="No rush, planning ahead"><span data-sr="Nije hitno, planiramo unapred" data-en="No rush, planning ahead">Nije hitno, planiramo unapred</span></label>
+                <label class="chip"><input type="radio" name="rok" value="Vezano za datum (sajam, otvaranje, sezona)" data-en-val="Tied to a date (fair, opening, season)"><span data-sr="Vezano za datum (sajam, otvaranje, sezona)" data-en="Tied to a date (fair, opening, season)">Vezano za datum</span></label>
+              </fieldset>
+              <div class="err" id="e-rok" data-sr="Izaberite jednu opciju." data-en="Please choose one option.">Izaberite jednu opciju.</div>
+            </div>
+          </div>
+
+          <div class="q">
+            <span class="q-t" data-sr="Okvirni budžet za sajt *" data-en="Rough budget for the site *">Okvirni budžet za sajt *</span>
+            <p class="q-h" data-sr="Raspon nam govori koliko dubok posao možemo da predložimo — bez pogađanja u prazno. Ako još ne znate, izaberite poslednju opciju."
+               data-en="A range tells us how deep a scope we can propose, with no guessing. If you don't know yet, pick the last option.">Raspon nam govori koliko dubok posao možemo da predložimo — bez pogađanja u prazno. Ako još ne znate, izaberite poslednju opciju.</p>
+            <div class="q-body stack" style="gap:1.1rem">
+              <fieldset class="chips group" data-required data-col="Budžet" id="g-budzet">
+                <legend data-sr="Budžet" data-en="Budget">Budžet</legend>
+                <label class="chip"><input type="radio" name="budzet" value="do 300 €" data-en-val="under €300"><span>do 300 €</span></label>
+                <label class="chip"><input type="radio" name="budzet" value="300–500 €"><span>300–500 €</span></label>
+                <label class="chip"><input type="radio" name="budzet" value="500–1.000 €"><span>500–1.000 €</span></label>
+                <label class="chip"><input type="radio" name="budzet" value="1.000–2.500 €"><span>1.000–2.500 €</span></label>
+                <label class="chip"><input type="radio" name="budzet" value="2.500–5.000 €"><span>2.500–5.000 €</span></label>
+                <label class="chip"><input type="radio" name="budzet" value="preko 5.000 €" data-en-val="over €5,000"><span data-sr="preko 5.000 €" data-en="over €5,000">preko 5.000 €</span></label>
+                <label class="chip"><input type="radio" name="budzet" value="Nisam siguran/na — predložite" data-en-val="Not sure — advise me"><span data-sr="Nisam siguran/na — predložite" data-en="Not sure — advise me">Nisam siguran/na — predložite</span></label>
+              </fieldset>
+              <div class="err" id="e-budzet" data-sr="Izaberite jedan raspon." data-en="Pick one range.">Izaberite jedan raspon.</div>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ---------------- STEP 2 ---------------- -->
+        <section class="step" data-step="2" aria-labelledby="h2" hidden>
+          <header class="step-head">
+            <span class="eyebrow" data-sr="Korak 02 — Biznis" data-en="Step 02 — Business">Korak 02 — Biznis</span>
+            <h2 id="h2" data-sr="Recite nam o poslu" data-en="Tell us about the business">Recite nam o poslu</h2>
+            <p class="small" data-sr="Jedno pitanje — ali od njega zavisi ceo predlog sajta, pa slobodno pišite koliko treba."
+               data-en="One question — but the whole site proposal rests on it, so write as much as you need.">Jedno pitanje — ali od njega zavisi ceo predlog sajta, pa slobodno pišite koliko treba.</p>
+          </header>
+
+          <div class="q">
+            <label class="q-t" for="delatnost" data-sr="Opišite nam vaš biznis *" data-en="Tell us about your business *">Opišite nam vaš biznis *</label>
+            <p class="q-h" data-sr="Čime se bavite, šta prodajete ili radite, šta vas izdvaja — pišite slobodno, kao da nam to objašnjavate uživo."
+               data-en="What you do, what you sell or offer, what sets you apart — write freely, as if explaining it to us in person.">Čime se bavite, šta prodajete ili radite, šta vas izdvaja — pišite slobodno, kao da nam to objašnjavate uživo.</p>
+            <div class="q-body">
+              <textarea id="delatnost" name="delatnost" required data-col="Čime se bavite" style="min-height:168px"
+                data-sr-ph="Npr. Radimo adaptacije kupatila u Beogradu, uglavnom stanovi u novogradnji. Najviše tražena usluga nam je kompletna adaptacija ključ u ruke, a izdvaja nas brza isporuka i fiksna cena dogovorena unapred."
+                data-en-ph="e.g. We renovate bathrooms in Belgrade, mostly flats in new buildings. Our most requested service is a full turnkey renovation, and what sets us apart is fast delivery and a fixed price agreed up front."
+                placeholder="Npr. Radimo adaptacije kupatila u Beogradu, uglavnom stanovi u novogradnji. Najviše tražena usluga nam je kompletna adaptacija ključ u ruke, a izdvaja nas brza isporuka i fiksna cena dogovorena unapred."></textarea>
+              <div class="err" data-sr="Ovo polje je obavezno." data-en="This field is required.">Ovo polje je obavezno.</div>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ---------------- STEP 3 ---------------- -->
+        <section class="step" data-step="3" aria-labelledby="h3" hidden>
+          <header class="step-head">
+            <span class="eyebrow" data-sr="Korak 03 — Materijali" data-en="Step 03 — Materials">Korak 03 — Materijali</span>
+            <h2 id="h3" data-sr="Šta već imate" data-en="What you already have">Šta već imate</h2>
+            <p class="small" data-sr="Ništa od ovoga nije obavezno, osim kontakt podataka. Ako nemate materijale — recite nam, možemo da ih uključimo u ponudu. Do 10 MB po fajlu."
+               data-en="None of this is required except your contact details. If you don't have materials, say so — we can include that in the proposal. Up to 10 MB per file.">Ništa od ovoga nije obavezno, osim kontakt podataka. Ako nemate materijale — recite nam, možemo da ih uključimo u ponudu. Do 10 MB po fajlu.</p>
+          </header>
+
+          <div class="q">
+            <span class="q-t" data-sr="Logo firme" data-en="Company logo">Logo firme</span>
+            <p class="q-h" data-sr="Ako imate vektor (.ai, .eps, .svg, .pdf), pošaljite njega — iz njega se sve ostalo izvodi."
+               data-en="If you have a vector file (.ai, .eps, .svg, .pdf), send that one — everything else derives from it.">Ako imate vektor (.ai, .eps, .svg, .pdf), pošaljite njega — iz njega se sve ostalo izvodi.</p>
+            <div class="q-body" data-file="logo" data-col="Logo"></div>
+          </div>
+
+          <div class="q">
+            <span class="q-t" data-sr="Fotografije" data-en="Photographs">Fotografije</span>
+            <p class="q-h" data-sr="Radovi, proizvodi, tim, prostor. Bolje deset dobrih nego sto nasumičnih. Slobodno ovde ubacite i cenovnik, katalog ili brošuru u PDF-u ili sličnom formatu."
+               data-en="Work, products, team, premises. Ten good ones beat a hundred random ones. Feel free to drop your price list, catalogue or brochure here too — PDF or similar.">Radovi, proizvodi, tim, prostor. Bolje deset dobrih nego sto nasumičnih. Slobodno ovde ubacite i cenovnik, katalog ili brošuru u PDF-u ili sličnom formatu.</p>
+            <div class="q-body" data-file="fotografije" data-col="Fotografije" data-multiple></div>
+          </div>
+
+          <div class="q">
+            <label class="q-t" for="mreze" data-sr="Linkovi" data-en="Links">Linkovi</label>
+            <p class="q-h" data-sr="Društvene mreže, Google profil, link ka Drive-u/WeTransferu ako je materijal prevelik — i slobodno linkove ili nazive sajtova koji vam se dopadaju."
+               data-en="Social profiles, Google listing, a Drive/WeTransfer link if material is too big — and feel free to add links or names of sites you like.">Društvene mreže, Google profil, link ka Drive-u/WeTransferu ako je materijal prevelik — i slobodno linkove ili nazive sajtova koji vam se dopadaju.</p>
+            <div class="q-body">
+              <textarea id="mreze" name="mreze" data-col="Linkovi" style="min-height:84px"
+                data-sr-ph="Jedan link po redu — Instagram, Facebook, Google profil, Drive…"
+                data-en-ph="One link per line — Instagram, Facebook, Google listing, Drive…"
+                placeholder="Jedan link po redu — Instagram, Facebook, Google profil, Drive…"></textarea>
+            </div>
+          </div>
+
+          <div class="q">
+            <label class="q-t" for="kontakt_podaci" data-sr="Adresa, radno vreme i kontakt podaci" data-en="Address, opening hours and contact details">Adresa, radno vreme i kontakt podaci</label>
+            <p class="q-h" data-sr="Tačno onako kako treba da stoji na sajtu i na Google mapi. Ako radite onlajn ili bez fiksnog radnog vremena, preskočite."
+               data-en="Exactly as it should appear on the site and on Google Maps. Skip it if you work online or without fixed hours.">Tačno onako kako treba da stoji na sajtu i na Google mapi. Ako radite onlajn ili bez fiksnog radnog vremena, preskočite.</p>
+            <div class="q-body">
+              <textarea id="kontakt_podaci" name="kontakt_podaci" data-col="Adresa, radno vreme, kontakt"
+                data-sr-ph="Adresa&#10;Radno vreme&#10;Telefon i email za sajt&#10;PIB i matični broj (za podnožje sajta)"
+                data-en-ph="Address&#10;Opening hours&#10;Phone and email for the site&#10;Company registration details (for the footer)"
+                placeholder="Adresa&#10;Radno vreme&#10;Telefon i email za sajt&#10;PIB i matični broj (za podnožje sajta)"></textarea>
+            </div>
+          </div>
+
+          <div class="q">
+            <label class="q-t" for="ostalo" data-sr="Bilo šta drugo što treba da znamo" data-en="Anything else we should know">Bilo šta drugo što treba da znamo</label>
+            <p class="q-h" data-sr="Ovde nam slobodno ostavite i dva-tri sajta koja vam se sviđaju i zašto — bilo koja branša."
+               data-en="Feel free to drop in two or three websites you like, and why — any industry.">Ovde nam slobodno ostavite i dva-tri sajta koja vam se sviđaju i zašto — bilo koja branša.</p>
+            <div class="q-body">
+              <textarea id="ostalo" name="ostalo" data-col="Ostalo"></textarea>
+            </div>
+          </div>
+
+          <div class="q">
+            <label class="consent">
+              <input type="checkbox" name="saglasnost" required data-col="Saglasnost">
+              <span data-sr="Saglasan/na sam da Deerzign koristi ove podatke radi pripreme ponude i kontakta u vezi sa ovim projektom, i da ime, email i telefon (heširano) deli sa Meta/Facebook radi merenja i unapređenja oglasa."
+                    data-en="I agree that Deerzign may use this information to prepare a proposal and contact me about this project, and may share my name, email and phone (hashed) with Meta/Facebook to measure and improve ad performance.">Saglasan/na sam da Deerzign koristi ove podatke radi pripreme ponude i kontakta u vezi sa ovim projektom, i da ime, email i telefon (heširano) deli sa Meta/Facebook radi merenja i unapređenja oglasa.</span>
+            </label>
+            <div class="err" data-sr="Potrebna je saglasnost da bismo mogli da vam odgovorimo." data-en="We need your consent before we can reply.">Potrebna je saglasnost da bismo mogli da vam odgovorimo.</div>
+          </div>
+        </section>
+
+        <!-- ---------------- NAV ---------------- -->
+        <div class="nav-row">
+          <button type="button" class="btn btn-quiet" id="back" hidden data-sr="Nazad" data-en="Back">Nazad</button>
+          <button type="button" class="btn btn-dark" id="next" data-sr="Sledeće" data-en="Next">Sledeće</button>
+          <button type="submit" class="btn btn-dark" id="send" hidden>
+            <span class="spin" aria-hidden="true"></span>
+            <span class="btn-label" data-sr="Pošalji upit" data-en="Send the brief">Pošalji upit</span>
+          </button>
+          <span class="save" id="save" data-sr="Sačuvano" data-en="Saved">Sačuvano</span>
+        </div>
+        <p class="sending-note" id="sendingNote"
+          data-sr="Šalje se — ovo može potrajati par sekundi, naročito ako ste priložili fajlove. Ne zatvarajte stranicu."
+          data-en="Sending — this can take a few seconds, especially with attachments. Please don't close the page.">
+          Šalje se — ovo može potrajati par sekundi, naročito ako ste priložili fajlove. Ne zatvarajte stranicu.
+        </p>
+      </form>
+
+    </div>
+  </main>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ============================================================
+     WHERE THE ANSWERS GO
+     Paste the /exec URL of the Apps Script web app deployed from
+     brief-apps-script.gs (see README). Until it is filled in, the
+     form falls back to an email with the answers in the body.
+     ============================================================ */
+  var ENDPOINT = 'https://script.google.com/macros/s/AKfycbysPbaDWkhf1Be_vFjsGDMeiizoSDYRHfo_Iv98EpZz-RRFjiS3vBAgRLRiNY5hVHkv/exec';
+  var FALLBACK_EMAIL = 'team@deerzign.com';
+
+  var MAX_FILE = 10 * 1024 * 1024;   /* per file  */
+  var MAX_TOTAL = 25 * 1024 * 1024;  /* all files */
+
+  /* phone photos routinely arrive at 4000px/8+ MB — downscaling client-side
+     before upload is most of what makes submit feel slow with attachments */
+  function compressImage(file){
+    if (!/^image\/(jpeg|png|webp)$/.test(file.type)) return Promise.resolve(file);
+    var MAX_DIM = 1920;
+    return new Promise(function(resolve){
+      var url = URL.createObjectURL(file);
+      var img = new Image();
+      img.onload = function(){
+        URL.revokeObjectURL(url);
+        var w = img.naturalWidth, h = img.naturalHeight;
+        var scale = Math.min(1, MAX_DIM / Math.max(w, h));
+        var cw = Math.max(1, Math.round(w * scale)), ch = Math.max(1, Math.round(h * scale));
+        var canvas = document.createElement('canvas');
+        canvas.width = cw; canvas.height = ch;
+        canvas.getContext('2d').drawImage(img, 0, 0, cw, ch);
+        canvas.toBlob(function(blob){
+          if (!blob || blob.size >= file.size){ resolve(file); return; }
+          resolve(new File([blob], file.name, {type:'image/jpeg'}));
+        }, 'image/jpeg', 0.82);
+      };
+      img.onerror = function(){ URL.revokeObjectURL(url); resolve(file); };
+      img.src = url;
+    });
+  }
+
+  var form = document.getElementById('brief');
+  var steps = [].slice.call(form.querySelectorAll('.step'));
+  var trail = [].slice.call(document.querySelectorAll('.tstep'));
+  var backBtn = document.getElementById('back');
+  var nextBtn = document.getElementById('next');
+  var sendBtn = document.getElementById('send');
+  var sendingNote = document.getElementById('sendingNote');
+  var summary = document.getElementById('summary');
+  var saveTag = document.getElementById('save');
+  var mBar = document.getElementById('mBar');
+  var mNum = document.getElementById('mStepNum');
+  var mName = document.getElementById('mStepName');
+
+  var cur = 0;
+  var lang = 'sr';
+  var files = {};   /* field -> [File] */
+  var paketOdCenovnika = new URLSearchParams(location.search).get('paket') || '';
+  /* handoff from a Meta Lead Ads follow-up message — see automation/PLAYBOOK.md
+     "Nacrt poruke" for Leads Meta Ads: budzet/rok mirror the exact values the
+     person already gave Meta, so the chip they'd otherwise re-pick here is
+     pre-checked instead. izvor overrides document.referrer because a link
+     opened from WhatsApp/SMS usually carries no referrer at all. */
+  var budzetOdLinka = new URLSearchParams(location.search).get('budzet') || '';
+  var rokOdLinka = new URLSearchParams(location.search).get('rok') || '';
+  /* handoff from a service page (redizajn-sajta.html etc.) — pre-picks which
+     "Šta vam je potrebno" chip matches the page the visitor came from */
+  var potrebaOdLinka = new URLSearchParams(location.search).get('potreba') || '';
+  var izvorOdLinka = new URLSearchParams(location.search).get('izvor') || '';
+  var submitted = false;   /* real submit in flight/done — never also log as abandoned */
+  var partialSent = false; /* send the "started but left" snapshot at most once */
+
+  /* ---------- language ---------- */
+  function applyLang(l){
+    lang = l;
+    document.documentElement.lang = l;
+    document.querySelectorAll('[data-sr]').forEach(function(el){
+      var t = el.getAttribute('data-' + l);
+      if (t) el.textContent = t;
+    });
+    document.querySelectorAll('[data-sr-ph]').forEach(function(el){
+      var t = el.getAttribute('data-' + l + '-ph');
+      if (t) el.placeholder = t;
+    });
+    document.querySelectorAll('.lang button').forEach(function(b){
+      b.setAttribute('aria-pressed', String(b.dataset.lang === l));
+    });
+    try { localStorage.setItem('dz-lang', l); } catch(e){}
+    paint();
+  }
+  document.querySelectorAll('.lang button').forEach(function(b){
+    b.addEventListener('click', function(){ applyLang(b.dataset.lang); });
+  });
+
+  /* ---------- file fields ---------- */
+  var FILE_TXT = {
+    sr:{pick:'Izaberite fajl ili prevucite ovde', hint:'do 10 MB po fajlu', remove:'ukloni'},
+    en:{pick:'Choose a file or drop it here', hint:'up to 10 MB per file', remove:'remove'}
+  };
+  document.querySelectorAll('[data-file]').forEach(function(host){
+    var key = host.dataset.file;
+    var multi = host.hasAttribute('data-multiple');
+    files[key] = [];
+
+    var input = document.createElement('input');
+    input.type = 'file'; input.multiple = multi; input.className = 'sr-only';
+    input.id = 'f-' + key;
+
+    var drop = document.createElement('label');
+    drop.className = 'drop'; drop.setAttribute('for', input.id);
+    drop.innerHTML =
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">' +
+      '<path d="M12 16V4"/><path d="m7.5 8.5 4.5-4.5 4.5 4.5"/><path d="M4 15v3.5A1.5 1.5 0 0 0 5.5 20h13a1.5 1.5 0 0 0 1.5-1.5V15"/></svg>' +
+      '<span><span class="dt" data-sr="' + FILE_TXT.sr.pick + '" data-en="' + FILE_TXT.en.pick + '">' + FILE_TXT.sr.pick + '</span><br>' +
+      '<span class="dh" data-sr="' + FILE_TXT.sr.hint + '" data-en="' + FILE_TXT.en.hint + '">' + FILE_TXT.sr.hint + '</span></span>';
+
+    var list = document.createElement('div');
+    list.className = 'files';
+    var err = document.createElement('div');
+    err.className = 'err';
+
+    host.appendChild(input); host.appendChild(drop); host.appendChild(list); host.appendChild(err);
+
+    function render(){
+      list.innerHTML = '';
+      files[key].forEach(function(f, i){
+        var row = document.createElement('div');
+        row.className = 'file';
+        row.innerHTML = '<b></b><span>' + (f.size/1048576).toFixed(1) + ' MB</span>';
+        row.querySelector('b').textContent = f.name;
+        var rm = document.createElement('button');
+        rm.type = 'button';
+        rm.textContent = FILE_TXT[lang].remove;
+        rm.addEventListener('click', function(){ files[key].splice(i,1); render(); });
+        row.appendChild(rm);
+        list.appendChild(row);
+      });
+    }
+    function add(fileList){
+      err.classList.remove('on');
+      var incoming = [].slice.call(fileList);
+      Promise.all(incoming.map(compressImage)).then(function(processed){
+        processed.forEach(function(f){
+          if (f.size > MAX_FILE){
+            err.textContent = (lang === 'sr' ? 'Fajl je veći od 10 MB: ' : 'File is over 10 MB: ') + f.name;
+            err.classList.add('on');
+            return;
+          }
+          if (!multi) files[key] = [];
+          files[key].push(f);
+        });
+        render();
+      });
+    }
+    input.addEventListener('change', function(){ add(input.files); input.value = ''; });
+    ['dragenter','dragover'].forEach(function(ev){
+      drop.addEventListener(ev, function(e){ e.preventDefault(); drop.classList.add('over'); });
+    });
+    ['dragleave','drop'].forEach(function(ev){
+      drop.addEventListener(ev, function(e){ e.preventDefault(); drop.classList.remove('over'); });
+    });
+    drop.addEventListener('drop', function(e){ if (e.dataTransfer) add(e.dataTransfer.files); });
+  });
+
+  /* ---------- validation ---------- */
+  function clearErr(scope){
+    scope.querySelectorAll('.err.on').forEach(function(el){ el.classList.remove('on'); });
+    scope.querySelectorAll('.invalid').forEach(function(el){ el.classList.remove('invalid'); });
+    summary.classList.remove('on');
+  }
+  function showErr(el){
+    var q = el.closest('.q') || el.parentElement;
+    var e = q.querySelector('.err');
+    if (e) e.classList.add('on');
+  }
+  function validate(step){
+    clearErr(step);
+    var bad = null;
+
+    /* single controls */
+    step.querySelectorAll('input[required],textarea[required]').forEach(function(el){
+      if (el.closest('[hidden]:not(.step)')) return;
+      var ok = el.type === 'checkbox' ? el.checked : el.value.trim() !== '';
+      if (ok && el.type === 'email') ok = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(el.value.trim());
+      if (!ok){ el.classList.add('invalid'); showErr(el); if (!bad) bad = el; }
+    });
+
+    /* choice groups */
+    step.querySelectorAll('.group[data-required]').forEach(function(g){
+      if (g.closest('[hidden]:not(.step)')) return;
+      if (!g.querySelector('input:checked')){
+        g.classList.add('invalid'); showErr(g);
+        if (!bad) bad = g.querySelector('input');
+      }
+    });
+
+    if (bad){
+      summary.classList.add('on');
+      var target = bad.closest('.q') || bad;
+      target.scrollIntoView({behavior:'smooth', block:'center'});
+      if (bad.focus) try { bad.focus({preventScroll:true}); } catch(e){ bad.focus(); }
+      return false;
+    }
+    return true;
+  }
+
+  /* ---------- step machine ---------- */
+  function paint(){
+    steps.forEach(function(s,i){ s.hidden = i !== cur; });
+    trail.forEach(function(t,i){
+      t.classList.toggle('now', i === cur);
+      t.classList.toggle('done', i < cur);
+    });
+    backBtn.hidden = cur === 0;
+    nextBtn.hidden = cur === steps.length - 1;
+    sendBtn.hidden = cur !== steps.length - 1;
+    mBar.style.width = ((cur + 1) / steps.length * 100) + '%';
+    mNum.textContent = String(cur + 1);
+    var name = trail[cur].querySelector('.t');
+    mName.textContent = name.getAttribute('data-' + lang) || name.textContent;
+  }
+  function go(i){
+    cur = Math.max(0, Math.min(steps.length - 1, i));
+    paint();
+    summary.classList.remove('on');
+    window.scrollTo({top:0, behavior:'smooth'});
+    try { localStorage.setItem('dz-brief-step', String(cur)); } catch(e){}
+  }
+  nextBtn.addEventListener('click', function(){ if (validate(steps[cur])) go(cur + 1); });
+  backBtn.addEventListener('click', function(){ go(cur - 1); });
+  trail.forEach(function(t, i){
+    t.addEventListener('click', function(){ if (i < cur) go(i); });
+    t.style.cursor = 'pointer';
+  });
+
+  /* Enter moves on, except inside a textarea */
+  form.addEventListener('keydown', function(e){
+    if (e.key !== 'Enter') return;
+    if (e.target.tagName === 'TEXTAREA') return;
+    e.preventDefault();
+    if (cur < steps.length - 1){ if (validate(steps[cur])) go(cur + 1); }
+    else sendBtn.click();
+  });
+
+  /* ---------- autosave (files excluded — they can't be serialised) ---------- */
+  var KEY = 'dz-brief';
+  var saveTimer;
+  function snapshot(){
+    var data = {};
+    form.querySelectorAll('input,textarea,select').forEach(function(el){
+      if (!el.name || el.type === 'file') return;
+      if (el.type === 'radio'){ if (el.checked) data[el.name] = el.value; }
+      else if (el.type === 'checkbox'){ (data[el.name] = data[el.name] || []).push(el.checked ? el.value : null); }
+      else data[el.name] = el.value;
+    });
+    return data;
+  }
+  function save(){
+    try { localStorage.setItem(KEY, JSON.stringify(snapshot())); } catch(e){ return; }
+    saveTag.classList.add('on');
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(function(){ saveTag.classList.remove('on'); }, 1600);
+  }
+  function restore(){
+    var raw;
+    try { raw = localStorage.getItem(KEY); } catch(e){ return; }
+    if (!raw) return;
+    var data;
+    try { data = JSON.parse(raw); } catch(e){ return; }
+    form.querySelectorAll('input,textarea,select').forEach(function(el){
+      if (!el.name || el.type === 'file') return;
+      var v = data[el.name];
+      if (v === undefined) return;
+      if (el.type === 'radio') el.checked = (v === el.value);
+      else if (el.type === 'checkbox') el.checked = Array.isArray(v) ? v.indexOf(el.value) > -1 : !!v;
+      else el.value = v;
+    });
+  }
+  form.addEventListener('input', save);
+  form.addEventListener('change', save);
+
+  /* ---------- collect ---------- */
+  function collect(){
+    var out = [];
+    if (paketOdCenovnika) out.push({label:'Paket sa cenovnika', value:paketOdCenovnika});
+    form.querySelectorAll('[data-col]').forEach(function(el){
+      /* skip only questions switched off by conditional logic — the steps
+         themselves are hidden most of the time and still have to be sent */
+      if (el.closest('[hidden]:not(.step)')) return;
+      var label = el.getAttribute('data-col');
+      var value = '';
+      if (el.classList.contains('group')){
+        value = [].slice.call(el.querySelectorAll('input:checked')).map(function(i){ return i.value; }).join(', ');
+      } else if (el.hasAttribute('data-file')){
+        var k = el.dataset.file;
+        value = (files[k] || []).map(function(f){ return f.name; }).join(', ');
+      } else if (el.type === 'checkbox'){
+        value = el.checked ? 'Da' : 'Ne';
+      } else {
+        value = (el.value || '').trim();
+      }
+      out.push({label:label, value:value});
+    });
+    return out;
+  }
+  function readFiles(){
+    var jobs = [];
+    Object.keys(files).forEach(function(k){
+      files[k].forEach(function(f){
+        jobs.push(new Promise(function(res){
+          var r = new FileReader();
+          r.onload = function(){
+            res({field:k, name:f.name, type:f.type || 'application/octet-stream',
+                 data:String(r.result).split(',')[1]});
+          };
+          r.onerror = function(){ res(null); };
+          r.readAsDataURL(f);
+        }));
+      });
+    });
+    return Promise.all(jobs).then(function(a){ return a.filter(Boolean); });
+  }
+  function totalSize(){
+    var t = 0;
+    Object.keys(files).forEach(function(k){ files[k].forEach(function(f){ t += f.size; }); });
+    return t;
+  }
+
+  /* ---------- abandoned-form capture ----------
+     Fires once, when the tab is hidden/closed, and only if there's at least
+     an email or phone to follow up on — otherwise there's nothing to do
+     with it. sendBeacon rather than fetch: it has to complete during page
+     teardown, when a normal request would just get cancelled. */
+  function sendPartial(){
+    if (partialSent || submitted) return;
+    var fields = collect().filter(function(f){ return f.value; });
+    var hasContact = fields.some(function(f){ return (f.label === 'Email' || f.label === 'Telefon') && f.value; });
+    if (!hasContact || !ENDPOINT || !navigator.sendBeacon) return;
+    partialSent = true;
+    var payload = JSON.stringify({
+      action: 'partialLead',
+      fields: fields,
+      meta: { jezik: lang, poslato: new Date().toISOString(), stranica: location.href, izvor: izvorOdLinka || document.referrer || '' }
+    });
+    navigator.sendBeacon(ENDPOINT, new Blob([payload], {type:'text/plain;charset=utf-8'}));
+  }
+  document.addEventListener('visibilitychange', function(){
+    if (document.visibilityState === 'hidden') sendPartial();
+  });
+  window.addEventListener('pagehide', sendPartial);
+
+  /* ---------- submit ---------- */
+  function mailtoFallback(fields){
+    var body = fields.map(function(f){ return f.label + ': ' + (f.value || '—'); }).join('\n');
+    var name = (form.querySelector('[name="firma"]') || {}).value || '';
+    return 'mailto:' + FALLBACK_EMAIL +
+      '?subject=' + encodeURIComponent('Brif za sajt — ' + name) +
+      '&body=' + encodeURIComponent(body);
+  }
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    if (!validate(steps[cur])) return;
+
+    if (totalSize() > MAX_TOTAL){
+      summary.textContent = lang === 'sr'
+        ? 'Fajlovi zajedno prelaze 25 MB. Uklonite nešto ili nam pošaljite link ka materijalu.'
+        : 'The files add up to more than 25 MB. Remove some, or send us a link instead.';
+      summary.classList.add('on');
+      return;
+    }
+
+    var fields = collect();
+    /* shared with the Meta Pixel Lead call on hvala.html, so the browser
+       event and the server-side (Conversions API) event get deduplicated
+       into one lead instead of being counted twice */
+    var eventId = 'dz-' + Date.now() + '-' + Math.random().toString(36).slice(2, 10);
+    var labelEl = sendBtn.querySelector('.btn-label');
+    var label = labelEl.getAttribute('data-' + lang) || labelEl.textContent;
+    sendBtn.disabled = true;
+    sendBtn.classList.add('is-sending');
+    labelEl.textContent = lang === 'sr' ? 'Šaljem…' : 'Sending…';
+    sendingNote.classList.add('on');
+
+    if (!ENDPOINT){
+      /* no backend wired yet — hand the answers over by email instead of losing them */
+      console.warn('ENDPOINT is empty — falling back to email.', fields);
+      window.location.href = mailtoFallback(fields);
+      sendBtn.disabled = false;
+      sendBtn.classList.remove('is-sending');
+      labelEl.textContent = label;
+      sendingNote.classList.remove('on');
+      return;
+    }
+
+    readFiles().then(function(payloadFiles){
+      return fetch(ENDPOINT, {
+        method:'POST',
+        /* text/plain keeps the browser from sending a preflight Apps Script can't answer */
+        headers:{'Content-Type':'text/plain;charset=utf-8'},
+        body:JSON.stringify({
+          fields: fields,
+          files: payloadFiles,
+          eventId: eventId,
+          meta: {
+            jezik: lang,
+            poslato: new Date().toISOString(),
+            stranica: location.href,
+            izvor: izvorOdLinka || document.referrer || ''
+          }
+        })
+      });
+    }).then(function(r){
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.text();
+    }).then(function(){
+      try { localStorage.removeItem(KEY); localStorage.removeItem('dz-brief-step'); } catch(e){}
+      submitted = true; /* a real submission just went through — the pagehide beacon must not also fire */
+      /* the thank-you lives on its own page so it can be linked and shared */
+      var hvalaParams = new URLSearchParams();
+      if (lang === 'sr') hvalaParams.set('lang', 'sr');
+      hvalaParams.set('eid', eventId);
+      window.location.href = 'hvala.html?' + hvalaParams.toString();
+    }).catch(function(err){
+      console.error(err);
+      summary.textContent = lang === 'sr'
+        ? 'Slanje nije uspelo. Pokušajte ponovo ili nam pišite na ' + FALLBACK_EMAIL + '.'
+        : 'Sending failed. Please try again, or write to us at ' + FALLBACK_EMAIL + '.';
+      summary.classList.add('on');
+      sendBtn.disabled = false;
+      sendBtn.classList.remove('is-sending');
+      labelEl.textContent = label;
+      sendingNote.classList.remove('on');
+    });
+  });
+
+  /* ---------- pricing-tier / Meta Lead Ads handoff ---------- */
+  if (paketOdCenovnika || budzetOdLinka || rokOdLinka){
+    var note = document.getElementById('paketNote');
+    var txt;
+    if (paketOdCenovnika){
+      txt = {
+        sr: 'Krenuli ste sa cenovnika, paket: ' + paketOdCenovnika + '. Javite nam ako se predomislite — ovo je samo početna procena.',
+        en: 'You came from the pricing page, package: ' + paketOdCenovnika + '. Let us know if that changes — this is just a starting point.'
+      };
+    } else {
+      txt = {
+        sr: 'Već ste nam ostavili budžet i rok — dole su unapred štiklirani. Javite ako se nešto promenilo.',
+        en: 'You already gave us a budget and timeline — they’re pre-checked below. Let us know if anything changed.'
+      };
+    }
+    note.hidden = false;
+    note.setAttribute('data-sr', txt.sr);
+    note.setAttribute('data-en', txt.en);
+    note.textContent = txt.sr;
+  }
+
+  /* pre-check the matching chip for each — compared in JS, never built into a
+     selector string, so a stray quote in the URL can't break anything */
+  function preselectFromLink(name, value){
+    if (!value) return;
+    form.querySelectorAll('[name="' + name + '"]').forEach(function(input){
+      if (input.value === value) input.checked = true;
+    });
+  }
+
+  /* ---------- boot ---------- */
+  restore();
+  /* after restore(), so a fresh handoff link always wins over whatever an
+     unrelated older session left in localStorage */
+  preselectFromLink('budzet', budzetOdLinka);
+  preselectFromLink('rok', rokOdLinka);
+  preselectFromLink('potreba', potrebaOdLinka);
+  var savedLang;
+  try { savedLang = localStorage.getItem('dz-lang'); } catch(e){}
+  applyLang(savedLang === 'sr' ? 'sr' : 'en');
+  var savedStep;
+  try { savedStep = parseInt(localStorage.getItem('dz-brief-step'), 10); } catch(e){}
+  if (savedStep > 0 && savedStep < steps.length) cur = savedStep;
+  paint();
+})();
+</script>
+</body>
+</html>

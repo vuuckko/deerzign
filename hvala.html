@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="sr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hvala — Deerzign</title>
+<meta name="description" content="Vaš upit je stigao. Javljamo se u roku od jednog radnog dana sa predlogom narednog koraka i okvirnom procenom.">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#14150F">
+<link rel="icon" href="deer.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --warm:#F2F0E9;
+  --ink:#151815;
+  --forest:#263D32;
+  --text-dim:#AAA99F;
+  --line-lt:rgba(242,240,233,.18);
+  --display:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --text:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --pad:clamp(1.25rem,5vw,4.5rem);
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;min-height:100vh;background:var(--ink);color:var(--warm);
+  font-family:var(--text);font-size:16px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+  display:flex;flex-direction:column;overflow-x:clip;
+}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+h1{font-family:var(--display);font-weight:600;margin:0;letter-spacing:-.032em;line-height:1.04}
+p{margin:0}
+ol{margin:0;padding:0;list-style:none}
+::selection{background:var(--warm);color:var(--ink)}
+:focus-visible{outline:2px solid var(--warm);outline-offset:4px;border-radius:2px}
+
+/* the mark, large and quiet, the way it sits in the dark panels on the site */
+body::after{
+  content:"";position:fixed;right:-14%;bottom:-14%;width:64%;aspect-ratio:1;
+  background:url(deer.png) center/contain no-repeat;
+  filter:brightness(0) invert(1);opacity:.06;pointer-events:none;
+}
+
+.shell{width:100%;max-width:1480px;margin-inline:auto;padding-inline:var(--pad)}
+
+header{padding-top:clamp(1.5rem,4vh,2.5rem)}
+.head-in{display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand{display:flex;align-items:center;gap:11px}
+.brand img{height:30px;width:auto;filter:brightness(0) invert(1)}
+.brand span{font-family:var(--display);font-weight:600;font-size:1.125rem;letter-spacing:-.02em}
+.lang{display:inline-flex;border:1px solid var(--line-lt);border-radius:999px;overflow:hidden}
+.lang button{padding:6px 13px;font-size:.75rem;font-weight:600;letter-spacing:.08em;color:rgba(244,241,233,.6)}
+.lang button[aria-pressed="true"]{background:var(--warm);color:var(--ink)}
+
+main{flex:1;display:flex;align-items:center;padding:clamp(3rem,10vh,7rem) 0}
+.in{max-width:720px;position:relative;z-index:1}
+
+.eyebrow{font-size:.6875rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--text-dim)}
+.tag{display:flex;align-items:center;gap:14px;margin-bottom:1.6rem}
+.tag::before{content:"";width:34px;height:1px;background:rgba(244,241,233,.35);flex:none}
+
+h1{font-size:clamp(2.2rem,5.4vw,4.25rem)}
+.lead{margin-top:1.5rem;font-size:clamp(1.0625rem,1.2vw,1.1875rem);line-height:1.68;color:rgba(244,241,233,.72);max-width:52ch}
+
+.steps{margin-top:clamp(2.4rem,5vh,3.4rem);display:grid;gap:1px;background:var(--line-lt);border-block:1px solid var(--line-lt)}
+.steps li{background:var(--ink);padding:1.1rem 0 1.1rem 46px;position:relative}
+.steps .track{position:absolute;left:0;top:14px;width:28px;height:28px;display:grid;place-items:center}
+.steps .track svg{width:22px;height:22px;color:var(--warm);opacity:.5}
+.steps li:nth-child(2) .track svg{transform:rotate(9deg)}
+.steps li:nth-child(3) .track svg{transform:rotate(-7deg)}
+.steps b{display:block;font-weight:600;font-size:.9375rem}
+.steps span{font-size:.9rem;color:var(--text-dim)}
+
+.actions{display:flex;flex-wrap:wrap;gap:14px;margin-top:clamp(2.2rem,5vh,3rem)}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  padding:14px 26px;border-radius:999px;font-size:.9rem;font-weight:600;
+  letter-spacing:-.01em;border:1px solid transparent;white-space:nowrap;
+  transition:background .45s var(--ease),color .45s var(--ease);
+}
+.btn-light{background:var(--warm);color:var(--ink)}
+.btn-light:hover{background:var(--forest);color:var(--warm)}
+.btn-ghost{border-color:rgba(244,241,233,.4);color:var(--warm)}
+.btn-ghost:hover{background:var(--warm);color:var(--ink)}
+
+footer{padding-bottom:clamp(1.5rem,4vh,2.5rem)}
+.foot-in{display:flex;flex-wrap:wrap;gap:12px 24px;justify-content:space-between;
+  padding-top:1.25rem;border-top:1px solid var(--line-lt);
+  font-size:.875rem;color:var(--text-dim)}
+
+/* one entry animation, same easing as the site */
+.rv{opacity:0;transform:translateY(16px);animation:rise .8s var(--ease) forwards}
+.rv:nth-child(2){animation-delay:.06s}
+.rv:nth-child(3){animation-delay:.12s}
+.rv:nth-child(4){animation-delay:.18s}
+.rv:nth-child(5){animation-delay:.24s}
+@keyframes rise{to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.rv{animation:none;opacity:1;transform:none}}
+</style>
+
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1056070890490241');
+fbq('track', 'PageView');
+/* this page only ever loads after brief.html's POST to Apps Script succeeds,
+   so a PageView here IS a real submitted brief — the safest place to fire
+   Lead, rather than racing the redirect in brief.html's submit handler.
+   eventID must match the one brief-apps-script.gs used for the server-side
+   Conversions API call for this same submission, so Meta deduplicates the
+   two into a single lead instead of counting it twice. */
+(function(){
+  var eid = new URLSearchParams(location.search).get('eid');
+  fbq('track', 'Lead', {}, eid ? {eventID: eid} : undefined);
+})();
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1056070890490241&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
+</head>
+<body>
+
+<header>
+  <div class="shell head-in">
+    <a class="brand" href="index.html" aria-label="Deerzign">
+      <img src="deer.png" alt="" aria-hidden="true">
+      <span>Deerzign</span>
+    </a>
+    <div class="lang" role="group" aria-label="Jezik / Language">
+      <button type="button" data-lang="en" aria-pressed="true">EN</button>
+      <button type="button" data-lang="sr" aria-pressed="false">SR</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="shell">
+    <div class="in">
+      <div class="tag rv"><span class="eyebrow" data-sr="Upit primljen" data-en="Brief received">Upit primljen</span></div>
+
+      <h1 class="rv" data-sr="Hvala — trag je ostavljen." data-en="Thank you — the trail is set.">Hvala — trag je ostavljen.</h1>
+
+      <p class="lead rv" data-sr="Vaši odgovori su stigli kod nas. Sada ih čitamo pažljivo, jer od njih zavisi kako će sajt izgledati i šta će raditi za vas."
+         data-en="Your answers have reached us. We're reading them carefully — they decide how the site will look and what it will do for you.">Vaši odgovori su stigli kod nas. Sada ih čitamo pažljivo, jer od njih zavisi kako će sajt izgledati i šta će raditi za vas.</p>
+
+      <ol class="steps rv">
+        <li>
+          <span class="track"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.4 3.2c1.6 0 2.6 2 2.4 4.6-.2 2.6-1.3 4.4-2.8 4.3-1.6-.1-2.6-2.1-2.4-4.7.2-2.5 1.3-4.2 2.8-4.2Z"/><path d="M15.6 4.6c1.5.2 2.3 2.2 1.9 4.7-.4 2.5-1.7 4.2-3.2 3.9-1.5-.3-2.3-2.3-1.9-4.8.4-2.4 1.7-4 3.2-3.8Z"/><path d="M11 15.4c2.2 0 4 1.5 4 3.3s-1.8 2.6-4 2.6-4-.8-4-2.6 1.8-3.3 4-3.3Z" opacity=".55"/></svg></span>
+          <b data-sr="Pregledamo odgovore" data-en="We go through your answers">Pregledamo odgovore</b>
+          <span data-sr="Danas ili najkasnije sutra ujutru." data-en="Today, or tomorrow morning at the latest.">Danas ili najkasnije sutra ujutru.</span>
+        </li>
+        <li>
+          <span class="track"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.4 3.2c1.6 0 2.6 2 2.4 4.6-.2 2.6-1.3 4.4-2.8 4.3-1.6-.1-2.6-2.1-2.4-4.7.2-2.5 1.3-4.2 2.8-4.2Z"/><path d="M15.6 4.6c1.5.2 2.3 2.2 1.9 4.7-.4 2.5-1.7 4.2-3.2 3.9-1.5-.3-2.3-2.3-1.9-4.8.4-2.4 1.7-4 3.2-3.8Z"/><path d="M11 15.4c2.2 0 4 1.5 4 3.3s-1.8 2.6-4 2.6-4-.8-4-2.6 1.8-3.3 4-3.3Z" opacity=".55"/></svg></span>
+          <b data-sr="Javljamo se u roku od jednog radnog dana" data-en="We get back to you within one business day">Javljamo se u roku od jednog radnog dana</b>
+          <span data-sr="Emailom ili na WhatsApp — kako vam više odgovara." data-en="By email or WhatsApp — whichever suits you.">Emailom ili na WhatsApp — kako vam više odgovara.</span>
+        </li>
+        <li>
+          <span class="track"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.4 3.2c1.6 0 2.6 2 2.4 4.6-.2 2.6-1.3 4.4-2.8 4.3-1.6-.1-2.6-2.1-2.4-4.7.2-2.5 1.3-4.2 2.8-4.2Z"/><path d="M15.6 4.6c1.5.2 2.3 2.2 1.9 4.7-.4 2.5-1.7 4.2-3.2 3.9-1.5-.3-2.3-2.3-1.9-4.8.4-2.4 1.7-4 3.2-3.8Z"/><path d="M11 15.4c2.2 0 4 1.5 4 3.3s-1.8 2.6-4 2.6-4-.8-4-2.6 1.8-3.3 4-3.3Z" opacity=".55"/></svg></span>
+          <b data-sr="Dobijate predlog i okvirnu procenu" data-en="You get a proposed next step and a ballpark estimate">Dobijate predlog i okvirnu procenu</b>
+          <span data-sr="Bez obaveze i bez sitnih slova." data-en="No obligation, no small print.">Bez obaveze i bez sitnih slova.</span>
+        </li>
+      </ol>
+
+      <div class="actions rv">
+        <a class="btn btn-light" href="index.html" data-sr="Nazad na sajt" data-en="Back to the site">Nazad na sajt</a>
+        <a class="btn btn-ghost" href="mailto:team@deerzign.com" data-sr="Pišite nam direktno" data-en="Email us directly">Pišite nam direktno</a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="shell foot-in">
+    <span data-sr="© 2026 Deerzign. Sva prava zadržana." data-en="© 2026 Deerzign. All rights reserved.">© 2026 Deerzign. Sva prava zadržana.</span>
+    <a href="mailto:team@deerzign.com">team@deerzign.com</a>
+  </div>
+</footer>
+
+<script>
+(function(){
+  'use strict';
+  /* the language follows the brief: ?lang=en wins, otherwise what was picked there */
+  function applyLang(l){
+    document.documentElement.lang = l;
+    document.querySelectorAll('[data-sr]').forEach(function(el){
+      var t = el.getAttribute('data-' + l);
+      if (t) el.textContent = t;
+    });
+    document.querySelectorAll('.lang button').forEach(function(b){
+      b.setAttribute('aria-pressed', String(b.dataset.lang === l));
+    });
+    try { localStorage.setItem('dz-lang', l); } catch(e){}
+  }
+  document.querySelectorAll('.lang button').forEach(function(b){
+    b.addEventListener('click', function(){ applyLang(b.dataset.lang); });
+  });
+
+  var q = new URLSearchParams(location.search).get('lang');
+  var saved;
+  try { saved = localStorage.getItem('dz-lang'); } catch(e){}
+  applyLang((q || saved) === 'sr' ? 'sr' : 'en');
+})();
+</script>
+</body>
+</html>
