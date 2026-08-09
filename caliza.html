@@ -1,0 +1,727 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Caliza — Barton Creek, Austin | Presented by Deerzign</title>
+<meta name="description" content="Caliza, a single-storey limestone and white oak residence in Barton Creek, Austin. A demonstration property built by Deerzign to show how a luxury listing can be presented.">
+<meta name="theme-color" content="#151815">
+<link rel="icon" href="deer.png">
+<meta name="robots" content="noindex">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="preload" as="image" href="lre/court-hero-crop.webp" fetchpriority="high">
+
+<style>
+/* ============================================================
+   CALIZA — demonstration property
+   Territory: "The First Showing" — the page is a route through
+   the house, not a page of sections. The hairline rail at the
+   left edge is the route; it draws as you move through.
+   Motion rule inherited from the studio site: transform and
+   opacity only. Nothing else animates.
+   ============================================================ */
+:root{
+  --warm:#F2F0E9;
+  --warm-2:#ECE7DA;
+  --ink:#151815;
+  --ink-soft:#5C5F58;
+  --forest:#263D32;
+  --forest-deep:#16241D;
+  --brown:#756B5E;
+  --text-dim:#AAA99F;
+  --line:rgba(20,21,15,.16);
+  --line-lt:rgba(242,240,233,.26);
+
+  --display:"Marcellus",Georgia,"Times New Roman",serif;
+  --text:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
+
+  --pad:clamp(1.25rem,4.6vw,4.5rem);
+  --rail:clamp(0px,3.2vw,58px);
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--warm);color:var(--ink);
+  font-family:var(--text);font-size:clamp(1rem,.96rem + .2vw,1.0625rem);
+  line-height:1.62;-webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit}
+
+/* ---------- the route rail ---------------------------------- */
+.rail{
+  position:fixed;left:var(--rail);top:0;bottom:0;width:1px;
+  background:rgba(242,240,233,.22);z-index:40;pointer-events:none;
+  transition:background .5s var(--ease);
+}
+.rail::after{
+  content:"";position:absolute;left:0;top:0;width:1px;height:100%;
+  background:var(--warm);transform:scaleY(var(--progress,0));
+  transform-origin:top;transition:transform .12s linear;
+}
+.rail.on-light{background:rgba(20,21,15,.14)}
+.rail.on-light::after{background:var(--forest)}
+@media (max-width:860px){.rail{display:none}}
+
+/* ---------- header ------------------------------------------ */
+.head{
+  position:absolute;top:0;left:0;right:0;z-index:30;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:20px;padding:22px var(--pad);
+}
+/* Local scrim: keeps the header legible over bright sky without
+   washing the whole photograph. */
+.head::before{
+  content:"";position:absolute;left:0;right:0;top:0;height:150px;z-index:-1;
+  background:linear-gradient(to bottom,rgba(12,13,10,.68),rgba(12,13,10,.34) 46%,transparent);
+  pointer-events:none;
+}
+.mark{display:inline-flex;align-items:center;gap:10px;text-decoration:none}
+.mark img{height:22px;width:auto;filter:brightness(0) invert(1)}
+.mark span{font-weight:600;font-size:.95rem;letter-spacing:-.01em;color:#fff}
+.head-right{display:flex;align-items:center;gap:clamp(14px,2.4vw,30px)}
+.head-note{font-size:.8rem;color:rgba(255,255,255,.8);white-space:nowrap}
+.head-link{
+  font-size:.86rem;font-weight:500;color:#fff;text-decoration:none;
+  padding-bottom:3px;border-bottom:1px solid rgba(255,255,255,.4);
+  transition:border-color .35s var(--ease)
+}
+.head-link:hover{border-color:#fff}
+@media (max-width:720px){.head-note{display:none}}
+
+/* ---------- hero -------------------------------------------- */
+.hero{position:relative;min-height:100svh;display:flex;align-items:flex-end;overflow:hidden}
+.hero-media{position:absolute;inset:0}
+.hero-media img{
+  width:100%;height:100%;object-fit:cover;object-position:50% 72%;
+  transform:scale(1.06);transition:transform 1.9s var(--ease);
+}
+.hero.ready .hero-media img{transform:scale(1)}
+.hero-media::after{
+  content:"";position:absolute;inset:0;
+  /* Two layers: a strong pool of shade in the bottom-left where the type
+     sits, and a light overall balance so the sky and terrace keep detail. */
+  background:
+    radial-gradient(84% 56% at 0% 100%,rgba(9,11,7,.74),rgba(9,11,7,.44) 34%,rgba(9,11,7,.16) 56%,transparent 76%),
+    linear-gradient(to top,rgba(12,13,10,.52) 0%,rgba(12,13,10,.28) 15%,rgba(12,13,10,.08) 34%,rgba(12,13,10,.02) 52%,rgba(12,13,10,.08) 72%,rgba(12,13,10,.32) 100%);
+}
+.hero-in{position:relative;z-index:2;width:100%;padding:0 var(--pad) clamp(28px,4vw,48px)}
+
+.hero-name{
+  font-family:var(--display);font-weight:400;
+  font-size:clamp(3.2rem,10.5vw,8.8rem);line-height:.9;
+  letter-spacing:-.004em;color:#fff;margin:0;
+}
+.hero-place{
+  margin:clamp(14px,1.6vw,22px) 0 0;color:rgba(255,255,255,.95);
+  font-size:clamp(.92rem,.88rem + .2vw,1.05rem);font-weight:400;
+}
+
+.facts{
+  margin-top:clamp(26px,3.4vw,44px);padding-top:18px;
+  border-top:1px solid rgba(255,255,255,.24);
+  display:flex;flex-wrap:wrap;gap:10px clamp(20px,3.6vw,54px);
+  align-items:baseline;
+}
+/* Spaced caps are used here and nowhere else on the page: these are
+   catalogue facts, not decorative labels. */
+.fact{
+  font-size:.76rem;font-weight:500;letter-spacing:.13em;
+  text-transform:uppercase;color:rgba(255,255,255,.8);white-space:nowrap;
+}
+.fact-price{color:#fff;letter-spacing:.09em;font-size:.84rem}
+
+.cue{
+  margin-left:auto;z-index:2;
+  font-size:.74rem;color:rgba(255,255,255,.62);display:flex;align-items:center;gap:10px;
+}
+.cue i{display:block;width:1px;height:22px;background:rgba(255,255,255,.4);position:relative;overflow:hidden}
+.cue i::after{content:"";position:absolute;inset:0;background:#fff;animation:drop 2.6s var(--ease) infinite}
+@keyframes drop{0%{transform:translateY(-100%)}55%,100%{transform:translateY(100%)}}
+@media (max-width:720px){.cue{display:none}}
+
+/* reveal ----------------------------------------------------- */
+.rise{opacity:0;transform:translateY(24px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.hero.ready .rise,.rise.in{opacity:1;transform:none}
+.hero.ready .rise:nth-child(1){transition-delay:.16s}
+.hero.ready .rise:nth-child(2){transition-delay:.26s}
+.hero.ready .rise:nth-child(3){transition-delay:.36s}
+
+/* ---------- first beat: the approach ------------------------ */
+.beat{padding:clamp(80px,11vw,170px) var(--pad)}
+.beat-in{max-width:1320px;margin:0 auto;display:grid;grid-template-columns:repeat(12,1fr);gap:clamp(24px,3vw,52px)}
+.beat-place{
+  grid-column:1/4;font-size:.9rem;color:var(--brown);font-weight:500;
+  align-self:start;padding-top:.6rem;
+}
+.beat-body{grid-column:4/11}
+.beat-lead{
+  font-family:var(--display);font-weight:400;
+  font-size:clamp(1.7rem,3.4vw,3.05rem);line-height:1.14;letter-spacing:-.01em;
+  margin:0 0 clamp(20px,2.4vw,34px);text-wrap:balance;
+}
+.beat-body p{margin:0 0 1.1em;max-width:58ch;color:var(--ink-soft)}
+.beat-body p:last-child{margin-bottom:0}
+@media (max-width:900px){
+  .beat-place{grid-column:1/13;padding-top:0}
+  .beat-body{grid-column:1/13}
+}
+
+/* ---------- route marker (the rail speaks) ------------------ */
+.marker{
+  /* Sits in the gutter to the LEFT of the rail. Placing it to the right
+     puts it under the content column, which starts at --pad. */
+  position:fixed;left:max(12px,calc(var(--rail) - 26px));top:50%;transform:translateY(-50%);
+  z-index:41;font-size:.78rem;color:var(--brown);pointer-events:none;
+  writing-mode:vertical-rl;letter-spacing:.02em;
+  opacity:0;transition:opacity .5s var(--ease);
+}
+.marker.show{opacity:1}
+@media (max-width:1100px){.marker{display:none}}
+
+/* ---------- full-bleed plate -------------------------------- */
+.plate{position:relative;height:min(92svh,860px);overflow:hidden}
+.plate img{width:100%;height:100%;object-fit:cover}
+.plate-cap{
+  position:absolute;left:var(--pad);bottom:clamp(20px,3vw,36px);
+  color:#fff;font-size:.82rem;text-shadow:0 1px 24px rgba(10,12,8,.7);
+}
+.plate.is-tall{height:min(96svh,940px)}
+
+/* ---------- paired figures ---------------------------------- */
+.duo{padding:clamp(60px,8vw,130px) var(--pad)}
+.duo-in{max-width:1320px;margin:0 auto;display:grid;grid-template-columns:repeat(12,1fr);gap:clamp(20px,2.6vw,44px);align-items:end}
+.duo-a{grid-column:1/8}
+.duo-b{grid-column:9/13;padding-bottom:clamp(10px,3vw,52px)}
+.duo-b h3{
+  font-family:var(--display);font-weight:400;font-size:clamp(1.35rem,2.2vw,1.95rem);
+  line-height:1.18;margin:0 0 .7em;letter-spacing:-.01em;text-wrap:balance;
+}
+.duo-b p{margin:0;color:var(--ink-soft);font-size:.98rem}
+.duo.flip .duo-a{grid-column:6/13;order:2}
+.duo.flip .duo-b{grid-column:1/5;order:1}
+@media (max-width:860px){
+  .duo-a,.duo-b,.duo.flip .duo-a,.duo.flip .duo-b{grid-column:1/13;order:initial;padding-bottom:0}
+  .duo-b{margin-top:22px}
+}
+
+/* ---------- stack of two ------------------------------------ */
+.pair{padding:0 var(--pad) clamp(60px,8vw,130px)}
+.pair-in{max-width:1320px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:clamp(14px,1.8vw,28px)}
+.pair-in figure{margin:0}
+.pair-in figcaption{margin-top:10px;font-size:.8rem;color:var(--brown)}
+@media (max-width:640px){.pair-in{grid-template-columns:1fr}}
+
+/* ---------- gallery (horizontal) ---------------------------- */
+.gal{padding:clamp(60px,8vw,120px) 0 clamp(60px,8vw,110px)}
+/* max-width is border-box here, so it must include the padding or the
+   heading lands 60px right of the images it belongs to. */
+.gal-head{padding:0 var(--pad);max-width:calc(1320px + var(--pad)*2);margin:0 auto clamp(26px,3.4vw,46px)}
+.gal-head h2{
+  font-family:var(--display);font-weight:400;font-size:clamp(1.6rem,3.2vw,2.7rem);
+  line-height:1.1;margin:0;letter-spacing:-.01em;text-wrap:balance;
+}
+.gal-track{
+  display:flex;gap:clamp(12px,1.6vw,24px);overflow-x:auto;overflow-y:hidden;
+  padding:0 var(--pad) 18px;scroll-snap-type:x mandatory;
+  max-width:calc(1320px + var(--pad)*2);margin:0 auto;
+  scrollbar-width:thin;scrollbar-color:var(--line) transparent;
+}
+.gal-track figure{margin:0;flex:0 0 auto;width:min(76vw,620px);scroll-snap-align:center}
+.gal-track img{width:100%;aspect-ratio:3/2;object-fit:cover}
+.gal-track figcaption{margin-top:10px;font-size:.8rem;color:var(--brown)}
+.gal-note{padding:0 var(--pad);max-width:calc(1320px + var(--pad)*2);margin:14px auto 0;font-size:.8rem;color:var(--brown)}
+
+/* ---------- the plan ---------------------------------------- */
+.plan{padding:clamp(70px,9vw,140px) var(--pad);background:var(--warm-2)}
+.plan-in{max-width:1320px;margin:0 auto;display:grid;grid-template-columns:repeat(12,1fr);gap:clamp(24px,3vw,52px);align-items:center}
+.plan-copy{grid-column:1/5}
+.plan-copy h2{font-family:var(--display);font-weight:400;font-size:clamp(1.6rem,2.9vw,2.5rem);line-height:1.1;margin:0 0 .6em;letter-spacing:-.01em;text-wrap:balance}
+.plan-copy p{color:var(--ink-soft);margin:0 0 1.6em;font-size:.98rem}
+.plan-list{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.plan-list li{
+  padding:11px 0;border-bottom:1px solid var(--line);font-size:.92rem;
+  display:flex;justify-content:space-between;gap:16px;cursor:default;
+  transition:color .3s var(--ease);
+}
+.plan-list li span{color:var(--brown)}
+.plan-list li.on{color:var(--forest)}
+.plan-fig{grid-column:6/13}
+.plan-fig svg{width:100%;height:auto;display:block}
+.room{fill:rgba(38,61,50,.06);stroke:var(--ink);stroke-width:1.1;transition:fill .3s var(--ease)}
+.room.on{fill:rgba(38,61,50,.24)}
+.room-label{font-family:var(--text);font-size:11px;fill:var(--brown)}
+.plan-water{fill:rgba(38,61,50,.16);stroke:var(--ink);stroke-width:1.1}
+@media (max-width:900px){.plan-copy,.plan-fig{grid-column:1/13}}
+
+/* ---------- the terms --------------------------------------- */
+.terms{padding:clamp(70px,9vw,140px) var(--pad);background:var(--ink);color:var(--warm)}
+.terms-in{max-width:1320px;margin:0 auto}
+.terms h2{font-family:var(--display);font-weight:400;font-size:clamp(1.7rem,3.2vw,2.8rem);line-height:1.1;margin:0 0 clamp(28px,3.6vw,54px);letter-spacing:-.01em}
+.terms-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(18px,2.4vw,40px);border-top:1px solid var(--line-lt)}
+.terms-cell{padding:22px 0;border-bottom:1px solid var(--line-lt)}
+.terms-num{
+  font-family:var(--display);font-weight:400;font-size:clamp(1.7rem,3.4vw,2.9rem);
+  line-height:1;font-variant-numeric:tabular-nums;
+}
+.terms-key{margin-top:9px;font-size:.82rem;color:var(--text-dim,#AAA99F)}
+@media (max-width:820px){.terms-grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:400px){.terms-grid{grid-template-columns:1fr}}
+
+/* ---------- agent + enquiry --------------------------------- */
+.enq{padding:clamp(70px,9vw,140px) var(--pad)}
+.enq-in{max-width:1320px;margin:0 auto;display:grid;grid-template-columns:repeat(12,1fr);gap:clamp(28px,3.6vw,64px)}
+.enq-copy{grid-column:1/6}
+.enq-copy h2{font-family:var(--display);font-weight:400;font-size:clamp(1.7rem,3.2vw,2.8rem);line-height:1.1;margin:0 0 .6em;letter-spacing:-.01em;text-wrap:balance}
+.enq-copy p{color:var(--ink-soft);margin:0 0 1.5em}
+.agent{border-top:1px solid var(--line);padding-top:18px;margin-top:30px}
+.agent-name{font-weight:600;font-size:1.02rem}
+.agent-role{color:var(--brown);font-size:.9rem;margin-top:3px}
+.agent-contact{margin-top:12px;font-size:.9rem;color:var(--ink-soft)}
+.agent-contact a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--line)}
+
+.enq-form{grid-column:7/13;display:grid;gap:16px}
+.field{display:grid;gap:7px}
+.field label{font-size:.84rem;color:var(--brown)}
+.field input,.field textarea{
+  font:inherit;font-size:.96rem;color:var(--ink);background:transparent;
+  border:0;border-bottom:1px solid var(--line);padding:9px 0;border-radius:0;
+  transition:border-color .3s var(--ease);
+}
+.field input:focus,.field textarea:focus{outline:none;border-bottom-color:var(--forest)}
+.field textarea{resize:vertical;min-height:92px}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.submit{
+  justify-self:start;margin-top:8px;font:inherit;font-size:.94rem;font-weight:500;
+  color:var(--warm);background:var(--forest);border:0;border-radius:6px;
+  padding:13px 26px;cursor:pointer;transition:background .3s var(--ease);
+}
+.submit:hover{background:var(--forest-deep,#16241D)}
+.enq-note{grid-column:7/13;font-size:.8rem;color:var(--brown);margin:0}
+@media (max-width:900px){
+  .enq-copy,.enq-form,.enq-note{grid-column:1/13}
+  .field-row{grid-template-columns:1fr}
+}
+
+/* Narrow screens: a 12-column grid needs 11 gaps, which on a 320px
+   screen costs more width than the screen has. Collapse to one column
+   rather than letting the columns shrink to nothing. */
+@media (max-width:640px){
+  .beat-in,.duo-in,.plan-in,.enq-in{grid-template-columns:1fr;gap:22px}
+  .beat-place,.beat-body,
+  .duo-a,.duo-b,.duo.flip .duo-a,.duo.flip .duo-b,
+  .plan-copy,.plan-fig,.enq-copy,.enq-form,.enq-note{grid-column:auto}
+}
+
+/* ---------- foot -------------------------------------------- */
+.foot{padding:clamp(40px,5vw,70px) var(--pad);border-top:1px solid var(--line);background:var(--warm)}
+.foot-in{max-width:1320px;margin:0 auto;display:flex;flex-wrap:wrap;gap:16px 32px;justify-content:space-between;align-items:center}
+.foot a{color:var(--ink)}
+.foot-note{font-size:.82rem;color:var(--brown);max-width:62ch}
+
+@media (prefers-reduced-motion:reduce){
+  .hero-media img{transform:none!important;transition:none}
+  .rise{opacity:1;transform:none;transition:none}
+  .cue i::after{animation:none}
+  .rail::after{transition:none}
+}
+</style>
+</head>
+<body>
+
+<div class="rail" id="rail" aria-hidden="true"></div>
+<div class="marker" id="marker" aria-hidden="true"></div>
+
+<header class="head">
+  <a class="mark" href="luxury-real-estate.html">
+    <img src="deer.png" alt="" aria-hidden="true">
+    <span>Deerzign</span>
+  </a>
+  <div class="head-right">
+    <p class="head-note">Demonstration property</p>
+    <a class="head-link" href="#enquire">Arrange a viewing</a>
+  </div>
+</header>
+
+<section class="hero" id="hero">
+  <div class="hero-media">
+    <img src="lre/court-hero-crop.webp" width="1430" height="1060" fetchpriority="high"
+         alt="The courtyard at Caliza: a reflecting pool held between two glazed wings, under a wood soffit.">
+  </div>
+
+  <div class="hero-in">
+    <h1 class="hero-name rise">Caliza</h1>
+    <p class="hero-place rise">Barton Creek &middot; Austin, Texas</p>
+    <div class="facts rise">
+      <span class="fact fact-price">$4,250,000</span>
+      <span class="fact">5 Bedrooms</span>
+      <span class="fact">5.5 Bathrooms</span>
+      <span class="fact">5,240 Sq Ft</span>
+      <span class="fact">1.1 Acres</span>
+      <span class="cue"><i></i><span>Walk through</span></span>
+    </div>
+  </div>
+</section>
+
+<section class="beat" id="approach" data-place="The approach">
+  <div class="beat-in">
+    <p class="beat-place rise">The approach</p>
+    <div class="beat-body">
+      <h2 class="beat-lead rise">The house is entered from the north, along a path set slightly below the lawn.</h2>
+      <p class="rise">Caliza is built from cut limestone. The facade carries it in long, shallow courses, which is why the wall reads as horizontal across its full length. The house is single storey throughout.</p>
+      <p class="rise">The canopy over the entrance is a folded steel plate lit from within along its edge. No glass faces the street on this side. The first view of the courtyard arrives only once you are through the door.</p>
+    </div>
+  </div>
+</section>
+
+<section class="plate" data-place="The approach">
+  <img src="lre/arrival-entry.webp" width="1800" height="1200" loading="lazy" decoding="async"
+       alt="The north elevation of Caliza, with a cast concrete path running to a recessed entrance under a steel canopy.">
+  <p class="plate-cap">North elevation and entry court</p>
+</section>
+
+<section class="duo" data-place="The light">
+  <div class="duo-in">
+    <figure class="duo-a rise" style="margin:0">
+      <img src="lre/light-floor.webp" width="1800" height="1200" loading="lazy" decoding="async"
+           alt="Late afternoon light falling in long bands across a white oak floor beside full-height sliding doors.">
+    </figure>
+    <div class="duo-b">
+      <h3 class="rise">Every principal room takes glass on two sides.</h3>
+      <p class="rise">The plan is one room deep. Light crosses it twice a day — from the courtyard in the morning, from the west lawn in the late afternoon — and the floor keeps a record of both.</p>
+    </div>
+  </div>
+</section>
+
+<section class="duo flip" data-place="The hearth">
+  <div class="duo-in">
+    <figure class="duo-a rise" style="margin:0">
+      <img src="lre/fireplace-detail.webp" width="1800" height="1200" loading="lazy" decoding="async"
+           alt="A limestone chimney wall running floor to ceiling, with a long horizontal firebox set into it.">
+    </figure>
+    <div class="duo-b">
+      <h3 class="rise">The limestone does not stop at the door.</h3>
+      <p class="rise">The chimney wall is the same stone as the facade, in the same courses, carried through the glass line without a joint. It is the one element visible from every room in the west wing.</p>
+    </div>
+  </div>
+</section>
+
+<section class="beat" data-place="The kitchen">
+  <div class="beat-in">
+    <p class="beat-place rise">The kitchen</p>
+    <div class="beat-body">
+      <h2 class="beat-lead rise">A single slab, book-matched across the hood and the island.</h2>
+      <p class="rise">Cabinetry is rift-sawn white oak with no visible hardware. The island runs 4.2 metres and seats six. Appliances are integrated behind matching fronts; the only metal in the room is the tap and the trim on the pantry doors.</p>
+    </div>
+  </div>
+</section>
+
+<section class="pair" data-place="The kitchen">
+  <div class="pair-in">
+    <figure class="rise">
+      <img src="lre/kitchen-main.webp" width="1800" height="1200" loading="lazy" decoding="async"
+           alt="The kitchen seen from the dining end: a long island, white oak cabinetry and a marble hood surround.">
+      <figcaption>Kitchen, looking west</figcaption>
+    </figure>
+    <figure class="rise">
+      <img src="lre/kitchen-marble.webp" width="1800" height="1200" loading="lazy" decoding="async"
+           alt="Detail of the marble hood surround and splashback meeting white oak cabinet fronts.">
+      <figcaption>Hood surround and splashback</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="plate is-tall" data-place="The water">
+  <img src="lre/court-kitchen-out.webp" width="1800" height="1200" loading="lazy" decoding="async"
+       alt="The courtyard at Caliza: a lap pool and two shallow reflecting channels set into limestone paving, with an outdoor kitchen under the roof.">
+  <p class="plate-cap">Courtyard, lap pool and reflecting channels</p>
+</section>
+
+<section class="beat" data-place="The water">
+  <div class="beat-in">
+    <p class="beat-place rise">The water</p>
+    <div class="beat-body">
+      <h2 class="beat-lead rise">The courtyard holds a lap pool and two shallow channels, set flush with the paving.</h2>
+      <p class="rise">The channels are 120 millimetres deep and hold their surface still, so the roof line and the sky sit in them for most of the day. The lap pool is 18 metres, unheated, and runs the length of the east wing.</p>
+      <p class="rise">The outdoor kitchen is under the main roof rather than in a separate structure, which keeps the courtyard usable from March to November.</p>
+    </div>
+  </div>
+</section>
+
+<section class="pair" data-place="The private rooms">
+  <div class="pair-in">
+    <figure class="rise">
+      <img src="lre/bath-vanity.webp" width="1800" height="1200" loading="lazy" decoding="async"
+           alt="The primary bathroom: a backlit mirror set into a textured stone wall above a floating double vanity.">
+      <figcaption>Primary bathroom, vanity wall</figcaption>
+    </figure>
+    <figure class="rise">
+      <img src="lre/bath-tub.webp" width="1800" height="1200" loading="lazy" decoding="async"
+           alt="A freestanding bath beside a glazed shower, with a window to the planted side court.">
+      <figcaption>Primary bathroom, bath and shower</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ---------------- gallery ---------------- -->
+<section class="gal" data-place="The gallery">
+  <div class="gal-head">
+    <h2 class="rise">The rest of the house, in order.</h2>
+  </div>
+  <div class="gal-track" tabindex="0" aria-label="Property gallery, scroll horizontally">
+    <figure><img src="lre/court-hero.webp" width="1800" height="1200" loading="lazy" decoding="async" alt="The courtyard seen from the south, with the reflecting channel running toward the east wing."><figcaption>Courtyard, from the south</figcaption></figure>
+    <figure><img src="lre/court-hills.webp" width="1800" height="1200" loading="lazy" decoding="async" alt="The west terrace looking out over the pool to the hill country beyond the boundary."><figcaption>West terrace, toward the hills</figcaption></figure>
+    <figure><img src="lre/living-fireplace.webp" width="1800" height="1200" loading="lazy" decoding="async" alt="The great room with its limestone chimney wall and clerestory windows above."><figcaption>Great room</figcaption></figure>
+    <figure><img src="lre/court-patio.webp" width="1800" height="1200" loading="lazy" decoding="async" alt="The covered terrace between the two wings, with the courtyard beyond."><figcaption>Covered terrace</figcaption></figure>
+    <figure><img src="lre/outdoor-kitchen.webp" width="1800" height="1200" loading="lazy" decoding="async" alt="The outdoor kitchen built into the terrace wall under the main roof."><figcaption>Outdoor kitchen</figcaption></figure>
+    <figure><img src="lre/arrival-entry.webp" width="1800" height="1200" loading="lazy" decoding="async" alt="The entrance under its steel canopy, seen from the path."><figcaption>Entrance</figcaption></figure>
+  </div>
+  <p class="gal-note">Photography of the residence. Furnishings shown are not included in the sale.</p>
+</section>
+
+<!-- ---------------- the plan ---------------- -->
+<section class="plan" data-place="The plan">
+  <div class="plan-in">
+    <div class="plan-copy">
+      <h2 class="rise">See past the photographs.</h2>
+      <p class="rise">One storey, arranged in three wings around the courtyard. The public rooms face west; the private wing faces the morning.</p>
+      <ul class="plan-list rise" id="planList">
+        <li data-room="great">Great room <span>7.8 &times; 6.4 m</span></li>
+        <li data-room="kitchen">Kitchen and pantry <span>6.1 &times; 5.2 m</span></li>
+        <li data-room="entry">Entry gallery <span>9.0 &times; 3.1 m</span></li>
+        <li data-room="primary">Primary suite <span>6.6 &times; 5.8 m</span></li>
+        <li data-room="guest">Guest wing, three rooms <span>—</span></li>
+        <li data-room="court">Courtyard and pool <span>18 m lap</span></li>
+      </ul>
+    </div>
+
+    <div class="plan-fig rise">
+      <svg viewBox="0 0 920 600" role="img" aria-label="Floor plan of Caliza: three wings arranged around a central courtyard with a lap pool.">
+        <!-- west wing -->
+        <rect class="room" data-room="great"   x="40"  y="60"  width="220" height="240"/>
+        <rect class="room" data-room="kitchen" x="40"  y="300" width="220" height="150"/>
+        <rect class="room" data-room="guest"   x="40"  y="450" width="220" height="90"/>
+        <!-- north wing -->
+        <rect class="room" data-room="entry"   x="260" y="60"  width="420" height="140"/>
+        <!-- east wing -->
+        <rect class="room" data-room="primary" x="680" y="60"  width="200" height="240"/>
+        <rect class="room" data-room="guest"   x="680" y="300" width="200" height="240"/>
+        <!-- south wing -->
+        <rect class="room" data-room="guest"   x="260" y="450" width="420" height="90"/>
+        <!-- courtyard + water -->
+        <rect class="room" data-room="court"   x="260" y="200" width="420" height="250"/>
+        <rect class="plan-water" data-room="court" x="300" y="330" width="340" height="86"/>
+        <rect class="plan-water" data-room="court" x="300" y="240" width="340" height="18"/>
+
+        <text class="room-label" x="150" y="185" text-anchor="middle">Great room</text>
+        <text class="room-label" x="150" y="380" text-anchor="middle">Kitchen</text>
+        <text class="room-label" x="470" y="135" text-anchor="middle">Entry gallery</text>
+        <text class="room-label" x="780" y="185" text-anchor="middle">Primary suite</text>
+        <text class="room-label" x="780" y="425" text-anchor="middle">Guest wing</text>
+        <text class="room-label" x="470" y="300" text-anchor="middle">Courtyard</text>
+        <text class="room-label" x="470" y="500" text-anchor="middle">Guest wing</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ---------------- the terms ---------------- -->
+<section class="terms" data-place="The terms">
+  <div class="terms-in">
+    <h2 class="rise">The terms.</h2>
+    <div class="terms-grid">
+      <div class="terms-cell rise"><div class="terms-num" data-count="4250000" data-prefix="$">$4,250,000</div><div class="terms-key">Offered at</div></div>
+      <div class="terms-cell rise"><div class="terms-num" data-count="5240">5,240</div><div class="terms-key">Square feet</div></div>
+      <div class="terms-cell rise"><div class="terms-num" data-count="5">5</div><div class="terms-key">Bedrooms</div></div>
+      <div class="terms-cell rise"><div class="terms-num">5.5</div><div class="terms-key">Bathrooms</div></div>
+      <div class="terms-cell rise"><div class="terms-num">1.1</div><div class="terms-key">Acres</div></div>
+      <div class="terms-cell rise"><div class="terms-num" data-count="2021">2021</div><div class="terms-key">Built</div></div>
+      <div class="terms-cell rise"><div class="terms-num">3</div><div class="terms-key">Car garage</div></div>
+      <div class="terms-cell rise"><div class="terms-num">18 m</div><div class="terms-key">Lap pool</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ---------------- enquiry ---------------- -->
+<section class="enq" id="enquire" data-place="A private viewing">
+  <div class="enq-in">
+    <div class="enq-copy">
+      <h2 class="rise">Caliza is shown by appointment.</h2>
+      <p class="rise">Viewings are arranged privately, on weekdays and by prior confirmation. Tell us when suits and we will come back to you the same day.</p>
+
+      <div class="agent rise">
+        <div class="agent-name">Alex Morgan</div>
+        <div class="agent-role">Listing advisor</div>
+        <div class="agent-contact">
+          <a href="mailto:team@deerzign.com">team@deerzign.com</a>
+        </div>
+      </div>
+    </div>
+
+    <form class="enq-form rise" id="enqForm" novalidate>
+      <div class="field-row">
+        <div class="field">
+          <label for="f-name">Name</label>
+          <input id="f-name" name="name" type="text" autocomplete="name" required>
+        </div>
+        <div class="field">
+          <label for="f-phone">Phone</label>
+          <input id="f-phone" name="phone" type="tel" autocomplete="tel">
+        </div>
+      </div>
+      <div class="field">
+        <label for="f-email">Email</label>
+        <input id="f-email" name="email" type="email" autocomplete="email" required>
+      </div>
+      <div class="field">
+        <label for="f-msg">When would you like to visit?</label>
+        <textarea id="f-msg" name="message" rows="3"></textarea>
+      </div>
+      <button class="submit" type="submit">Request a viewing</button>
+      <p id="enqStatus" role="status" style="margin:0;font-size:.86rem;color:var(--brown)"></p>
+    </form>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="foot-in">
+    <p class="foot-note">Caliza is a demonstration property. It was built by <a href="luxury-real-estate.html">Deerzign</a> to show how a single listing can be presented. The residence, the price and the advisor are not real.</p>
+    <a href="luxury-real-estate.html" style="font-size:.9rem">Back to Deerzign &rarr;</a>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var hero = document.getElementById('hero');
+  var rail = document.getElementById('rail');
+
+  /* Hero settles once the first frame is painted. */
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){ hero.classList.add('ready'); }); });
+
+  /* Route progress — transform only, written once per frame. */
+  var ticking = false;
+  function progress(){
+    var max = document.documentElement.scrollHeight - window.innerHeight;
+    var p = max > 0 ? Math.min(1, window.scrollY / max) : 0;
+    rail.style.setProperty('--progress', p.toFixed(4));
+    rail.classList.toggle('on-light', window.scrollY > window.innerHeight * 0.86);
+    ticking = false;
+  }
+  window.addEventListener('scroll', function(){
+    if(!ticking){ ticking = true; requestAnimationFrame(progress); }
+  }, {passive:true});
+  progress();
+
+  var sections = document.querySelectorAll('section:not(.hero), footer');
+
+  /* Beats rise as they arrive. */
+  if(reduce || !('IntersectionObserver' in window)){
+    document.querySelectorAll('.rise').forEach(function(el){ el.classList.add('in'); });
+  } else {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(!e.isIntersecting) return;
+        e.target.querySelectorAll('.rise').forEach(function(el,i){
+          el.style.transitionDelay = (i*70) + 'ms';
+          el.classList.add('in');
+        });
+        io.unobserve(e.target);
+      });
+    }, {rootMargin:'0px 0px -16% 0px', threshold:0.12});
+    sections.forEach(function(s){ io.observe(s); });
+  }
+
+  /* The rail names the place you are in. */
+  var marker = document.getElementById('marker');
+  var placed = document.querySelectorAll('[data-place]');
+  if(placed.length && 'IntersectionObserver' in window){
+    var current = '';
+    var po = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(!e.isIntersecting) return;
+        var name = e.target.getAttribute('data-place');
+        if(name === current) return;
+        current = name;
+        marker.classList.remove('show');
+        window.setTimeout(function(){ marker.textContent = name; marker.classList.add('show'); }, 180);
+      });
+    }, {rootMargin:'-45% 0px -45% 0px'});
+    placed.forEach(function(s){ po.observe(s); });
+  }
+
+  /* Floor plan: list and drawing highlight together. */
+  var planList = document.getElementById('planList');
+  if(planList){
+    var rooms = document.querySelectorAll('.room[data-room]');
+    var items = planList.querySelectorAll('li[data-room]');
+    var setRoom = function(key, on){
+      rooms.forEach(function(r){ if(r.getAttribute('data-room') === key) r.classList.toggle('on', on); });
+      items.forEach(function(li){ if(li.getAttribute('data-room') === key) li.classList.toggle('on', on); });
+    };
+    var bind = function(el){
+      var key = el.getAttribute('data-room');
+      el.addEventListener('mouseenter', function(){ setRoom(key, true); });
+      el.addEventListener('mouseleave', function(){ setRoom(key, false); });
+    };
+    items.forEach(bind);
+    rooms.forEach(bind);
+  }
+
+  /* Figures count up once, when the terms arrive. */
+  var nums = document.querySelectorAll('.terms-num[data-count]');
+  if(nums.length && !reduce && 'IntersectionObserver' in window){
+    nums.forEach(function(el){ el.dataset.final = el.textContent; });
+    var no = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(!e.isIntersecting) return;
+        var el = e.target;
+        no.unobserve(el);
+        var target = parseFloat(el.getAttribute('data-count'));
+        var prefix = el.getAttribute('data-prefix') || '';
+        var start = null, dur = 1100;
+        var step = function(t){
+          if(start === null) start = t;
+          var p = Math.min(1, (t - start) / dur);
+          var eased = 1 - Math.pow(1 - p, 3);
+          if(p < 1){
+            el.textContent = prefix + Math.round(target * eased).toLocaleString('en-US');
+            requestAnimationFrame(step);
+          } else {
+            el.textContent = el.dataset.final;   // exact value, correctly formatted
+          }
+        };
+        el.textContent = prefix + '0';
+        requestAnimationFrame(step);
+      });
+    }, {threshold:0.5});
+    nums.forEach(function(el){ no.observe(el); });
+  }
+
+  /* Demonstration form: never sends anything. */
+  var form = document.getElementById('enqForm');
+  if(form){
+    form.addEventListener('submit', function(ev){
+      ev.preventDefault();
+      var status = document.getElementById('enqStatus');
+      var name = form.querySelector('#f-name');
+      var email = form.querySelector('#f-email');
+      if(!name.value.trim() || !email.value.trim()){
+        status.textContent = 'Please add a name and an email address.';
+        return;
+      }
+      form.querySelector('.submit').disabled = true;
+      status.textContent = 'This is a demonstration property, so nothing was sent. On a live site this enquiry would reach the listing advisor within seconds.';
+    });
+  }
+})();
+</script>
+</body>
+</html>

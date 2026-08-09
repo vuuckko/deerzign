@@ -29,7 +29,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=Marcellus&display=swap" rel="stylesheet">
 
 <!-- Meta Pixel Code -->
 <script>
@@ -739,6 +739,51 @@ section{position:relative}
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;animation-delay:0s!important;transition-duration:.01ms!important;transition-delay:0s!important}
   .rv{opacity:1;transform:none}
 }
+
+/* ---- luxury real estate: portal into the specialist practice ----
+   Deliberately unlike the other bands — a full-bleed split, and the only
+   place on this page that borrows the practice's own display face. */
+.lux{padding-block:0;background:var(--ink);color:var(--warm);overflow:hidden}
+.lux-in{display:grid;grid-template-columns:1.02fr 1fr;align-items:stretch;min-height:min(84vh,700px)}
+.lux-copy{
+  display:flex;flex-direction:column;justify-content:center;
+  padding-block:clamp(3.5rem,9vh,6.5rem);
+  padding-inline-end:clamp(2rem,4vw,4.5rem);
+  padding-inline-start:max(var(--pad),calc((100vw - 1480px) / 2 + var(--pad)));
+}
+.lux-h{
+  font-family:"Marcellus",Georgia,"Times New Roman",serif;font-weight:400;
+  font-size:clamp(1.65rem,2.7vw,2.45rem);line-height:1.14;letter-spacing:-.004em;
+  margin:.95rem 0 0;text-wrap:balance;
+}
+.lux-copy .lead{margin-top:1.05rem;max-width:40ch}
+.lux-acts{margin-top:clamp(1.5rem,3vw,2.3rem);display:flex;flex-wrap:wrap;gap:14px 24px;align-items:center}
+.lux-note{font-size:.8rem;color:var(--text-dim);margin:1.4rem 0 0}
+.lux-media{position:relative;overflow:hidden}
+.lux-media img{width:100%;height:100%;object-fit:cover;transform:scale(1.07);transition:transform 1.9s var(--ease)}
+.lux-media.is-in img{transform:scale(1)}
+.lux-media::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(21,24,21,.55),rgba(21,24,21,0) 32%)}
+@media (max-width:900px){
+  .lux-in{grid-template-columns:1fr}
+  .lux-media{order:-1;aspect-ratio:16/10}
+  .lux-media::after{background:linear-gradient(to top,rgba(21,24,21,.5),rgba(21,24,21,0) 46%)}
+  .lux-copy{padding-inline:var(--pad);padding-block:clamp(2.6rem,7vh,4rem)}
+}
+
+/* ---- nav button through to the practice ---- */
+.nav-lux{
+  display:inline-flex;align-items:center;gap:9px;white-space:nowrap;text-decoration:none;
+  font-size:.82rem;font-weight:500;letter-spacing:-.005em;
+  padding:10px 18px;border-radius:999px;
+  border:1px solid rgba(244,241,233,.34);color:var(--warm);
+  transition:background .45s var(--ease),color .45s var(--ease),border-color .45s var(--ease);
+}
+.nav-lux-i{flex:none;opacity:.85;transition:opacity .45s var(--ease)}
+.nav-lux:hover .nav-lux-i{opacity:1}
+.nav-lux:hover{background:var(--warm);color:var(--ink);border-color:var(--warm)}
+.nav.scrolled .nav-lux{border-color:rgba(20,21,15,.26);color:var(--ink)}
+.nav.scrolled .nav-lux:hover{background:var(--ink);color:var(--warm);border-color:var(--ink)}
+@media (max-width:1120px){.nav-lux{display:none}}
 </style>
 </head>
 <body>
@@ -760,6 +805,7 @@ section{position:relative}
     </nav>
 
     <div class="nav-actions">
+      <a class="nav-lux" href="luxury-real-estate.html" aria-label="Luxury Real Estate"><svg class="nav-lux-i" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.6 8.4 8 3.6l6.4 4.8"/><path d="M1.6 13.6h12.8"/><path d="M6.5 13.6v-3.1h3v3.1"/></svg><span data-sr="Luksuzne nekretnine" data-en="Luxury Real Estate">Luxury Real Estate</span></a>
       <div class="lang-switch" role="group" aria-label="Jezik / Language">
         <button type="button" data-lang="en" aria-pressed="false">EN</button>
         <button type="button" data-lang="sr" aria-pressed="true">SR</button>
@@ -781,6 +827,7 @@ section{position:relative}
     <a class="sheet-link" href="#services" data-sr="Usluge" data-en="Services">Usluge</a>
     <a class="sheet-link" href="#pricing" data-sr="Cene" data-en="Pricing">Cene</a>
     <a class="sheet-link" href="#process" data-sr="Proces" data-en="Process">Proces</a>
+    <a class="sheet-link" href="luxury-real-estate.html" data-sr="Luksuzne nekretnine" data-en="Luxury Real Estate">Luxury Real Estate</a>
     <a class="sheet-link" href="#about" data-sr="O nama" data-en="About">O nama</a>
   </nav>
   <div class="sheet-foot">
@@ -943,6 +990,32 @@ section{position:relative}
         </a>
       </div>
     </article>
+  </div>
+</section>
+
+
+<!-- ============================ LUXURY REAL ESTATE ============================ -->
+<section class="band lux on-dark" id="luxury">
+  <div class="lux-in">
+    <div class="lux-copy">
+      <div class="tag rv"><span class="eyebrow" data-sr="Luksuzne nekretnine" data-en="Luxury real estate">Luxury real estate</span></div>
+      <h2 class="lux-h rv" data-sr="Za nekretnine koje zaslužuju više od oglasa."
+        data-en="For properties that deserve more than a listing.">For properties that deserve more than a listing.</h2>
+      <p class="lead rv" data-sr="Zasebna linija za izuzetne nekretnine i agencije koje ih zastupaju. Prezentacije građene oko fotografije i arhitekture, umesto oko filtera i sličica."
+        data-en="A separate practice for exceptional homes and the brokerages that represent them. Presentations built around photography and architecture rather than filters and thumbnails.">A separate practice for exceptional homes and the brokerages that represent them. Presentations built around photography and architecture rather than filters and thumbnails.</p>
+      <div class="lux-acts rv">
+        <a class="btn btn-light" href="luxury-real-estate.html" data-sr="Pogledajte ponudu" data-en="See the practice">See the practice</a>
+        <a class="arrow-link" href="caliza.html"><span class="ln" data-sr="Otvorite Calizu" data-en="Open Caliza">Open Caliza</span>
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8h11"/><path d="m8.5 3.5 4.5 4.5-4.5 4.5"/></svg>
+        </a>
+      </div>
+      <p class="lux-note rv" data-sr="Uključuje Calizu — kompletnu prezentaciju jedne nekretnine, izgrađenu od početka do kraja."
+        data-en="Including Caliza — one property, presented end to end.">Including Caliza — one property, presented end to end.</p>
+    </div>
+    <figure class="lux-media rv" style="margin:0">
+      <img src="lre/court-hero.webp" width="1800" height="1200" loading="lazy" decoding="async"
+           alt="A modern limestone residence with a reflecting pool held between two glazed wings.">
+    </figure>
   </div>
 </section>
 
@@ -1252,6 +1325,7 @@ section{position:relative}
           <li><a href="#pricing" data-sr="Cene" data-en="Pricing">Cene</a></li>
           <li><a href="#process" data-sr="Proces" data-en="Process">Proces</a></li>
           <li><a href="#about" data-sr="O nama" data-en="About">O nama</a></li>
+          <li><a href="luxury-real-estate.html" data-sr="Luksuzne nekretnine" data-en="Luxury Real Estate">Luxury Real Estate</a></li>
           <li><a href="#contact" data-sr="Kontakt" data-en="Contact">Kontakt</a></li>
         </ul>
       </nav>

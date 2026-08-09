@@ -1,0 +1,738 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Luxury Real Estate Websites | Deerzign</title>
+<meta name="description" content="Deerzign designs and builds the digital presentation for exceptional properties and the brokerages that represent them. See a complete property presentation, built end to end.">
+<meta name="theme-color" content="#151815">
+<link rel="icon" href="deer.png">
+<link rel="canonical" href="https://www.deerzign.com/luxury-real-estate.html">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Luxury Real Estate Websites | Deerzign">
+<meta property="og:description" content="Your website is the first showing. Deerzign designs and builds the digital presentation for exceptional properties and the brokerages that represent them.">
+<meta property="og:site_name" content="Deerzign">
+<meta property="og:locale" content="en_US">
+<meta property="og:url" content="https://www.deerzign.com/luxury-real-estate.html">
+<meta property="og:image" content="https://www.deerzign.com/og-image.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Luxury Real Estate Websites | Deerzign">
+<meta name="twitter:description" content="Your website is the first showing. Deerzign designs and builds the digital presentation for exceptional properties.">
+<meta name="twitter:image" content="https://www.deerzign.com/og-image.jpg">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="lre/arrival-poster.webp" fetchpriority="high">
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Service","name":"Luxury real estate web design","provider":{"@type":"Organization","name":"Deerzign","url":"https://www.deerzign.com/","email":"team@deerzign.com"},"serviceType":"Web design and development for luxury real estate","description":"Design and development of property presentations and brokerage websites for the luxury residential market.","areaServed":{"@type":"Country","name":"United States"},"url":"https://www.deerzign.com/luxury-real-estate.html"}
+</script>
+
+<style>
+/* ============================================================
+   LUXURY REAL ESTATE — the offer
+
+   Composition rules for this page, after v1 read as a template:
+   - No section repeats another section's column placement. Content
+     is deliberately off-axis; nothing lines up on one left margin.
+   - No equal-box grids anywhere. Lists are rows, not cards.
+   - Type is small and precise. Scale is spent on two moments only.
+   - Photographs break the container; text never does.
+   - Motion is transform and opacity. Nothing else animates.
+   ============================================================ */
+:root{
+  --warm:#F2F0E9;
+  --warm-2:#ECE7DA;
+  --ink:#151815;
+  --ink-soft:#5C5F58;
+  --forest:#263D32;
+  --forest-deep:#16241D;
+  --brown:#756B5E;
+  --text-dim:#AAA99F;
+  --line:rgba(20,21,15,.16);
+  --line-lt:rgba(242,240,233,.22);
+
+  --display:"Marcellus",Georgia,"Times New Roman",serif;
+  --text:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
+
+  --pad:clamp(1.25rem,5vw,5.5rem);
+  --rail:clamp(0px,3.2vw,58px);
+  --ease:cubic-bezier(.16,1,.3,1);
+  --slow:cubic-bezier(.22,1,.28,1);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{
+  margin:0;background:var(--warm);color:var(--ink);
+  font-family:var(--text);font-size:clamp(.94rem,.9rem + .16vw,1rem);
+  line-height:1.68;-webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit}
+
+/* Type: small and precise. Two moments get scale, nothing else. */
+.d1{font-family:var(--display);font-weight:400;line-height:1.04;letter-spacing:-.004em;
+    font-size:clamp(1.85rem,4vw,3.15rem);margin:0;text-wrap:balance}
+.d2{font-family:var(--display);font-weight:400;line-height:1.1;letter-spacing:-.002em;
+    font-size:clamp(1.3rem,2vw,1.72rem);margin:0;text-wrap:balance}
+.d3{font-family:var(--display);font-weight:400;line-height:1.16;letter-spacing:-.008em;
+    font-size:clamp(1.05rem,1.25vw,1.2rem);margin:0}
+.note{font-size:.82rem;color:var(--brown);margin:0}
+.body-sm{color:var(--ink-soft);font-size:.95rem;margin:0}
+
+/* The asymmetric grid. Every section places itself differently. */
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:clamp(20px,2.4vw,44px)}
+.wrap{padding-left:var(--pad);padding-right:var(--pad)}
+
+/* ---------- rail -------------------------------------------- */
+.rail{position:fixed;left:var(--rail);top:0;bottom:0;width:1px;background:rgba(242,240,233,.2);z-index:40;pointer-events:none;transition:background .6s var(--ease)}
+.rail::after{content:"";position:absolute;left:0;top:0;width:1px;height:100%;background:var(--warm);transform:scaleY(var(--progress,0));transform-origin:top;transition:transform .12s linear}
+.rail.on-light{background:rgba(20,21,15,.12)}
+.rail.on-light::after{background:var(--forest)}
+@media (max-width:860px){.rail{display:none}}
+
+/* ---------- nav --------------------------------------------- */
+.nav{position:absolute;top:0;left:0;right:0;z-index:30;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:24px var(--pad)}
+.nav::before{content:"";position:absolute;left:0;right:0;top:0;height:160px;z-index:-1;background:linear-gradient(to bottom,rgba(12,13,10,.6),rgba(12,13,10,.28) 46%,transparent);pointer-events:none}
+.brand{display:inline-flex;align-items:center;gap:10px;text-decoration:none}
+.brand img{height:21px;width:auto;filter:brightness(0) invert(1)}
+.brand span{font-weight:600;font-size:.92rem;letter-spacing:-.01em;color:#fff}
+.nav-links{display:flex;gap:clamp(16px,2.2vw,32px)}
+.nav-links a{color:rgba(255,255,255,.84);text-decoration:none;font-size:.87rem;padding-bottom:3px;border-bottom:1px solid transparent;transition:border-color .3s var(--ease),color .3s var(--ease)}
+.nav-links a:hover{color:#fff;border-bottom-color:rgba(255,255,255,.6)}
+.nav-cta{color:#fff;text-decoration:none;font-size:.87rem;font-weight:500;padding-bottom:3px;border-bottom:1px solid rgba(255,255,255,.5)}
+@media (max-width:760px){.nav-links{display:none}}
+
+/* ---------- hero (cinematic) -------------------------------- */
+.hero{position:relative;min-height:100svh;display:flex;align-items:flex-end;overflow:hidden}
+.hero-media{position:absolute;inset:0}
+.hero-media img,.hero-media video{width:100%;height:100%;object-fit:cover;object-position:50% 56%}
+/* The film already pushes in; a CSS scale on top of it would fight the
+   camera move, so the hero media is not animated here. */
+.hero-media::after{
+  content:"";position:absolute;inset:0;
+  background:
+    radial-gradient(96% 74% at 0% 100%,rgba(9,11,7,.86),rgba(9,11,7,.62) 30%,rgba(9,11,7,.32) 52%,rgba(9,11,7,.10) 70%,transparent 86%),
+    linear-gradient(to top,rgba(12,13,10,.58) 0%,rgba(12,13,10,.34) 16%,rgba(12,13,10,.12) 36%,rgba(12,13,10,.03) 54%,rgba(12,13,10,.08) 72%,rgba(12,13,10,.34) 100%);
+}
+.hero-in{position:relative;z-index:2;width:100%;padding:0 var(--pad) clamp(40px,6vw,86px)}
+.hero h1{
+  font-family:var(--display);font-weight:400;color:#fff;margin:0;
+  font-size:clamp(1.95rem,4.1vw,3.35rem);line-height:1.06;letter-spacing:-.004em;
+  max-width:15ch;text-wrap:balance;
+}
+.hero-sub{margin:clamp(18px,2vw,28px) 0 0;color:rgba(255,255,255,.88);max-width:46ch;font-size:clamp(.94rem,.9rem + .2vw,1.04rem)}
+.hero-acts{margin-top:clamp(28px,3.4vw,46px);display:flex;flex-wrap:wrap;gap:14px 30px;align-items:center}
+.btn{
+  display:inline-flex;align-items:center;gap:14px;
+  font-size:.855rem;font-weight:500;letter-spacing:.004em;text-decoration:none;
+  padding:15px 28px;border-radius:2px;
+  background:var(--warm);color:var(--ink);border:1px solid var(--warm);
+  transition:background .55s var(--slow),color .55s var(--slow),border-color .55s var(--slow);
+}
+.btn svg{transition:transform .55s var(--slow);opacity:.72}
+.btn:hover{background:transparent;color:var(--warm);border-color:rgba(242,240,233,.46)}
+.btn:hover svg{transform:translateX(5px);opacity:1}
+/* on a light ground the inversion runs the other way */
+.on-light .btn,.spec .btn{background:var(--ink);color:var(--warm);border-color:var(--ink)}
+.on-light .btn:hover,.spec .btn:hover{background:transparent;color:var(--ink);border-color:rgba(20,21,15,.32)}
+
+.btn-ghost{
+  display:inline-flex;align-items:center;gap:12px;background:transparent;color:#fff;
+  padding:15px 2px;border:0;border-radius:0;border-bottom:1px solid rgba(255,255,255,.36);
+  transition:border-color .55s var(--slow);
+}
+.btn-ghost:hover{background:transparent;color:#fff;border-bottom-color:#fff}
+.btn-ghost:hover svg{transform:translateX(5px)}
+
+/* reveal ----------------------------------------------------- */
+.rise{opacity:0;transform:translateY(22px);transition:opacity 1s var(--slow),transform 1s var(--slow)}
+.hero.ready .rise,.rise.in{opacity:1;transform:none}
+.hero.ready .rise:nth-child(1){transition-delay:.18s}
+.hero.ready .rise:nth-child(2){transition-delay:.32s}
+.hero.ready .rise:nth-child(3){transition-delay:.46s}
+
+/* Photographs settle rather than appear. */
+.ph{overflow:hidden;position:relative}
+.ph img{transform:scale(1.07);transition:transform 1.6s var(--slow)}
+.ph.in img,.in .ph img{transform:scale(1)}
+
+/* ---------- 1. the statement (near-empty, off-axis) --------- */
+.statement{
+  background:var(--ink);color:var(--warm);min-height:96svh;
+  display:flex;align-items:center;padding:clamp(80px,12vw,180px) var(--pad);
+}
+.statement .grid{width:100%;align-items:end}
+.statement-lead{grid-column:2/10}
+.statement-lead p{margin:clamp(26px,3vw,44px) 0 0;color:var(--text-dim);max-width:42ch;font-size:.95rem}
+.statement-aside{grid-column:11/13;align-self:end;text-align:right}
+.statement-aside p{margin:0;color:var(--text-dim);font-size:.8rem;line-height:1.6}
+@media (max-width:900px){
+  .statement-lead{grid-column:1/13}
+  .statement-aside{grid-column:1/13;text-align:left;margin-top:34px}
+}
+
+/* ---------- 2. fullscreen showcase (cinematic) -------------- */
+.stage{position:relative;height:100svh;overflow:hidden;display:block;text-decoration:none;color:#fff}
+.stage img{width:100%;height:100%;object-fit:cover;transform:scale(1.05);transition:transform 2.4s var(--slow)}
+.stage.in img{transform:scale(1)}
+.stage:hover img{transform:scale(1.03)}
+.stage::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(10,12,8,.76),rgba(10,12,8,.22) 44%,rgba(10,12,8,.06) 70%,rgba(10,12,8,.28) 100%)}
+.stage-top{position:absolute;top:clamp(26px,4vw,58px);left:var(--pad);right:var(--pad);z-index:2;display:flex;justify-content:space-between;gap:20px}
+.stage-top p{margin:0;font-size:.8rem;color:rgba(255,255,255,.72)}
+.stage-in{position:absolute;left:var(--pad);right:var(--pad);bottom:clamp(30px,5vw,74px);z-index:2}
+.stage-name{font-family:var(--display);font-weight:400;font-size:clamp(2rem,5.2vw,4.1rem);line-height:.98;letter-spacing:-.006em;margin:0}
+.stage-meta{display:flex;flex-wrap:wrap;gap:10px clamp(18px,3.4vw,56px);align-items:baseline;margin-top:clamp(18px,2.4vw,32px);padding-top:16px;border-top:1px solid rgba(255,255,255,.22)}
+.stage-meta span{font-size:.72rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.8);white-space:nowrap}
+.stage-go{margin-left:auto;text-transform:none;letter-spacing:0;font-size:.88rem;color:#fff!important}
+
+/* ---------- 3. the moves (asymmetric, never the same slot) -- */
+.moves{padding:clamp(90px,13vw,210px) var(--pad)}
+.move{margin-bottom:clamp(70px,10vw,170px)}
+.move:last-child{margin-bottom:0}
+.move .grid{align-items:end}
+.move-fig{margin:0}
+.move-txt p{margin:14px 0 0;color:var(--ink-soft);font-size:.95rem}
+.move-txt .note{margin-bottom:10px}
+
+/* Each move sits in a different pair of columns. */
+.m1 .move-fig{grid-column:1/8}
+.m1 .move-txt{grid-column:9/13;padding-bottom:clamp(0px,3vw,54px)}
+.m2 .move-fig{grid-column:6/13;order:2}
+.m2 .move-txt{grid-column:2/6;order:1;padding-bottom:clamp(0px,6vw,110px)}
+/* m3 is the one that breaks the container on both sides: the page needs
+   a moment where the photograph owns the full width. */
+.m3 .move-fig{grid-column:1/13;margin:0 calc(var(--pad) * -1)}
+.m3 .move-fig img{width:100%;height:min(78svh,720px);object-fit:cover}
+.m3 .move-txt{grid-column:8/13;margin-top:24px}
+.m4 .move-fig{grid-column:1/6;order:2}
+.m4 .move-txt{grid-column:7/12;order:1;padding-bottom:clamp(0px,4vw,70px)}
+@media (max-width:900px){
+  .move-fig,.move-txt{grid-column:1/13!important;order:initial!important;padding-bottom:0!important}
+  .move-txt{margin-top:20px}
+}
+
+/* ---------- 6. before / after ------------------------------- */
+.ba-sec{padding:clamp(90px,12vw,190px) var(--pad)}
+.ba-head{grid-column:2/8;margin-bottom:clamp(30px,4vw,60px)}
+.ba-head p{margin:18px 0 0;color:var(--ink-soft);font-size:.95rem;max-width:44ch}
+.ba-hold{grid-column:2/12}
+.ba{position:relative;overflow:hidden;border:1px solid var(--line);background:#fff;aspect-ratio:16/9;touch-action:pan-y;user-select:none}
+.ba-pane{position:absolute;inset:0;overflow:hidden}
+.ba-after{clip-path:inset(0 0 0 var(--split,45%))}
+.ba-frame{position:absolute;inset:0;overflow:hidden}
+.ba-cap{display:none}
+.ba-handle{position:absolute;top:0;bottom:0;left:var(--split,45%);width:2px;background:var(--warm);z-index:7;cursor:ew-resize;transform:translateX(-1px)}
+.ba-grip{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:42px;height:42px;border-radius:50%;background:var(--warm);color:var(--ink);display:grid;place-items:center;font-size:.78rem;box-shadow:0 2px 16px rgba(0,0,0,.24)}
+.ba-range{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:ew-resize;z-index:8;margin:0}
+.ba-legend{grid-column:2/12;margin-top:16px;display:flex;justify-content:space-between;gap:16px;font-size:.84rem}
+.ba-legend span:first-child{color:var(--brown)}
+.ba-legend span:last-child{color:var(--ink);font-weight:500;text-align:right}
+@media (max-width:900px){.ba-head{grid-column:1/13}}
+
+/* mock: a typical listing site, built rather than screenshotted */
+.mock{position:absolute;inset:0;background:#fff;color:#222;font-size:11px;overflow:hidden}
+.mock-bar{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid #e6e6e6}
+.mock-logo{font-weight:700;color:#1a4b8c;letter-spacing:-.006em}
+.mock-nav{display:flex;gap:10px;margin-left:auto;color:#666;font-size:11px}
+.mock-btn{background:#1a6fd4;color:#fff;padding:5px 10px;border-radius:999px;font-size:10px;font-weight:600}
+.mock-filters{display:flex;gap:6px;padding:10px 16px;border-bottom:1px solid #eee;flex-wrap:wrap}
+.mock-chip{border:1px solid #ddd;border-radius:999px;padding:4px 10px;color:#555;font-size:10px}
+.mock-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:14px 16px}
+.mock-card{border:1px solid #e8e8e8;border-radius:10px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.mock-card img{width:100%;aspect-ratio:4/3;object-fit:cover}
+.mock-body{padding:8px 10px}
+.mock-badge{display:inline-block;background:#e8322d;color:#fff;font-size:8px;font-weight:700;padding:2px 6px;border-radius:3px;letter-spacing:.04em}
+.mock-price{font-weight:700;font-size:12px;margin:4px 0 2px}
+.mock-meta{color:#777;font-size:10px}
+.mock-cta{display:block;text-align:center;margin-top:7px;background:#1a6fd4;color:#fff;border-radius:5px;padding:5px;font-size:10px;font-weight:600}
+.real{position:absolute;inset:0;background:var(--ink);overflow:hidden}
+.real img{width:100%;height:100%;object-fit:cover}
+.real::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(10,12,8,.78),rgba(10,12,8,.2) 44%,transparent 68%)}
+.real-over{position:absolute;right:clamp(16px,3vw,44px);left:auto;width:min(46%,520px);bottom:clamp(16px,3vw,40px);z-index:3;color:#fff}
+.real-name{font-family:var(--display);font-weight:400;font-size:clamp(1.2rem,2.6vw,2.05rem);line-height:1;margin:0}
+.real-place{margin:8px 0 0;font-size:clamp(.72rem,1vw,.88rem);color:rgba(255,255,255,.85)}
+.real-facts{margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.24);display:flex;flex-wrap:wrap;gap:6px clamp(12px,2.4vw,34px)}
+.real-facts span{font-size:clamp(.56rem,.8vw,.68rem);font-weight:500;letter-spacing:.13em;text-transform:uppercase;color:rgba(255,255,255,.8);white-space:nowrap}
+
+@media (max-width:700px){
+  .ba{aspect-ratio:auto;border:0;background:transparent;display:block}
+  .ba-pane{position:relative;inset:auto;overflow:visible;margin-bottom:26px}
+  .ba-after{clip-path:none}
+  .ba-frame{position:relative;inset:auto;aspect-ratio:4/3;border:1px solid var(--line)}
+  .ba-handle,.ba-range,.ba-legend{display:none}
+  .ba-cap{display:block;font-size:.84rem;margin-bottom:10px;color:var(--brown)}
+  .ba-after .ba-cap{color:var(--ink);font-weight:500}
+  .only-wide{display:none}
+  .real-over{left:clamp(14px,4vw,22px);right:clamp(14px,4vw,22px);width:auto}
+  .mock-grid{grid-template-columns:1fr}
+  .mock-filters{display:none}
+  .mock{font-size:13px}
+}
+
+/* ---------- 7. specification sheet (was six cards) ---------- */
+.spec{padding:clamp(90px,12vw,190px) var(--pad)}
+.spec-head{grid-column:2/8;margin-bottom:clamp(34px,4.6vw,72px)}
+.spec-rows{grid-column:1/13;border-top:1px solid var(--line)}
+.spec-row{display:grid;grid-template-columns:repeat(12,1fr);gap:clamp(20px,2.4vw,44px);
+  padding:clamp(22px,2.6vw,38px) 0;border-bottom:1px solid var(--line)}
+.spec-name{grid-column:2/6}
+.spec-desc{grid-column:6/11;color:var(--ink-soft);font-size:.93rem;margin:0;align-self:center}
+@media (max-width:900px){
+  .spec-head{grid-column:1/13}
+  .spec-name{grid-column:1/13}
+  .spec-desc{grid-column:1/13;margin-top:8px}
+}
+
+/* ---------- 9. process (route, staggered) ------------------- */
+.proc{background:var(--ink);color:var(--warm);padding:clamp(90px,12vw,190px) var(--pad)}
+.proc-head{grid-column:2/8;margin-bottom:clamp(44px,6vw,90px)}
+.proc-hold{grid-column:1/13;position:relative}
+.proc-line{position:absolute;left:0;right:0;top:5px;height:1px;background:var(--line-lt)}
+.proc-steps{display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(14px,2vw,32px)}
+.proc-step{position:relative;padding-top:30px}
+.proc-step::before{content:"";position:absolute;left:0;top:0;width:11px;height:11px;border-radius:50%;background:var(--warm)}
+.proc-step p{margin:8px 0 0;color:var(--text-dim);font-size:.86rem}
+/* Staggered via padding, not transform: a transform would carry the dot
+   down with the text and detach it from the line it belongs to. */
+.proc-step:nth-child(2){padding-top:62px}
+.proc-step:nth-child(3){padding-top:94px}
+.proc-step:nth-child(4){padding-top:62px}
+.proc-step:nth-child(5){padding-top:106px}
+@media (max-width:900px){
+  .proc-head{grid-column:1/13}
+  .proc-steps{grid-template-columns:1fr;gap:0}
+  .proc-step{padding:0 0 30px 30px!important}
+  .proc-line{left:5px;right:auto;top:0;bottom:0;width:1px;height:auto}
+  .proc-step::before{top:6px}
+}
+
+/* ---------- 10. case study ---------------------------------- */
+.case{padding:clamp(90px,12vw,190px) var(--pad)}
+.case-fig{grid-column:1/8;margin:0}
+.case-body{grid-column:9/13;align-self:center}
+.case-body p{margin:16px 0 26px;color:var(--ink-soft);font-size:.94rem}
+.link-arrow{text-decoration:none;font-weight:500;font-size:.9rem;border-bottom:1px solid var(--line);padding-bottom:3px;transition:border-color .3s var(--ease)}
+.link-arrow:hover{border-bottom-color:var(--ink)}
+@media (max-width:900px){.case-fig,.case-body{grid-column:1/13}.case-body{margin-top:24px}}
+
+/* ---------- 12. cta ----------------------------------------- */
+.cta{padding:clamp(58px,7vw,104px) var(--pad);background:var(--ink);color:var(--warm)}
+.cta .grid{align-items:start}
+.cta-head{grid-column:2/8}
+.cta-side{grid-column:9/13;padding-top:.5rem}
+.cta-side p{color:var(--text-dim);max-width:38ch;margin:0 0 clamp(24px,3vw,36px);font-size:.93rem}
+.cta-acts{display:flex;flex-wrap:wrap;gap:14px 26px;align-items:center}
+.cta-mail{color:var(--text-dim);text-decoration:none;font-size:.9rem;border-bottom:1px solid var(--line-lt);padding-bottom:3px}
+.cta-mail:hover{color:var(--warm)}
+.cta-who{margin:clamp(22px,2.6vw,34px) 0 0;color:var(--brown);font-size:.82rem;max-width:40ch}
+@media (max-width:900px){.cta-head,.cta-side{grid-column:1/13}.cta-side{margin-top:26px}}
+
+/* ---------- foot -------------------------------------------- */
+.foot{padding:clamp(44px,5vw,76px) var(--pad);border-top:1px solid var(--line)}
+.foot-in{display:flex;flex-wrap:wrap;gap:18px 40px;justify-content:space-between;align-items:center}
+.foot-links{display:flex;flex-wrap:wrap;gap:12px 26px;font-size:.88rem}
+.foot-links a{text-decoration:none;color:var(--ink-soft)}
+.foot-links a:hover{color:var(--ink)}
+.foot-links a[aria-current]{color:var(--ink);font-weight:500}
+.foot-small{font-size:.8rem;color:var(--brown)}
+
+/* Narrow screens: 12 columns need 11 gaps, which costs more width than
+   a 320px screen has. Collapse rather than shrink the columns. */
+@media (max-width:640px){
+  .grid,.spec-row{grid-template-columns:1fr;gap:20px}
+  .grid > *,.spec-row > *{grid-column:auto!important}
+}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .hero-media img,.stage img,.ph img{transform:none!important;transition:none}
+  .rise{opacity:1;transform:none;transition:none}
+  .proc-step{transform:none!important}
+  .rail::after{transition:none}
+}
+</style>
+</head>
+<body>
+
+<div class="rail" id="rail" aria-hidden="true"></div>
+
+<header class="nav">
+  <a class="brand" href="index.html">
+    <img src="deer.png" alt="" aria-hidden="true">
+    <span>Deerzign</span>
+  </a>
+  <nav class="nav-links" aria-label="Primary">
+    <a href="index.html#work">Work</a>
+    <a href="index.html#about">About</a>
+    <a href="#approach">Approach</a>
+  </nav>
+  <a class="nav-cta" href="#talk">Let's talk &rarr;</a>
+</header>
+
+<!-- ============ hero ============ -->
+<section class="hero" id="hero">
+  <div class="hero-media">
+    <!-- Source is 1620x1080. Encoding below that made the hero soft on any
+         2x display, so the desktop file stays at native resolution and
+         phones get a lighter one chosen at runtime. -->
+    <video id="heroVid" autoplay muted loop playsinline preload="auto"
+           poster="lre/arrival-poster.webp" width="1620" height="1080"
+           data-src-lg="lre/arrival.mp4" data-src-sm="lre/arrival-sm.mp4"
+           aria-label="A slow approach along the path to the entrance of a modern limestone residence."></video>
+  </div>
+  <div class="hero-in">
+    <h1 class="rise">Your website is the first showing.</h1>
+    <p class="hero-sub rise">We design and build the digital presentation for exceptional properties, and for the brokerages that represent them.</p>
+    <div class="hero-acts rise">
+      <a class="btn" href="caliza.html">See a property presentation<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 8h10"/><path d="m8.4 3.9 4.1 4.1-4.1 4.1"/></svg></a>
+      <a class="btn btn-ghost" href="#talk">Start a conversation<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 8h10"/><path d="m8.4 3.9 4.1 4.1-4.1 4.1"/></svg></a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ the statement ============ -->
+<section class="statement" id="approach">
+  <div class="grid">
+    <div class="statement-lead">
+      <h2 class="d1 rise">A ten million dollar property should not arrive online looking like every other listing.</h2>
+      <p class="rise">Luxury property is sold on photography, on architecture, and on the character of a place. Most property websites reduce all three to a grid of thumbnails, a filter bar and a row of specification chips.</p>
+    </div>
+    <div class="statement-aside">
+      <p class="rise">The seller has already decided the house is singular.<br><br>The website is where that claim is either supported or quietly withdrawn.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ fullscreen showcase ============ -->
+<a class="stage" href="caliza.html" id="stage">
+  <img src="lre/arrival-entry.webp" width="1800" height="1200" loading="lazy" decoding="async"
+       alt="The entrance to Caliza, the demonstration property: a concrete path running to a recessed door under a steel canopy.">
+  <div class="stage-top">
+    <p>A complete presentation, built end to end</p>
+    <p>Demonstration property</p>
+  </div>
+  <div class="stage-in">
+    <p class="stage-name">Caliza</p>
+    <div class="stage-meta">
+      <span>Barton Creek &middot; Austin</span>
+      <span>$4,250,000</span>
+      <span>5,240 Sq Ft</span>
+      <span class="stage-go">Open the presentation &rarr;</span>
+    </div>
+  </div>
+</a>
+
+<!-- ============ the moves ============ -->
+<section class="moves">
+  <div class="move m1">
+    <div class="grid">
+      <figure class="move-fig ph rise">
+        <img src="lre/light-floor.webp" width="1800" height="1200" loading="lazy" decoding="async"
+             alt="Afternoon light falling in long bands across a white oak floor beside full-height glazing.">
+      </figure>
+      <div class="move-txt rise">
+        <p class="note">The arrival</p>
+        <h3 class="d2">Atmosphere before information.</h3>
+        <p>The page opens with one photograph and one line. Price and specification wait until someone has decided they want to know.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="move m2">
+    <div class="grid">
+      <figure class="move-fig ph rise">
+        <img src="lre/kitchen-marble.webp" width="1800" height="1200" loading="lazy" decoding="async"
+             alt="Book-matched marble meeting white oak cabinetry in the kitchen.">
+      </figure>
+      <div class="move-txt rise">
+        <p class="note">The detail</p>
+        <h3 class="d2">Materials, named.</h3>
+        <p>Dimensions and finishes read as a catalogue entry — limestone, white oak, book-matched marble — rather than as a row of icons.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="move m3">
+    <div class="grid">
+      <figure class="move-fig ph rise">
+        <img src="lre/fireplace-detail.webp" width="1800" height="1200" loading="lazy" decoding="async"
+             alt="A limestone chimney wall running floor to ceiling, with a long horizontal firebox set into it.">
+      </figure>
+      <div class="move-txt rise">
+        <p class="note">The gallery</p>
+        <h3 class="d3">Photography at full width, in the order someone would walk the house.</h3>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============ before / after ============ -->
+<section class="ba-sec">
+  <div class="grid">
+    <div class="ba-head">
+      <h2 class="d1 rise">The same property, twice.</h2>
+      <p class="rise"><span class="only-wide">Drag the handle. </span>Both sides are working pages, not screenshots. The left is how the market presents a house; the right is how we do.</p>
+    </div>
+
+    <div class="ba-hold rise">
+      <div class="ba" id="ba" style="--split:45%">
+        <div class="ba-pane">
+          <span class="ba-cap">A typical listing website</span>
+          <div class="ba-frame">
+            <div class="mock" aria-hidden="true">
+              <div class="mock-bar">
+                <span class="mock-logo">PRIME&nbsp;REALTY</span>
+                <span class="mock-nav"><span>Buy</span><span>Sell</span><span>Agents</span><span>Contact</span></span>
+                <span class="mock-btn">Search Homes</span>
+              </div>
+              <div class="mock-filters">
+                <span class="mock-chip">Price &or;</span><span class="mock-chip">Beds &or;</span>
+                <span class="mock-chip">Baths &or;</span><span class="mock-chip">Sq Ft &or;</span>
+                <span class="mock-chip">Property Type &or;</span><span class="mock-chip">More Filters &or;</span>
+              </div>
+              <div class="mock-grid">
+                <div class="mock-card">
+                  <img src="lre/court-hero.webp" alt="" loading="lazy" decoding="async">
+                  <div class="mock-body">
+                    <span class="mock-badge">JUST LISTED</span>
+                    <div class="mock-price">$4,250,000</div>
+                    <div class="mock-meta">5 bd &middot; 5.5 ba &middot; 5,240 sqft</div>
+                    <div class="mock-meta">22 Barton Creek Blvd</div>
+                    <span class="mock-cta">View Details</span>
+                  </div>
+                </div>
+                <div class="mock-card">
+                  <img src="lre/kitchen-main.webp" alt="" loading="lazy" decoding="async">
+                  <div class="mock-body">
+                    <span class="mock-badge">OPEN SAT</span>
+                    <div class="mock-price">$3,795,000</div>
+                    <div class="mock-meta">4 bd &middot; 4.5 ba &middot; 4,180 sqft</div>
+                    <div class="mock-meta">108 Wildcat Hollow</div>
+                    <span class="mock-cta">View Details</span>
+                  </div>
+                </div>
+                <div class="mock-card">
+                  <img src="lre/bath-tub.webp" alt="" loading="lazy" decoding="async">
+                  <div class="mock-body">
+                    <span class="mock-badge">PRICE CUT</span>
+                    <div class="mock-price">$2,995,000</div>
+                    <div class="mock-meta">4 bd &middot; 3.5 ba &middot; 3,640 sqft</div>
+                    <div class="mock-meta">9 Escarpment Way</div>
+                    <span class="mock-cta">View Details</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ba-pane ba-after" id="baAfter">
+          <span class="ba-cap">The same property, presented</span>
+          <div class="ba-frame">
+            <div class="real">
+              <img src="lre/court-hero-crop.webp" alt="" loading="lazy" decoding="async">
+              <div class="real-over">
+                <p class="real-name">Caliza</p>
+                <p class="real-place">Barton Creek &middot; Austin, Texas</p>
+                <div class="real-facts">
+                  <span>$4,250,000</span><span>5 Bedrooms</span><span>5,240 Sq Ft</span><span>1.1 Acres</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ba-handle" id="baHandle" aria-hidden="true"><span class="ba-grip">&harr;</span></div>
+        <input class="ba-range" id="baRange" type="range" min="0" max="100" value="45" step="0.1"
+               aria-label="Compare a typical listing website with the same property presented by Deerzign">
+      </div>
+    </div>
+
+    <div class="ba-legend rise">
+      <span>A typical listing website</span>
+      <span>The same property, presented</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ specification sheet ============ -->
+<section class="spec">
+  <div class="grid">
+    <div class="spec-head">
+      <h2 class="d1 rise">What you are actually buying.</h2>
+    </div>
+    <div class="spec-rows">
+      <div class="spec-row rise">
+        <h3 class="d3 spec-name">A page for every property</h3>
+        <p class="spec-desc">Each listing gets its own presentation with its own sequence, rather than a slot in a grid.</p>
+      </div>
+      <div class="spec-row rise">
+        <h3 class="d3 spec-name">Designed around the photography</h3>
+        <p class="spec-desc">Full-width images, considered crops, and galleries that hold their quality from a laptop to a phone.</p>
+      </div>
+      <div class="spec-row rise">
+        <h3 class="d3 spec-name">Listings you manage yourself</h3>
+        <p class="spec-desc">Add a property, update a price, retire a sale. No waiting on us for routine changes.</p>
+      </div>
+      <div class="spec-row rise">
+        <h3 class="d3 spec-name">Private enquiries</h3>
+        <p class="spec-desc">Interest arrives as a named enquiry with the property and the preferred time attached, straight to the advisor.</p>
+      </div>
+      <div class="spec-row rise">
+        <h3 class="d3 spec-name">Right on every screen</h3>
+        <p class="spec-desc">The same presentation whether it opens on a desk or on a phone in a car park before a viewing.</p>
+      </div>
+      <div class="spec-row rise">
+        <h3 class="d3 spec-name">A drawn floor plan</h3>
+        <p class="spec-desc">Rooms named and measured. It is the first thing a serious buyer asks for and the last thing most sites provide.</p>
+      </div>
+      <div class="spec-row rise">
+        <h3 class="d3 spec-name">The brokerage, not only the listings</h3>
+        <p class="spec-desc">Homepage, agents, neighbourhoods and the story of the firm — for most sellers that is the longest look they get before they call.</p>
+      </div>
+      <div class="spec-row rise">
+        <h3 class="d3 spec-name">Room to grow</h3>
+        <p class="spec-desc">One flagship residence or an entire portfolio, on the same system, without a rebuild.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ process ============ -->
+<section class="proc">
+  <div class="grid">
+    <div class="proc-head">
+      <h2 class="d1 rise">From property to presentation.</h2>
+    </div>
+    <div class="proc-hold rise">
+      <div class="proc-line"></div>
+      <div class="proc-steps">
+        <div class="proc-step"><h3 class="d3">Discover</h3><p>We learn the brand, the properties and the buyer you are trying to reach.</p></div>
+        <div class="proc-step"><h3 class="d3">Define</h3><p>We agree the visual direction and the sequence a visitor moves through.</p></div>
+        <div class="proc-step"><h3 class="d3">Design</h3><p>We design the pages, the interactions and the way each property is introduced.</p></div>
+        <div class="proc-step"><h3 class="d3">Build</h3><p>We turn the approved design into a fast site you can update yourself.</p></div>
+        <div class="proc-step"><h3 class="d3">Launch</h3><p>We take it live, check it on real devices, and stay on hand afterwards.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ case study ============ -->
+<section class="case">
+  <div class="grid">
+    <figure class="case-fig ph rise">
+      <img src="lre/work-zlatar.webp" width="1400" height="656" loading="lazy" decoding="async"
+           alt="The Kuće Zlatar website: a residential development presented with full-width photography.">
+    </figure>
+    <div class="case-body rise">
+      <p class="note">Residential development &middot; Serbia</p>
+      <h2 class="d2" style="margin-top:10px">Kuće Zlatar</h2>
+      <p>A development that was being sold over the phone, with no way for an interested buyer to see what was on offer. We built the presentation that turns property interest into a qualified enquiry.</p>
+      <a class="link-arrow" href="index.html#work">View the project &rarr;</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ cta ============ -->
+<section class="cta" id="talk">
+  <div class="grid">
+    <div class="cta-head">
+      <h2 class="d1 rise">Let's make your properties impossible to ignore.</h2>
+    </div>
+    <div class="cta-side">
+      <p class="rise">Tell us what you are selling and roughly when it goes to market. We will come back with what it could look like, and what it would take.</p>
+      <div class="cta-acts rise">
+        <a class="btn" href="brief.html">Start a conversation<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 8h10"/><path d="m8.4 3.9 4.1 4.1-4.1 4.1"/></svg></a>
+        <a class="cta-mail" href="mailto:team@deerzign.com?subject=Luxury%20real%20estate%20enquiry">team@deerzign.com</a>
+      </div>
+      <p class="cta-who rise">Luxury brokerages, private developers, individual agents and multi-property groups.</p>
+    </div>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="foot-in">
+    <div class="foot-links">
+      <a href="index.html">Deerzign</a>
+      <a href="index.html#work">Work</a>
+      <a href="index.html#about">About</a>
+      <a href="luxury-real-estate.html" aria-current="page">Luxury Real Estate</a>
+      <a href="caliza.html">Caliza</a>
+      <a href="brief.html">Start a project</a>
+    </div>
+    <p class="foot-small">&copy; 2026 Deerzign &middot; <a href="mailto:team@deerzign.com" style="color:inherit">team@deerzign.com</a></p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var hero = document.getElementById('hero');
+  var rail = document.getElementById('rail');
+
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){ hero.classList.add('ready'); }); });
+
+  /* Pick the hero file by viewport, then play. Reduced motion holds the
+     poster frame instead of running the camera move. */
+  var vid = document.getElementById('heroVid');
+  if(vid){
+    if(reduce){
+      vid.removeAttribute('autoplay');
+    } else {
+      var small = window.matchMedia('(max-width: 820px)').matches;
+      vid.src = vid.getAttribute(small ? 'data-src-sm' : 'data-src-lg');
+      var p = vid.play();
+      if(p && p.catch) p.catch(function(){ /* autoplay blocked; poster stands in */ });
+    }
+  }
+
+  /* Route progress. */
+  var ticking = false;
+  function progress(){
+    var max = document.documentElement.scrollHeight - window.innerHeight;
+    var p = max > 0 ? Math.min(1, window.scrollY / max) : 0;
+    rail.style.setProperty('--progress', p.toFixed(4));
+    rail.classList.toggle('on-light', window.scrollY > window.innerHeight * 0.86);
+    ticking = false;
+  }
+  window.addEventListener('scroll', function(){
+    if(!ticking){ ticking = true; requestAnimationFrame(progress); }
+  }, {passive:true});
+  progress();
+
+  /* Content settles as it arrives. */
+  if(reduce || !('IntersectionObserver' in window)){
+    document.querySelectorAll('.rise,.ph,.stage').forEach(function(el){ el.classList.add('in'); });
+  } else {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(!e.isIntersecting) return;
+        var items = e.target.querySelectorAll('.rise');
+        if(items.length){
+          items.forEach(function(el,i){ el.style.transitionDelay = (i*80) + 'ms'; el.classList.add('in'); });
+        }
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      });
+    }, {rootMargin:'0px 0px -14% 0px', threshold:0.08});
+    document.querySelectorAll('section:not(.hero), .stage, .move, .spec-row, footer')
+      .forEach(function(s){ io.observe(s); });
+  }
+
+  /* Before / after: a range input drives the clip, so mouse, finger and
+     keyboard all work without extra code. */
+  var ba = document.getElementById('ba');
+  var range = document.getElementById('baRange');
+  if(ba && range){
+    var apply = function(v){ ba.style.setProperty('--split', v + '%'); };
+    range.addEventListener('input', function(){ apply(range.value); });
+    apply(range.value);
+  }
+})();
+</script>
+</body>
+</html>

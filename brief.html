@@ -11,7 +11,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
 /* ============================================================
@@ -30,10 +30,10 @@
   --line-lt:rgba(242,240,233,.18);
   --err:#9A3B2B;
 
-  --display:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --display:"Marcellus",Georgia,"Times New Roman",serif;
   --text:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
 
-  --d2:clamp(1.75rem,3.4vw,2.8rem);
+  --d2:clamp(1.45rem,2.4vw,2rem);
   --d3:clamp(1.35rem,2.1vw,1.9rem);
 
   --pad:clamp(1.25rem,4vw,3.25rem);
@@ -58,7 +58,7 @@ ul,ol{margin:0;padding:0;list-style:none}
 .on-dark :focus-visible{outline-color:var(--warm)}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 
-.eyebrow{font-family:var(--text);font-size:.6875rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--brown)}
+.eyebrow{font-family:var(--text);font-size:.8rem;font-weight:500;letter-spacing:0;text-transform:none;color:var(--brown)}
 .on-dark .eyebrow{color:var(--text-dim)}
 .small{font-size:.9375rem;line-height:1.6;color:rgba(20,21,15,.68)}
 .on-dark .small{color:var(--text-dim)}
@@ -106,7 +106,8 @@ ul,ol{margin:0;padding:0;list-style:none}
 .rail-sub{margin-top:.85rem;max-width:30ch}
 
 /* ---- the trail: tracks pressed in one after another ---- */
-.trail{margin-top:auto;position:relative;display:flex;flex-direction:column;gap:6px}
+.trail{margin-top:clamp(2rem,5vh,3.4rem);position:relative;display:flex;flex-direction:column;gap:6px}
+.tstep .n{display:none}
 .trail::before{
   content:"";position:absolute;left:15px;top:18px;bottom:18px;width:1px;
   background:linear-gradient(rgba(244,241,233,0),rgba(244,241,233,.22),rgba(244,241,233,0));
@@ -156,30 +157,25 @@ ul,ol{margin:0;padding:0;list-style:none}
 @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.step{animation:none}}
 
-.step-head{padding-bottom:1.6rem;margin-bottom:2.2rem;border-bottom:1px solid var(--line)}
-.step-head h2{font-size:var(--d2);margin-top:.7rem}
-.step-head .small{margin-top:.85rem;max-width:56ch}
+.step-head{padding-bottom:1.1rem;margin-bottom:1.5rem;border-bottom:1px solid var(--line)}
+.step-head h2{font-family:var(--display);font-weight:400;letter-spacing:-.004em;font-size:var(--d2);margin-top:.45rem}
+.step-head .small{margin-top:.55rem;max-width:58ch;font-size:.875rem}
 
-.q{padding:2.3rem 0;border-bottom:1px solid var(--line)}
+.q{padding:1.35rem 0;border-bottom:1px solid var(--line)}
 .q:last-of-type{border-bottom:0}
 /* each real question gets a quiet outlined index mark, echoing the numerals
    used for services/pricing/process on the main site — :has() skips the
    contact-details block, which has no .q-t and so isn't really "a question" */
-.step{counter-reset:qnum}
-.q:has(.q-t){counter-increment:qnum}
-.q-t::before{
-  content:counter(qnum,decimal-leading-zero);
-  display:block;font-family:var(--display);font-weight:700;
-  font-size:1.5rem;line-height:1;letter-spacing:-.02em;margin-bottom:.6rem;
-  color:transparent;-webkit-text-stroke:1px rgba(20,21,15,.32);
-}
-.q-t{font-family:var(--display);font-size:clamp(1.3rem,1.9vw,1.6rem);font-weight:600;letter-spacing:-.02em;line-height:1.22;display:block}
+/* A question reads as a form label, not as a headline — the page is an
+   intake, and numbering every line made it feel like a survey. */
+.q-t{display:block;font-family:var(--text);font-size:.9rem;font-weight:600;
+  letter-spacing:0;line-height:1.4;color:var(--ink)}
 .q-t .req{color:var(--brown);font-weight:500}
-.q-h{margin-top:.5rem;font-size:.9375rem;line-height:1.55;color:rgba(20,21,15,.56);max-width:52ch}
-.q-body{margin-top:1.3rem}
+.q-h{margin-top:.3rem;font-size:.85rem;line-height:1.5;color:rgba(20,21,15,.52);max-width:56ch}
+.q-body{margin-top:.75rem}
 
 /* two fields side by side */
-.row{display:grid;grid-template-columns:1fr 1fr;gap:1.9rem 1.6rem}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:1.05rem 1.2rem}
 .stack{display:flex;flex-direction:column;gap:.7rem}
 
 label.f{display:block}
@@ -187,44 +183,39 @@ label.f .lb{display:block;font-size:.8125rem;font-weight:600;color:var(--brown);
 
 input[type=text],input[type=email],input[type=tel],input[type=url],input[type=number],textarea,select{
   width:100%;font:inherit;color:var(--ink);background:rgba(255,255,255,.55);
-  border:1px solid var(--line);border-radius:12px;padding:13px 15px;
+  border:1px solid var(--line);border-radius:2px;padding:11px 13px;
   transition:border-color .3s var(--ease),background .3s var(--ease);
 }
-textarea{resize:vertical;min-height:104px;line-height:1.6}
+textarea{resize:vertical;min-height:82px;line-height:1.55}
 input::placeholder,textarea::placeholder{color:rgba(20,21,15,.34)}
 input:hover,textarea:hover,select:hover{border-color:rgba(20,21,15,.26)}
-input:focus,textarea:focus,select:focus{outline:none;border-color:var(--forest);background:#fff;box-shadow:0 0 0 3px rgba(38,61,50,.1)}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--forest);background:#fff}
 .invalid input,.invalid textarea,.invalid select,input.invalid,textarea.invalid{border-color:var(--err)}
 .num{max-width:170px}
 
 /* ---- choices: pills ---- */
-.chips{display:flex;flex-wrap:wrap;gap:9px;border:0;padding:0;margin:0}
+.chips{display:flex;flex-wrap:wrap;gap:7px;border:0;padding:0;margin:0}
 .chips legend{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 .chip{position:relative}
 /* the real control sits over the pill rather than being sized to nothing —
    a 0×0 input drops out of the accessibility tree in some browsers */
 .chip input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
 .chip span{
-  display:inline-flex;align-items:center;gap:8px;cursor:pointer;
-  padding:10px 17px;border:1px solid var(--line);border-radius:999px;
-  font-size:.9rem;font-weight:500;background:rgba(255,255,255,.5);
+  display:inline-flex;align-items:center;cursor:pointer;
+  padding:8px 14px;border:1px solid var(--line);border-radius:2px;
+  font-size:.85rem;font-weight:500;background:transparent;
   transition:background .3s var(--ease),color .3s var(--ease),border-color .3s var(--ease);
 }
-.chip span::before{
-  content:"";width:7px;height:7px;border-radius:50%;background:transparent;
-  border:1px solid rgba(20,21,15,.34);flex:none;transition:background .3s var(--ease),border-color .3s var(--ease);
-}
-.chip input[type=checkbox]+span::before{border-radius:2px}
 .chip span:hover{border-color:rgba(20,21,15,.3)}
 .chip input:checked+span{background:var(--ink);color:var(--warm);border-color:var(--ink)}
-.chip input:checked+span::before{background:var(--warm);border-color:var(--warm)}
+
 .chip input:focus-visible+span{outline:2px solid var(--forest);outline-offset:3px}
 .chips.invalid .chip span{border-color:var(--err)}
 
 /* ---- file drop ---- */
 .drop{
   display:flex;align-items:center;gap:14px;width:100%;text-align:left;
-  padding:15px 18px;border:1px dashed rgba(20,21,15,.26);border-radius:14px;
+  padding:13px 16px;border:1px dashed rgba(20,21,15,.24);border-radius:2px;
   background:rgba(255,255,255,.4);transition:border-color .3s var(--ease),background .3s var(--ease);
 }
 .drop:hover,.drop.over{border-color:var(--forest);background:#fff}
@@ -366,8 +357,8 @@ src="https://www.facebook.com/tr?id=1056070890490241&ev=PageView&noscript=1"
           <header class="step-head">
             <span class="eyebrow" data-sr="Korak 01 — Osnovno" data-en="Step 01 — The basics">Korak 01 — Osnovno</span>
             <h2 id="h1" data-sr="Ko ste i šta vam treba" data-en="Who you are and what you need">Ko ste i šta vam treba</h2>
-            <p class="small" data-sr="Ovaj deo je najbrži. Na osnovu njega znamo koga zovemo i o kakvom poslu pričamo."
-               data-en="The quickest part. It tells us who to call back and what kind of job we are talking about.">Ovaj deo je najbrži. Na osnovu njega znamo koga zovemo i o kakvom poslu pričamo.</p>
+            <p class="small" data-sr="Koga zovemo i o kakvom poslu je reč."
+               data-en="Who to call back, and what kind of job this is.">Ovaj deo je najbrži. Na osnovu njega znamo koga zovemo i o kakvom poslu pričamo.</p>
             <p class="small" id="paketNote" hidden style="margin-top:.7rem;font-weight:600;color:var(--ink)"></p>
           </header>
 
@@ -430,12 +421,12 @@ src="https://www.facebook.com/tr?id=1056070890490241&ev=PageView&noscript=1"
             <div class="q-body stack" style="gap:1.1rem">
               <fieldset class="chips group" data-required data-col="Budžet" id="g-budzet">
                 <legend data-sr="Budžet" data-en="Budget">Budžet</legend>
-                <label class="chip"><input type="radio" name="budzet" value="do 300 €" data-en-val="under €300"><span>do 300 €</span></label>
-                <label class="chip"><input type="radio" name="budzet" value="300–500 €"><span>300–500 €</span></label>
-                <label class="chip"><input type="radio" name="budzet" value="500–1.000 €"><span>500–1.000 €</span></label>
-                <label class="chip"><input type="radio" name="budzet" value="1.000–2.500 €"><span>1.000–2.500 €</span></label>
-                <label class="chip"><input type="radio" name="budzet" value="2.500–5.000 €"><span>2.500–5.000 €</span></label>
-                <label class="chip"><input type="radio" name="budzet" value="preko 5.000 €" data-en-val="over €5,000"><span data-sr="preko 5.000 €" data-en="over €5,000">preko 5.000 €</span></label>
+                <label class="chip"><input type="radio" name="budzet" value="do 300 €"><span data-sr="do 300 €" data-en="under €300">do 300 €</span></label>
+                <label class="chip"><input type="radio" name="budzet" value="300–500 €"><span data-sr="300–500 €" data-en="€300–500">300–500 €</span></label>
+                <label class="chip"><input type="radio" name="budzet" value="500–1.000 €"><span data-sr="500–1.000 €" data-en="€500–1,000">500–1.000 €</span></label>
+                <label class="chip"><input type="radio" name="budzet" value="1.000–2.500 €"><span data-sr="1.000–2.500 €" data-en="€1,000–2,500">1.000–2.500 €</span></label>
+                <label class="chip"><input type="radio" name="budzet" value="2.500–5.000 €"><span data-sr="2.500–5.000 €" data-en="€2,500–5,000">2.500–5.000 €</span></label>
+                <label class="chip"><input type="radio" name="budzet" value="preko 5.000 €"><span data-sr="preko 5.000 €" data-en="over €5,000">preko 5.000 €</span></label>
                 <label class="chip"><input type="radio" name="budzet" value="Nisam siguran/na — predložite" data-en-val="Not sure — advise me"><span data-sr="Nisam siguran/na — predložite" data-en="Not sure — advise me">Nisam siguran/na — predložite</span></label>
               </fieldset>
               <div class="err" id="e-budzet" data-sr="Izaberite jedan raspon." data-en="Pick one range.">Izaberite jedan raspon.</div>
@@ -449,7 +440,7 @@ src="https://www.facebook.com/tr?id=1056070890490241&ev=PageView&noscript=1"
           <header class="step-head">
             <span class="eyebrow" data-sr="Korak 02 — Biznis" data-en="Step 02 — Business">Korak 02 — Biznis</span>
             <h2 id="h2" data-sr="Recite nam o poslu" data-en="Tell us about the business">Recite nam o poslu</h2>
-            <p class="small" data-sr="Jedno pitanje — ali od njega zavisi ceo predlog sajta, pa slobodno pišite koliko treba."
+            <p class="small" data-sr="Jedno pitanje, od kog zavisi ceo predlog. Pišite koliko treba."
                data-en="One question — but the whole site proposal rests on it, so write as much as you need.">Jedno pitanje — ali od njega zavisi ceo predlog sajta, pa slobodno pišite koliko treba.</p>
           </header>
 
@@ -473,7 +464,7 @@ src="https://www.facebook.com/tr?id=1056070890490241&ev=PageView&noscript=1"
           <header class="step-head">
             <span class="eyebrow" data-sr="Korak 03 — Materijali" data-en="Step 03 — Materials">Korak 03 — Materijali</span>
             <h2 id="h3" data-sr="Šta već imate" data-en="What you already have">Šta već imate</h2>
-            <p class="small" data-sr="Ništa od ovoga nije obavezno, osim kontakt podataka. Ako nemate materijale — recite nam, možemo da ih uključimo u ponudu. Do 10 MB po fajlu."
+            <p class="small" data-sr="Ništa ovde nije obavezno. Ako nemate materijale, uključujemo ih u ponudu. Do 10 MB po fajlu."
                data-en="None of this is required except your contact details. If you don't have materials, say so — we can include that in the proposal. Up to 10 MB per file.">Ništa od ovoga nije obavezno, osim kontakt podataka. Ako nemate materijale — recite nam, možemo da ih uključimo u ponudu. Do 10 MB po fajlu.</p>
           </header>
 
