@@ -6,7 +6,7 @@ The whole site is one file. Everything it needs sits beside it:
 
 ```
 index.html      the site — markup, styles and script in one file
-hero.mp4        hero background video
+hero-v2.mp4     hero background video (kiln/fire shot, from novihero.mp4)
 deer.png        the studio mark — brand lockup + watermark (cropped from logo1.png)
 logo1.png       original logo source, kept in case the mark needs re-cropping
 work-*.jpg      project screenshots (nocte, bisque, invklub, zlatar)
@@ -46,12 +46,20 @@ node serve.js
   hero video plays behind it — blurring a live video every frame is expensive
   and was the main cause of visible stutter on load. Blur is only turned on
   once scrolled, where it sits over the static page instead.
-- **Hero video**: `hero.mp4` is compressed to 1080p / ~4.6 MB (H.264, crf 26,
-  faststart) from an original 4K / 67 MB source — that original was the other
-  half of the stutter, since decoding 4K video is expensive regardless of file
-  size. If you replace the video, re-encode it the same way:
+- **Hero video**: `hero-v2.mp4` is 1080p24 / ~6.7 MB (H.264, crf 26, faststart),
+  cut from the `novihero.mp4` master (1080p / 18.8 MB). Never serve the master
+  directly and never serve 4K — decoding 4K video is expensive regardless of file
+  size, and that was the other half of the original stutter.
+- **Loop seam**: the master starts on dark timber and ends on open flame, so a
+  plain `loop` hard-cuts from bright to near-black every pass (measured: mean
+  pixel delta 32/255 between last and first frame). The served file fixes this by
+  dropping the first 1.2 s and cross-dissolving the tail back into it, so the
+  clip ends on exactly the frame it starts on — seam delta 1.9/255. If you
+  replace the video, re-encode the same way and give the file a new name so
+  caches update:
   ```bash
-  ffmpeg -i source.mp4 -an -vf scale=1920:-2 -c:v libx264 -profile:v high -crf 26 -preset slow -movflags +faststart hero.mp4
+  # X = crossfade length (1.2s), offset = source duration - 2X (28.278 - 2.4)
+  ffmpeg -i source.mp4 -filter_complex "[0:v]split[a][b];[a]trim=start=1.2,setpts=PTS-STARTPTS[main];[b]trim=duration=1.2,setpts=PTS-STARTPTS[head];[main][head]xfade=transition=fade:duration=1.2:offset=25.878[v]" -map "[v]" -an -c:v libx264 -profile:v high -crf 26 -preset slow -pix_fmt yuv420p -movflags +faststart hero-v2.mp4
   ```
 
 ## SEO

@@ -40,15 +40,20 @@
    TOKENS
    ============================================================ */
 :root{
-  --warm:#F2F0E9;
-  --warm-2:#ECE7DA;
-  --ink:#151815;
-  --ink-2:#1B1E1B;
-  --forest:#263D32;
-  --forest-deep:#16241D;
-  --brown:#756B5E;
-  --text-dim:#AAA99F;
-  --line:rgba(20,21,15,.14);
+  --warm:#F4F1EA;
+  --warm-2:#E9E4D8;
+  --ink:#0A0A0A;
+  --ink-2:#131313;
+  /* the ember reads at two strengths: #D34D19 holds up on the warm paper,
+     but on near-black it collapses to 4.6:1 and goes muddy. Dark bands lift
+     it to #FF7A2E (7.6:1) via the .on-dark override below, so one variable
+     name keeps working in both places. */
+  --forest:#D34D19;
+  --ember-lit:#FF7A2E;
+  --forest-deep:#0A0A0A;
+  --brown:#8A8177;
+  --text-dim:#7C766D;
+  --line:rgba(10,10,10,.15);
   --line-lt:rgba(242,240,233,.18);
 
   --display:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
@@ -79,8 +84,9 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 h1,h2,h3,h4{font-family:var(--display);font-weight:600;margin:0;letter-spacing:-.032em;line-height:1}
 p{margin:0}
 ul{margin:0;padding:0;list-style:none}
-::selection{background:var(--forest);color:var(--warm)}
+::selection{background:var(--forest);color:var(--ink)}
 :focus-visible{outline:2px solid var(--forest);outline-offset:4px;border-radius:2px}
+.on-dark{--forest:var(--ember-lit)}
 .on-dark :focus-visible{outline-color:var(--warm)}
 [id]{scroll-margin-top:calc(var(--nav-h) + var(--nav-top) + 20px)}
 
@@ -104,9 +110,9 @@ ul{margin:0;padding:0;list-style:none}
   border:1px solid transparent;white-space:nowrap;
 }
 .btn-light{background:var(--warm);color:var(--ink)}
-.btn-light:hover{background:var(--forest);color:var(--warm)}
+.btn-light:hover{background:var(--forest);color:var(--ink)}
 .btn-dark{background:var(--ink);color:var(--warm)}
-.btn-dark:hover{background:var(--forest)}
+.btn-dark:hover{background:var(--forest);color:var(--ink)}
 .btn-ghost{border-color:rgba(244,241,233,.4);color:var(--warm)}
 .btn-ghost:hover{background:var(--warm);color:var(--ink)}
 
@@ -161,7 +167,7 @@ ul{margin:0;padding:0;list-style:none}
 .nav-cta{padding:11px 22px;font-size:.875rem}
 .nav .btn-light{background:var(--warm);color:var(--ink)}
 .nav.scrolled .btn-light{background:var(--ink);color:var(--warm)}
-.nav.scrolled .btn-light:hover{background:var(--forest)}
+.nav.scrolled .btn-light:hover{background:var(--forest);color:var(--ink)}
 
 /* ---- language switch ---- */
 .lang-switch{display:inline-flex;border:1px solid rgba(244,241,233,.3);border-radius:999px;overflow:hidden;flex:none;
@@ -197,7 +203,7 @@ ul{margin:0;padding:0;list-style:none}
    ============================================================ */
 .hero{position:relative;min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;background:var(--ink);color:var(--warm)}
 .hero-fallback{position:absolute;inset:0;background:
-  radial-gradient(120% 90% at 26% 20%,rgba(38,61,50,.6) 0%,rgba(20,21,15,0) 62%),var(--ink)}
+  radial-gradient(120% 90% at 26% 20%,rgba(90,42,18,.62) 0%,rgba(20,21,15,0) 62%),var(--ink)}
 .hero video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.4s var(--ease)}
 .hero video.ready{opacity:1}
 /* two passes: one weights the frame to the lower left so the type always
@@ -216,7 +222,7 @@ ul{margin:0;padding:0;list-style:none}
 
 /* the dark film dissolves into the page — no pinning, no jump */
 .dissolve{position:relative;overflow:hidden;height:clamp(90px,13vh,170px);
-  background:linear-gradient(to bottom,var(--ink) 0%,#4a4b41 42%,var(--warm) 100%)}
+  background:linear-gradient(to bottom,var(--ink) 0%,#4a4038 42%,var(--warm) 100%)}
 
 /* tracks walking out of the dark and into the page — they press in one after
    another as the band scrolls up, and grow clearer as they reach the light */
@@ -236,7 +242,7 @@ section{position:relative}
 .band{padding-block:clamp(4.5rem,11vh,8.5rem)}
 .band-warm{background:var(--warm)}
 .band-dark{background:var(--ink);color:var(--warm)}
-.band-forest{background:linear-gradient(165deg,#27402F 0%,#16241D 68%);color:var(--warm)}
+.band-forest{background:linear-gradient(165deg,#171717 0%,#050505 68%);color:var(--warm)}
 
 /* ---- glass on the forest surfaces ------------------------------------------
    The four green panels are lit as one: the same cool reflection colour, the
@@ -255,37 +261,37 @@ section{position:relative}
    takes a surface off matte, and it only ever helps the type sitting on it */
 .band-forest::before,.intro-panel::before,.stage::before,.quote::before{
   background-repeat:no-repeat;
-  background-image:linear-gradient(180deg,rgba(255,255,255,0) 44%,rgba(5,11,8,.22) 100%)}
+  background-image:linear-gradient(180deg,rgba(255,255,255,0) 44%,rgba(14,8,4,.22) 100%)}
 
 /* the key reflection, dropped into each panel's own void */
 .band-forest::before,.quote::before{
   background-image:
-    radial-gradient(66% 74% at 88% -12%,rgba(214,236,226,.17) 0%,rgba(214,236,226,.055) 48%,rgba(214,236,226,0) 80%),
-    linear-gradient(180deg,rgba(255,255,255,0) 44%,rgba(5,11,8,.22) 100%)}
+    radial-gradient(66% 74% at 88% -12%,rgba(242,226,208,.17) 0%,rgba(242,226,208,.055) 48%,rgba(242,226,208,0) 80%),
+    linear-gradient(180deg,rgba(255,255,255,0) 44%,rgba(14,8,4,.22) 100%)}
 .intro-panel::before{
   background-image:
-    radial-gradient(58% 66% at 92% -16%,rgba(214,236,226,.15) 0%,rgba(214,236,226,.05) 48%,rgba(214,236,226,0) 80%),
-    linear-gradient(180deg,rgba(255,255,255,0) 44%,rgba(5,11,8,.22) 100%)}
+    radial-gradient(58% 66% at 92% -16%,rgba(242,226,208,.15) 0%,rgba(242,226,208,.05) 48%,rgba(242,226,208,0) 80%),
+    linear-gradient(180deg,rgba(255,255,255,0) 44%,rgba(14,8,4,.22) 100%)}
 /* the pricing stage carries body copy across its whole top edge, so here the
    light pools in the empty lower left instead */
 .stage::before{
   background-image:
-    radial-gradient(50% 74% at 14% 116%,rgba(214,236,226,.15) 0%,rgba(214,236,226,.05) 46%,rgba(214,236,226,0) 78%),
-    linear-gradient(180deg,rgba(255,255,255,0) 44%,rgba(5,11,8,.22) 100%)}
+    radial-gradient(50% 74% at 14% 116%,rgba(242,226,208,.15) 0%,rgba(242,226,208,.05) 46%,rgba(242,226,208,0) 78%),
+    linear-gradient(180deg,rgba(255,255,255,0) 44%,rgba(14,8,4,.22) 100%)}
 
 /* the two edges where a real pane gives itself away */
 .band-forest::after,.intro-panel::after,.stage::after,.quote::after{
-  box-shadow:inset 0 1px 0 rgba(228,244,236,.20),inset 0 -1px 0 rgba(5,11,8,.55)}
+  box-shadow:inset 0 1px 0 rgba(248,234,216,.20),inset 0 -1px 0 rgba(14,8,4,.55)}
 /* the rounded panels also catch a faint rim right around the glass edge */
 .intro-panel::after,.stage::after,.quote::after{
-  box-shadow:inset 0 0 0 1px rgba(228,244,236,.07),inset 0 1px 0 rgba(228,244,236,.20),inset 0 -1px 0 rgba(5,11,8,.55)}
+  box-shadow:inset 0 0 0 1px rgba(248,234,216,.07),inset 0 1px 0 rgba(248,234,216,.20),inset 0 -1px 0 rgba(14,8,4,.55)}
 /* once the CTA stacks, its copy runs the full width and the top right stops
    being empty — the light moves to the foot, which is the void at this size */
 @media (max-width:860px){
   .band-forest::before{
     background-image:
-      radial-gradient(78% 52% at 88% 116%,rgba(214,236,226,.16) 0%,rgba(214,236,226,.05) 46%,rgba(214,236,226,0) 78%),
-      linear-gradient(180deg,rgba(255,255,255,0) 44%,rgba(5,11,8,.22) 100%)}
+      radial-gradient(78% 52% at 88% 116%,rgba(242,226,208,.16) 0%,rgba(242,226,208,.05) 46%,rgba(242,226,208,0) 78%),
+      linear-gradient(180deg,rgba(255,255,255,0) 44%,rgba(14,8,4,.22) 100%)}
 }
 
 .head{display:grid;grid-template-columns:repeat(12,1fr);gap:clamp(24px,3vw,48px);align-items:end}
@@ -299,12 +305,12 @@ section{position:relative}
 .intro-panel{grid-column:6 / span 7;position:relative;overflow:hidden;border-radius:22px;
   padding:clamp(30px,3.2vw,52px);min-height:clamp(300px,32vw,440px);
   display:flex;flex-direction:column;justify-content:center;gap:clamp(22px,3vh,36px);
-  background:linear-gradient(150deg,#2C4438 0%,#1B2C24 100%)}
+  background:linear-gradient(150deg,#171717 0%,#050505 100%)}
 .intro-panel .deer-mark{position:absolute;right:-9%;bottom:-16%;width:60%;opacity:.16;filter:brightness(0) invert(1)}
 .intro-panel > *{position:relative;z-index:1}
 .intro-statement{font-family:var(--display);font-weight:600;color:var(--warm);
   font-size:clamp(1.55rem,2.5vw,2.35rem);line-height:1.08;letter-spacing:-.025em;max-width:19ch}
-.intro-statement em{font-style:normal;color:#9DBBA6}
+.intro-statement em{font-style:normal;color:var(--forest)}
 .stat-row{display:flex;gap:clamp(16px,2.4vw,36px);flex-wrap:wrap;
   padding-top:clamp(18px,2.4vh,26px);border-top:1px solid var(--line-lt)}
 .stat-row div{display:flex;flex-direction:column;gap:4px}
@@ -374,7 +380,7 @@ section{position:relative}
   font-size:clamp(3.2rem,5.6vw,5.4rem);font-weight:700;line-height:.78;letter-spacing:-.045em;
   color:transparent;-webkit-text-stroke:1px rgba(244,241,233,.26);
   transition:color .6s var(--ease),-webkit-text-stroke-color .6s var(--ease)}
-.svc-cell:hover .svc-num{color:rgba(38,61,50,.65);-webkit-text-stroke-color:rgba(244,241,233,.45)}
+.svc-cell:hover .svc-num{color:rgba(255,122,46,.70);-webkit-text-stroke-color:rgba(244,241,233,.45)}
 .svc-cell h3{font-size:var(--d3);letter-spacing:-.03em}
 .svc-cell p{margin-top:14px;max-width:34ch}
 
@@ -542,7 +548,7 @@ section{position:relative}
 .stage{position:relative;overflow:hidden;border-radius:22px;color:var(--warm);
   margin-top:clamp(18px,2.6vh,34px);
   padding:clamp(28px,3.6vw,52px);
-  background:linear-gradient(150deg,#2C4438 0%,#1B2C24 100%);
+  background:linear-gradient(150deg,#171717 0%,#050505 100%);
   box-shadow:0 18px 44px -30px rgba(20,21,15,.55)}
 .stage .deer-mark{position:absolute;right:-8%;bottom:-22%;width:46%;opacity:.13;filter:brightness(0) invert(1);pointer-events:none}
 .card{display:none;position:relative;z-index:1;grid-template-columns:repeat(12,1fr);
@@ -785,7 +791,7 @@ fbq('track', 'PageView');
 src="https://www.facebook.com/tr?id=1056070890490241&ev=PageView&noscript=1"
 /></noscript>
 <!-- End Meta Pixel Code -->
-</head>
+<style>.on-dark,.band-forest,.intro-panel,.stage,.quote{--text-dim:#9C9C9C}</style></head>
 
 <body>
 
@@ -847,7 +853,7 @@ src="https://www.facebook.com/tr?id=1056070890490241&ev=PageView&noscript=1"
 <section class="hero on-dark" id="top">
   <div class="hero-fallback" aria-hidden="true"></div>
   <video id="heroVideo" autoplay muted loop playsinline preload="metadata" aria-hidden="true">
-    <source src="hero.mp4" type="video/mp4">
+    <source src="hero-v2.mp4" type="video/mp4">
   </video>
   <div class="hero-veil" aria-hidden="true"></div>
 
@@ -904,7 +910,7 @@ src="https://www.facebook.com/tr?id=1056070890490241&ev=PageView&noscript=1"
       <div class="intro-panel on-dark rv">
         <img class="deer-mark" src="deer.png" alt="" aria-hidden="true">
         <span class="eyebrow" data-sr="Cilj" data-en="The goal">The goal</span>
-        <p class="intro-statement" data-sr="Pretvorite više ljudi koji vas pronađu u <em>stvarne upite.</em>" data-en="Turn more of the people who find you into <em>real enquiries.</em>">Turn more of the people who find you into <em>real enquiries.</em></p>
+        <p class="intro-statement" data-sr="Pretvorite pažnju u <em>stvarne upite.</em>" data-en="Turn attention into <em>real enquiries.</em>">Turn attention into <em>real enquiries.</em></p>
         <div class="stat-row">
           <div><b data-sr="Jasni putevi do kontakta" data-en="Clear paths to contact">Clear paths to contact</b><span data-sr="Pozivi, forme i sledeći koraci se lako pronalaze." data-en="Calls, forms and next steps are easy to find.">Calls, forms and next steps are easy to find.</span></div>
           <div><b data-sr="Brz na svakom uređaju" data-en="Fast on every device">Fast on every device</b><span data-sr="Rađen za mobilne uređaje od samog početka." data-en="Built for mobile from the start.">Built for mobile from the start.</span></div>
@@ -1098,14 +1104,14 @@ src="https://www.facebook.com/tr?id=1056070890490241&ev=PageView&noscript=1"
         <svg class="ridge-peak" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
           <defs>
             <linearGradient id="ridgeFadeNear" x1="0" y1="0" x2="0" y2="1">
-              <stop offset=".34" stop-color="#263D32" stop-opacity=".095"/>
-              <stop offset=".78" stop-color="#263D32" stop-opacity=".05"/>
-              <stop offset="1" stop-color="#263D32" stop-opacity="0"/>
+              <stop offset=".34" stop-color="#171717" stop-opacity=".095"/>
+              <stop offset=".78" stop-color="#171717" stop-opacity=".05"/>
+              <stop offset="1" stop-color="#171717" stop-opacity="0"/>
             </linearGradient>
             <linearGradient id="ridgeFadeFar" x1="0" y1="0" x2="0" y2="1">
-              <stop offset=".34" stop-color="#263D32" stop-opacity=".055"/>
-              <stop offset=".8" stop-color="#263D32" stop-opacity=".025"/>
-              <stop offset="1" stop-color="#263D32" stop-opacity="0"/>
+              <stop offset=".34" stop-color="#171717" stop-opacity=".055"/>
+              <stop offset=".8" stop-color="#171717" stop-opacity=".025"/>
+              <stop offset="1" stop-color="#171717" stop-opacity="0"/>
             </linearGradient>
           </defs>
           <polygon class="ridge-peak-far" points="30,100 38,84 46,91 56,70 64,80 74,60 82,68 90,52 100,58 100,100"/>
