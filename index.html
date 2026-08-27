@@ -44,12 +44,15 @@
   --warm-2:#E9E4D8;
   --ink:#0A0A0A;
   --ink-2:#131313;
-  /* the ember reads at two strengths: #D34D19 holds up on the warm paper,
-     but on near-black it collapses to 4.6:1 and goes muddy. Dark bands lift
-     it to #FF7A2E (7.6:1) via the .on-dark override below, so one variable
-     name keeps working in both places. */
-  --forest:#D34D19;
-  --ember-lit:#FF7A2E;
+  /* Deep red, pushed for richness rather than brightness. The earlier pair sat
+     at hue 15 with saturation .76 and lightness .56, which reads washed out -
+     that much lightness turns red into salmon. These sit at hue 8 (true red,
+     not orange) with saturation .86, and the dark-ground value gives up some
+     lightness to get there. Floor on the dark value is 4.5:1 against --ink,
+     because .btn-light:hover puts ink-coloured text directly on the accent;
+     #EF4025 measures 5.12:1, so there is room. Paper value reads 6.6:1. */
+  --forest:#A6210C;
+  --ember-lit:#EF4025;
   --forest-deep:#0A0A0A;
   --brown:#8A8177;
   --text-dim:#7C766D;
@@ -202,12 +205,23 @@ ul{margin:0;padding:0;list-style:none}
    HERO
    ============================================================ */
 .hero{position:relative;min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;background:var(--ink);color:var(--warm)}
-.hero-fallback{position:absolute;inset:0;background:
-  radial-gradient(120% 90% at 26% 20%,rgba(90,42,18,.62) 0%,rgba(20,21,15,0) 62%),var(--ink)}
-.hero video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.4s var(--ease)}
-.hero video.ready{opacity:1}
+.hero-fallback{position:absolute;inset:0;
+  background:url(hero-poster.webp) center/cover no-repeat,var(--ink)}
+/* No cross-fade. The fallback under this element is the video's own first
+   frame, so there is nothing to blend - and fading in a video that is already
+   playing composites two different frames at part opacity, which looks like the
+   hero going blurry and then sharpening on every refresh. */
+.hero video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 /* two passes: one weights the frame to the lower left so the type always
    holds, the other keeps the right side of the shot open */
+/* The film has to lose its texture slowly. When it faded over ~90px the
+   picture read as sliced off, and no amount of work on the ramp below fixed
+   that — the eye catches where detail stops, not where brightness changes.
+   Measured, texture now decays from st.dev 30 to 0.3 across ~275px. Sits at
+   z-index 1, under .hero-in and .cue at 2, so it never touches the type. */
+.hero::after{content:"";position:absolute;left:0;right:0;bottom:0;z-index:1;
+  height:clamp(220px,32vh,440px);pointer-events:none;
+  background:linear-gradient(to bottom,rgba(10,10,10,0) 0%,rgba(10,10,10,.28) 38%,rgba(10,10,10,.72) 72%,var(--ink) 100%)}
 .hero-veil{position:absolute;inset:0;background:
   linear-gradient(to right,rgba(20,21,15,.80) 0%,rgba(20,21,15,.46) 36%,rgba(20,21,15,.04) 68%,rgba(20,21,15,.26) 100%),
   linear-gradient(to top,rgba(20,21,15,.80) 0%,rgba(20,21,15,.14) 50%,rgba(20,21,15,.46) 100%)}
@@ -221,19 +235,19 @@ ul{margin:0;padding:0;list-style:none}
 @keyframes trace{0%{transform:translateY(-20px)}100%{transform:translateY(56px)}}
 
 /* the dark film dissolves into the page — no pinning, no jump */
-.dissolve{position:relative;overflow:hidden;height:clamp(90px,13vh,170px);
-  background:linear-gradient(to bottom,var(--ink) 0%,#4a4038 42%,var(--warm) 100%)}
+.dissolve{position:relative;overflow:hidden;height:clamp(210px,28vh,360px);
+  /* smoothstep, not linear. A straight ramp holds a constant slope and then
+     drops it to zero the instant it reaches --warm; the eye reads that kink as
+     a bright line across the page (Mach band) even though no pixel there is
+     lighter than the paper. These stops follow smootherstep 6t^5-15t^4+10t^3,
+     whose first AND second derivative are zero at both ends, so the ramp settles
+     into the paper with no corner for the eye to catch. Measured slope just
+     before the join: 0.95/px linear, 0.36 with plain smoothstep, 0.11 here. */
+  background:linear-gradient(to bottom,
+    var(--ink) 0%,#0B0B0B 7%,#0F0F0F 14%,#1A1A1A 21%,#2C2B2A 29%,#444341 36%,
+    #605F5C 43%,#7F7E7A 50%,#9E9C98 57%,#BAB8B3 64%,#D2D0CA 71%,#E4E1DA 79%,
+    #EFECE5 86%,#F3F0E9 93%,var(--warm) 100%)}
 
-/* tracks walking out of the dark and into the page — they press in one after
-   another as the band scrolls up, and grow clearer as they reach the light */
-/* scoped with .dissolve so these beat the generic .rv rule further down,
-   which would otherwise lift the prints up from below instead of pressing
-   them down into the ground */
-.dissolve .hoof-mark{position:absolute;display:block;color:var(--forest);
-  opacity:0;transform:translateY(-9px) scale(.86);
-  transition:opacity .8s var(--ease),transform .8s var(--ease)}
-.dissolve .hoof-mark.in{opacity:var(--o,.24);transform:none}
-.dissolve .hoof-mark svg{display:block;width:100%;height:auto}
 
 /* ============================================================
    SECTIONS
@@ -380,7 +394,7 @@ section{position:relative}
   font-size:clamp(3.2rem,5.6vw,5.4rem);font-weight:700;line-height:.78;letter-spacing:-.045em;
   color:transparent;-webkit-text-stroke:1px rgba(244,241,233,.26);
   transition:color .6s var(--ease),-webkit-text-stroke-color .6s var(--ease)}
-.svc-cell:hover .svc-num{color:rgba(255,122,46,.70);-webkit-text-stroke-color:rgba(244,241,233,.45)}
+.svc-cell:hover .svc-num{color:rgba(239,64,37,.72);-webkit-text-stroke-color:rgba(244,241,233,.45)}
 .svc-cell h3{font-size:var(--d3);letter-spacing:-.03em}
 .svc-cell p{margin-top:14px;max-width:34ch}
 
@@ -853,7 +867,7 @@ src="https://www.facebook.com/tr?id=1056070890490241&ev=PageView&noscript=1"
 <section class="hero on-dark" id="top">
   <div class="hero-fallback" aria-hidden="true"></div>
   <video id="heroVideo" autoplay muted loop playsinline preload="metadata" aria-hidden="true">
-    <source src="hero-v2.mp4" type="video/mp4">
+    <source src="hero-v3.mp4" type="video/mp4">
   </video>
   <div class="hero-veil" aria-hidden="true"></div>
 
@@ -875,14 +889,7 @@ src="https://www.facebook.com/tr?id=1056070890490241&ev=PageView&noscript=1"
     <span class="rail"></span>
   </div>
 </section>
-<div class="dissolve" aria-hidden="true">
-  <span class="hoof-mark rv" style="--o:.13;left:6%;top:22%;width:13px"><svg viewBox="0 0 24 24" fill="currentColor" style="transform:rotate(9deg)"><path d="M9.4 3.2c1.6 0 2.6 2 2.4 4.6-.2 2.6-1.3 4.4-2.8 4.3-1.6-.1-2.6-2.1-2.4-4.7.2-2.5 1.3-4.2 2.8-4.2Z"/><path d="M15.6 4.6c1.5.2 2.3 2.2 1.9 4.7-.4 2.5-1.7 4.2-3.2 3.9-1.5-.3-2.3-2.3-1.9-4.8.4-2.4 1.7-4 3.2-3.8Z"/><path d="M11 15.4c2.2 0 4 1.5 4 3.3s-1.8 2.6-4 2.6-4-.8-4-2.6 1.8-3.3 4-3.3Z" opacity=".55"/></svg></span>
-  <span class="hoof-mark rv" style="--o:.17;left:14%;top:38%;width:14px"><svg viewBox="0 0 24 24" fill="currentColor" style="transform:rotate(20deg)"><path d="M9.4 3.2c1.6 0 2.6 2 2.4 4.6-.2 2.6-1.3 4.4-2.8 4.3-1.6-.1-2.6-2.1-2.4-4.7.2-2.5 1.3-4.2 2.8-4.2Z"/><path d="M15.6 4.6c1.5.2 2.3 2.2 1.9 4.7-.4 2.5-1.7 4.2-3.2 3.9-1.5-.3-2.3-2.3-1.9-4.8.4-2.4 1.7-4 3.2-3.8Z"/><path d="M11 15.4c2.2 0 4 1.5 4 3.3s-1.8 2.6-4 2.6-4-.8-4-2.6 1.8-3.3 4-3.3Z" opacity=".55"/></svg></span>
-  <span class="hoof-mark rv" style="--o:.2;left:22%;top:29%;width:15px"><svg viewBox="0 0 24 24" fill="currentColor" style="transform:rotate(11deg)"><path d="M9.4 3.2c1.6 0 2.6 2 2.4 4.6-.2 2.6-1.3 4.4-2.8 4.3-1.6-.1-2.6-2.1-2.4-4.7.2-2.5 1.3-4.2 2.8-4.2Z"/><path d="M15.6 4.6c1.5.2 2.3 2.2 1.9 4.7-.4 2.5-1.7 4.2-3.2 3.9-1.5-.3-2.3-2.3-1.9-4.8.4-2.4 1.7-4 3.2-3.8Z"/><path d="M11 15.4c2.2 0 4 1.5 4 3.3s-1.8 2.6-4 2.6-4-.8-4-2.6 1.8-3.3 4-3.3Z" opacity=".55"/></svg></span>
-  <span class="hoof-mark rv" style="--o:.24;left:30%;top:47%;width:16px"><svg viewBox="0 0 24 24" fill="currentColor" style="transform:rotate(24deg)"><path d="M9.4 3.2c1.6 0 2.6 2 2.4 4.6-.2 2.6-1.3 4.4-2.8 4.3-1.6-.1-2.6-2.1-2.4-4.7.2-2.5 1.3-4.2 2.8-4.2Z"/><path d="M15.6 4.6c1.5.2 2.3 2.2 1.9 4.7-.4 2.5-1.7 4.2-3.2 3.9-1.5-.3-2.3-2.3-1.9-4.8.4-2.4 1.7-4 3.2-3.8Z"/><path d="M11 15.4c2.2 0 4 1.5 4 3.3s-1.8 2.6-4 2.6-4-.8-4-2.6 1.8-3.3 4-3.3Z" opacity=".55"/></svg></span>
-  <span class="hoof-mark rv hoof-far" style="--o:.27;left:38%;top:37%;width:17px"><svg viewBox="0 0 24 24" fill="currentColor" style="transform:rotate(14deg)"><path d="M9.4 3.2c1.6 0 2.6 2 2.4 4.6-.2 2.6-1.3 4.4-2.8 4.3-1.6-.1-2.6-2.1-2.4-4.7.2-2.5 1.3-4.2 2.8-4.2Z"/><path d="M15.6 4.6c1.5.2 2.3 2.2 1.9 4.7-.4 2.5-1.7 4.2-3.2 3.9-1.5-.3-2.3-2.3-1.9-4.8.4-2.4 1.7-4 3.2-3.8Z"/><path d="M11 15.4c2.2 0 4 1.5 4 3.3s-1.8 2.6-4 2.6-4-.8-4-2.6 1.8-3.3 4-3.3Z" opacity=".55"/></svg></span>
-  <span class="hoof-mark rv hoof-far" style="--o:.3;left:46%;top:55%;width:18px"><svg viewBox="0 0 24 24" fill="currentColor" style="transform:rotate(27deg)"><path d="M9.4 3.2c1.6 0 2.6 2 2.4 4.6-.2 2.6-1.3 4.4-2.8 4.3-1.6-.1-2.6-2.1-2.4-4.7.2-2.5 1.3-4.2 2.8-4.2Z"/><path d="M15.6 4.6c1.5.2 2.3 2.2 1.9 4.7-.4 2.5-1.7 4.2-3.2 3.9-1.5-.3-2.3-2.3-1.9-4.8.4-2.4 1.7-4 3.2-3.8Z"/><path d="M11 15.4c2.2 0 4 1.5 4 3.3s-1.8 2.6-4 2.6-4-.8-4-2.6 1.8-3.3 4-3.3Z" opacity=".55"/></svg></span>
-</div>
+<div class="dissolve" aria-hidden="true"></div>
 
 <!-- ============================ INTRO ============================ -->
 <section class="band band-warm" id="intro">
@@ -1534,10 +1541,6 @@ src="https://www.facebook.com/tr?id=1056070890490241&ev=PageView&noscript=1"
   sheet.addEventListener('click', function(e){ if(e.target.tagName === 'A') setMenu(false); });
   document.addEventListener('keydown', function(e){ if(e.key === 'Escape') setMenu(false); });
 
-  /* video fades in over the fallback */
-  var v = document.getElementById('heroVideo');
-  function ready(){ v.classList.add('ready'); }
-  if(v.readyState >= 3) ready(); else v.addEventListener('canplay', ready);
 
   /* one entry animation, played once */
   var items = document.querySelectorAll('.rv');
