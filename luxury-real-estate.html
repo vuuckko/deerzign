@@ -411,14 +411,8 @@ a{color:inherit}
 
 <!-- ============ fullscreen showcase ============ -->
 <a class="stage" href="caliza.html" id="stage">
-  <!-- Aerial reveal. The source is pillarboxed, so the 150px bars come off
-       and the 1620x1080 image is scaled to 1920 with lanczos. Below the fold,
-       so nothing is fetched until it is close to view; the poster stands in
-       until then, and it pauses again on the way out. -->
-  <video id="stageVid" muted loop playsinline preload="none"
-         poster="lre/aerial-poster.webp" width="1920" height="1280"
-         data-src-lg="lre/aerial.mp4" data-src-sm="lre/aerial-sm.mp4"
-         aria-label="An aerial shot rising away from the street to reveal the whole property and the hillside behind it."></video>
+  <img src="lre/arrival-entry.webp" width="1800" height="1200" loading="lazy" decoding="async"
+       alt="The entrance to Caliza, the demonstration property: a concrete path running to a recessed door under a steel canopy.">
   <div class="stage-top">
     <p>A complete presentation, built end to end</p>
     <p>Demonstration property</p>
@@ -699,30 +693,6 @@ a{color:inherit}
     }
   }
 
-  /* The showcase film sits below the fold: nothing is fetched until it is
-     near view, and it pauses again once it leaves. Reduced motion keeps the
-     poster and never loads the file at all. */
-  var sVid = document.getElementById('stageVid');
-  if(sVid && !reduce){
-    var sSmall = window.matchMedia('(max-width: 820px)').matches;
-    var sSrc = sVid.getAttribute(sSmall ? 'data-src-sm' : 'data-src-lg');
-    var startStage = function(){
-      if(!sVid.getAttribute('src')) sVid.setAttribute('src', sSrc);
-      var sp = sVid.play();
-      if(sp && sp.catch) sp.catch(function(){ /* poster stands in */ });
-    };
-    if('IntersectionObserver' in window){
-      new IntersectionObserver(function(entries){
-        entries.forEach(function(e){
-          if(e.isIntersecting) startStage();
-          else if(!sVid.paused) sVid.pause();
-        });
-      }, {rootMargin: '300px 0px'}).observe(sVid);
-    } else {
-      startStage();
-    }
-  }
-
   /* Route progress. */
   var ticking = false;
   function progress(){
@@ -767,5 +737,7 @@ a{color:inherit}
   }
 })();
 </script>
+<script>/* any page counts as entering the site, so the preloader never appears
+   part-way through a visit */try{sessionStorage.setItem("dz-entered","1")}catch(e){}</script>
 </body>
 </html>

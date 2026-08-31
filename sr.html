@@ -687,6 +687,62 @@ section{position:relative}
    REVEAL
    ============================================================ */
 .rv{opacity:0;transform:translateY(20px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+
+/* Headlines arrive a line at a time. Each line sits in its own clipped box and
+   starts fully below its edge, so the type rises into view instead of fading
+   up as one block -- there is no opacity change at all. Lines are measured at
+   runtime, so this survives the language switch and any reflow. */
+.rv-lines{opacity:1;transform:none;transition:none}
+.rv-lines .ln{display:block;overflow:hidden}
+.rv-lines .ln > i{display:block;font-style:normal;transform:translateY(106%);
+  transition:transform 1.05s var(--ease);transition-delay:var(--d,0ms);will-change:transform}
+.rv-lines.in .ln > i{transform:none}
+
+/* The trail runs down the left margin and lights as the page advances. Hidden
+   on anything narrower than the content gutter so it never crowds the text. */
+
+/* ---------- preloader ---------------------------------------------------
+   The mark already shows a deer mid-leap shedding a trail of shards, so the
+   animation says the same thing rather than decorating it: the body lands,
+   then the shards settle outward behind it, furthest one last. Shown once a
+   session — entering the site, not when moving around inside it. */
+.preload{position:fixed;inset:0;z-index:9999;background:var(--ink);
+  display:flex;align-items:center;justify-content:center;
+  transition:transform 1s cubic-bezier(.76,0,.24,1),opacity .5s ease .35s}
+.preload.gone{transform:translateY(-101%);opacity:0;pointer-events:none}
+/* while the cover is up, hold the page in its start state so the hero plays
+   its entrance as the cover leaves rather than unseen behind it */
+html.pl-on .rv{opacity:0;transform:translateY(20px)}
+html.pl-on .rv-lines .ln > i{transform:translateY(106%)}
+.preload-in{display:flex;flex-direction:column;align-items:center;gap:26px}
+.pl-deer{width:clamp(150px,17vw,232px);height:auto;overflow:visible;fill:var(--warm)}
+.pl-body{opacity:0;transform:translateY(34px);
+  animation:plBody .82s cubic-bezier(.16,1,.3,1) forwards}
+.pl-shard{opacity:0;transform:translate(150px,-84px);
+  animation:plShard .66s cubic-bezier(.16,1,.3,1) forwards;
+  animation-delay:calc(400ms + var(--i) * 62ms)}
+@keyframes plBody{to{opacity:1;transform:none}}
+@keyframes plShard{to{opacity:1;transform:none}}
+.pl-word{font-family:var(--display);font-size:.94rem;letter-spacing:.24em;
+  text-transform:uppercase;color:rgba(244,241,233,.42);opacity:0;
+  animation:plWord .9s ease forwards 1.15s}
+@keyframes plWord{to{opacity:1}}
+/* nothing here should ever strand a visitor: no motion, no overlay */
+@media (prefers-reduced-motion:reduce){.preload{display:none}}
+
+.trail-rail{position:fixed;left:20px;top:0;bottom:0;width:26px;z-index:60;pointer-events:none}
+.trail-rail i{position:absolute;left:50%;width:14px;height:14px;color:var(--forest);
+  transform:translate(-50%,-50%) rotate(var(--r)) scale(.5);opacity:0;
+  transition:opacity .42s var(--ease),transform .55s var(--ease),color .5s var(--ease)}
+.trail-rail i.on{opacity:.5;transform:translate(-50%,-50%) rotate(var(--r)) scale(.78)}
+.trail-rail.over-dark i{color:var(--ember-lit)}
+.trail-rail.over-dark i.on{opacity:.72}
+.trail-rail i svg{width:100%;height:100%;display:block}
+ (max-width:1240px){.trail-rail{display:none}}
+ (prefers-reduced-motion:reduce){
+  .rv-lines .ln > i{transform:none;transition:none}
+  .trail-rail{display:none}
+}
 .rv.in{opacity:1;transform:none}
 
 /* ============================================================
@@ -807,6 +863,67 @@ section{position:relative}
 </style>
 <style>.on-dark,.band-forest,.intro-panel,.stage,.quote{--text-dim:#9C9C9C}</style></head>
 <body>
+<div class="preload" id="preload" aria-hidden="true">
+  <div class="preload-in">
+    <svg class="pl-deer" viewBox="0 0 1416 1243">
+<g class="pl-body"><path d="M0 0 C1 0 1 1 2 1 C-0 11 -3 21 -5 30 C-7 35 -8 39 -9 44 C-9 45 -9 46 -10 47 C-10 48 -10 50 -11 52 C-12 56 -13 61 -14 65 C-15 67 -15 68 -15 70 C-16 71 -16 72 -16 73 C-17 77 -19 82 -20 87 C-20 90 -21 93 -22 96 C-22 97 -23 99 -23 101 C-26 111 -30 118 -37 124 C-40 127 -43 130 -46 134 C-47 135 -48 136 -49 137 C-52 141 -56 146 -59 150 C-63 153 -66 157 -69 161 C-70 162 -71 163 -72 164 C-75 167 -77 170 -80 173 C-88 182 -93 192 -98 202 C-101 207 -104 212 -106 216 C-108 218 -109 220 -110 222 C-112 226 -114 229 -116 233 C-126 249 -131 267 -137 285 C-139 291 -139 291 -140 293 C-139 293 -139 293 -138 293 C-118 291 -105 294 -88 305 C-83 308 -78 311 -73 314 C-71 315 -69 316 -68 317 C-62 320 -56 323 -51 326 C-43 330 -35 335 -28 339 C-22 343 -16 346 -11 349 C-9 350 -8 350 -7 351 C-4 353 -0 355 3 357 C20 367 36 376 53 386 C52 392 49 398 47 404 C47 405 46 407 46 408 C45 410 44 412 43 414 C43 416 42 417 42 418 C39 423 35 424 30 425 C28 425 27 426 26 426 C25 426 23 426 22 427 C21 427 20 427 20 427 C16 428 12 429 8 430 C3 431 -2 432 -7 434 C-31 439 -50 446 -70 460 C-75 463 -81 467 -86 470 C-89 472 -92 473 -94 475 C-96 476 -96 476 -98 476 C-98 477 -98 477 -98 478 C-98 486 -98 493 -99 501 C-99 502 -99 504 -99 505 C-100 509 -100 512 -100 516 C-101 519 -101 522 -101 525 C-102 532 -103 540 -103 547 C-104 555 -105 562 -105 569 C-106 576 -106 582 -107 589 C-107 593 -108 596 -108 600 C-110 622 -113 643 -116 664 C-116 666 -117 668 -117 670 C-118 674 -118 679 -119 683 C-119 686 -120 688 -120 691 C-121 698 -123 706 -124 714 C-124 718 -125 723 -126 728 C-126 729 -126 731 -127 733 C-127 735 -128 738 -128 740 C-128 741 -128 742 -128 742 C-130 750 -130 750 -127 756 C-126 757 -126 757 -125 758 C-121 762 -118 766 -115 771 C-111 776 -107 781 -102 786 C-98 790 -94 795 -90 800 C-86 806 -81 811 -77 817 C-73 821 -69 825 -66 829 C-63 833 -60 837 -57 841 C-56 842 -54 844 -53 845 C-52 846 -52 846 -51 847 C-50 850 -49 852 -49 856 C-49 856 -48 857 -48 858 C-48 860 -48 862 -47 864 C-47 866 -47 868 -47 869 C-46 874 -45 878 -44 882 C-44 887 -43 891 -42 896 C-41 904 -40 911 -39 919 C-37 930 -35 940 -34 951 C-32 960 -31 968 -30 976 C-29 977 -29 978 -29 979 C-28 984 -28 989 -27 995 C-26 996 -26 998 -26 999 C-26 1001 -25 1003 -25 1006 C-25 1007 -25 1008 -24 1009 C-24 1012 -24 1012 -24 1014 C-25 1014 -25 1015 -26 1015 C-29 1017 -32 1019 -35 1020 C-36 1021 -36 1021 -37 1022 C-43 1025 -50 1029 -56 1033 C-77 1046 -99 1056 -122 1067 C-123 1068 -125 1068 -126 1069 C-133 1072 -137 1072 -144 1071 C-145 1071 -147 1071 -148 1070 C-153 1070 -158 1069 -163 1068 C-164 1068 -166 1068 -168 1067 C-172 1067 -175 1066 -179 1065 C-184 1065 -188 1064 -193 1063 C-197 1063 -201 1062 -204 1061 C-206 1061 -208 1061 -209 1061 C-212 1060 -214 1060 -217 1059 C-218 1059 -218 1059 -219 1059 C-221 1059 -222 1058 -224 1058 C-224 1057 -225 1057 -225 1056 C-224 1056 -224 1055 -223 1055 C-211 1049 -199 1043 -187 1036 C-179 1032 -171 1027 -162 1023 C-153 1018 -144 1013 -135 1008 C-125 1003 -114 997 -104 992 C-105 972 -106 953 -107 933 C-107 928 -108 924 -108 919 C-108 915 -108 912 -109 908 C-109 906 -109 905 -109 903 C-109 901 -109 898 -109 896 C-109 895 -109 894 -109 894 C-110 888 -110 883 -114 878 C-115 877 -115 877 -116 876 C-118 875 -118 875 -119 874 C-122 873 -123 873 -127 874 C-132 875 -137 875 -142 876 C-222 887 -222 887 -283 936 C-285 939 -287 942 -289 945 C-294 951 -299 956 -305 961 C-314 954 -323 948 -331 941 C-338 936 -345 931 -352 926 C-359 921 -365 916 -372 910 C-378 906 -383 902 -388 898 C-395 893 -401 889 -407 884 C-413 879 -419 875 -426 870 C-434 864 -442 858 -450 852 C-461 843 -473 834 -485 825 C-491 821 -497 816 -503 811 C-508 808 -513 804 -517 801 C-518 800 -519 800 -519 799 C-521 798 -522 797 -524 796 C-522 807 -519 817 -517 828 C-517 829 -517 829 -517 830 C-516 833 -516 836 -515 838 C-513 846 -512 854 -510 862 C-508 871 -506 880 -504 889 C-504 889 -504 890 -504 891 C-500 911 -495 931 -491 952 C-490 955 -490 959 -489 963 C-488 964 -488 965 -488 966 C-487 969 -487 971 -486 973 C-485 980 -484 987 -482 994 C-481 998 -480 1002 -479 1006 C-479 1008 -479 1010 -478 1012 C-478 1015 -477 1017 -477 1020 C-476 1021 -476 1021 -476 1022 C-475 1026 -475 1029 -475 1033 C-482 1028 -488 1023 -495 1017 C-497 1016 -499 1015 -500 1013 C-507 1008 -514 1003 -520 997 C-527 992 -533 987 -540 982 C-547 976 -554 971 -562 965 C-568 960 -575 954 -582 949 C-584 953 -585 958 -586 963 C-586 963 -586 964 -586 965 C-587 967 -587 969 -588 971 C-588 974 -589 977 -589 980 C-591 988 -593 996 -595 1005 C-596 1010 -597 1015 -598 1020 C-598 1022 -599 1024 -599 1026 C-600 1028 -600 1031 -601 1034 C-601 1035 -601 1036 -601 1036 C-602 1039 -602 1039 -603 1042 C-606 1043 -606 1043 -608 1042 C-609 1042 -610 1041 -610 1041 C-611 1040 -612 1040 -613 1039 C-614 1039 -615 1038 -616 1037 C-617 1037 -618 1036 -619 1036 C-623 1034 -626 1032 -629 1030 C-631 1029 -633 1028 -635 1027 C-638 1025 -641 1023 -644 1021 C-651 1017 -659 1012 -667 1008 C-677 1002 -687 996 -697 991 C-705 986 -712 982 -719 978 C-730 972 -740 966 -750 960 C-758 956 -766 951 -774 946 C-775 946 -775 946 -776 945 C-783 941 -783 941 -789 938 C-789 937 -789 937 -789 936 C-763 937 -736 939 -710 940 C-697 940 -685 941 -673 942 C-662 942 -652 943 -641 943 C-635 943 -630 944 -624 944 C-619 944 -613 945 -608 945 C-606 945 -604 945 -602 945 C-599 945 -597 945 -594 946 C-593 946 -593 946 -592 946 C-589 946 -586 946 -583 947 C-583 946 -583 945 -583 944 C-582 941 -581 937 -579 934 C-579 933 -579 933 -578 931 C-578 930 -577 928 -577 927 C-575 922 -573 917 -571 913 C-571 912 -570 911 -570 909 C-566 900 -563 891 -560 882 C-559 881 -559 881 -559 880 C-556 873 -554 866 -551 860 C-550 857 -549 854 -548 851 C-547 848 -546 846 -545 843 C-542 836 -540 830 -537 823 C-536 820 -535 817 -534 814 C-533 812 -532 811 -532 809 C-529 801 -526 795 -527 786 C-527 784 -527 784 -527 783 C-528 779 -528 776 -528 773 C-529 770 -529 768 -529 766 C-530 760 -530 754 -531 747 C-532 744 -532 740 -532 736 C-533 734 -533 732 -533 730 C-533 728 -533 727 -533 726 C-534 724 -534 723 -534 722 C-534 719 -534 717 -533 714 C-532 713 -532 713 -530 711 C-529 711 -528 710 -528 710 C-527 709 -526 709 -525 708 C-524 708 -524 707 -523 707 C-520 705 -517 703 -515 702 C-513 701 -511 699 -509 698 C-505 696 -501 693 -498 691 C-490 686 -483 681 -475 676 C-471 673 -467 671 -464 668 C-452 661 -440 653 -429 645 C-427 644 -425 643 -423 642 C-423 641 -422 641 -421 640 C-415 637 -410 633 -405 629 C-401 627 -397 625 -394 622 C-392 621 -390 620 -388 619 C-384 616 -379 613 -374 609 C-372 608 -370 607 -368 605 C-366 604 -365 603 -364 603 C-363 602 -363 602 -362 601 C-354 596 -348 589 -342 582 C-340 579 -337 577 -334 574 C-331 571 -328 568 -326 565 C-323 562 -320 559 -316 556 C-313 552 -310 549 -308 546 C-304 542 -300 538 -296 534 C-293 531 -290 528 -287 524 C-284 521 -280 517 -277 514 C-275 512 -275 512 -274 511 C-274 511 -273 510 -273 510 C-267 503 -265 494 -263 485 C-262 483 -262 481 -261 480 C-260 475 -258 470 -257 465 C-256 461 -255 456 -253 451 C-252 446 -250 440 -249 435 C-246 426 -244 417 -241 408 C-235 388 -231 368 -228 348 C-228 344 -227 339 -226 335 C-226 332 -226 329 -225 326 C-225 325 -225 323 -225 322 C-225 321 -225 320 -224 319 C-224 317 -224 317 -223 315 C-221 314 -218 313 -216 312 C-215 312 -214 312 -213 311 C-211 311 -209 310 -206 309 C-205 308 -203 308 -202 307 C-198 306 -194 304 -190 303 C-190 302 -190 302 -190 301 C-192 300 -192 300 -194 298 C-195 298 -196 297 -197 296 C-198 296 -199 295 -200 295 C-202 293 -205 292 -207 291 C-208 290 -209 290 -210 289 C-215 286 -220 282 -226 279 C-229 277 -232 275 -235 273 C-246 267 -253 257 -261 248 C-263 245 -266 241 -269 238 C-273 233 -278 228 -282 223 C-286 217 -291 212 -295 207 C-295 206 -294 206 -294 205 C-292 206 -292 206 -291 206 C-287 208 -283 210 -279 211 C-278 212 -276 213 -274 214 C-272 215 -269 216 -267 217 C-266 217 -265 217 -265 218 C-262 219 -259 220 -256 221 C-264 209 -272 197 -281 185 C-283 182 -284 180 -286 177 C-287 176 -288 174 -289 173 C-291 170 -294 166 -296 163 C-297 161 -297 161 -298 160 C-298 159 -299 158 -300 156 C-301 156 -301 155 -302 154 C-302 154 -302 153 -303 153 C-304 151 -304 151 -306 149 C-309 143 -307 134 -306 127 C-306 126 -305 125 -305 124 C-305 122 -305 120 -304 118 C-304 115 -304 112 -303 108 C-303 106 -303 104 -302 102 C-302 101 -302 100 -302 99 C-302 98 -302 98 -302 97 C-302 95 -302 95 -301 94 C-301 92 -301 89 -300 87 C-298 89 -297 91 -296 94 C-296 94 -296 95 -295 96 C-295 97 -295 98 -294 99 C-294 102 -293 104 -292 106 C-291 109 -290 113 -289 116 C-285 129 -281 140 -271 150 C-270 151 -269 152 -268 154 C-267 156 -265 158 -263 160 C-263 161 -262 162 -261 163 C-259 166 -256 169 -254 172 C-254 159 -254 146 -255 133 C-256 121 -256 110 -256 98 C-253 101 -251 104 -250 107 C-249 108 -248 109 -248 111 C-247 112 -246 113 -246 114 C-245 115 -244 117 -244 118 C-242 121 -241 124 -239 127 C-238 127 -238 127 -237 127 C-235 125 -234 122 -233 120 C-232 119 -231 117 -230 116 C-229 115 -229 114 -228 113 C-226 110 -224 106 -221 102 C-221 101 -221 101 -220 100 C-219 99 -218 97 -217 96 C-216 95 -215 93 -215 92 C-210 84 -204 80 -196 76 C-195 76 -194 75 -192 74 C-190 73 -187 71 -185 70 C-180 67 -175 65 -171 62 C-167 60 -163 58 -159 56 C-155 53 -151 51 -146 48 C-146 48 -145 47 -144 47 C-143 47 -143 48 -142 48 C-143 49 -143 49 -144 51 C-149 56 -154 61 -159 67 C-164 72 -168 77 -172 82 C-176 85 -179 89 -182 93 C-185 96 -188 99 -191 102 C-195 107 -195 107 -200 112 C-200 113 -201 113 -201 114 C-207 121 -210 127 -213 135 C-213 137 -214 138 -214 139 C-216 142 -217 145 -218 149 C-219 152 -221 155 -222 158 C-224 163 -225 168 -227 173 C-229 178 -231 182 -233 186 C-233 188 -233 188 -234 189 C-234 191 -235 193 -236 195 C-238 200 -238 200 -237 206 C-236 208 -235 210 -234 213 C-233 213 -233 214 -233 214 C-232 216 -231 217 -230 218 C-229 220 -228 222 -227 224 C-222 234 -216 243 -208 251 C-200 258 -192 266 -185 273 C-185 272 -185 272 -185 271 C-186 265 -187 259 -188 254 C-189 251 -189 249 -190 247 C-190 244 -191 241 -191 237 C-192 236 -192 235 -192 234 C-192 234 -192 233 -192 232 C-193 231 -193 230 -193 229 C-193 227 -193 225 -192 223 C-190 225 -188 228 -186 230 C-186 231 -186 231 -185 233 C-181 237 -178 241 -175 245 C-174 246 -174 247 -173 248 C-172 250 -171 251 -169 253 C-169 254 -168 255 -168 255 C-167 256 -167 257 -166 258 C-166 258 -165 258 -165 259 C-164 259 -164 259 -163 259 C-163 257 -162 255 -162 253 C-162 252 -162 251 -161 250 C-161 249 -161 248 -161 247 C-161 246 -161 245 -161 244 C-161 238 -164 237 -168 233 C-169 232 -170 230 -172 229 C-173 228 -173 228 -174 227 C-187 215 -197 204 -205 188 C-206 186 -207 184 -208 183 C-210 180 -210 180 -210 178 C-206 179 -203 181 -199 183 C-198 184 -197 184 -196 185 C-195 185 -194 186 -193 187 C-191 187 -190 188 -189 189 C-180 194 -171 199 -162 205 C-157 207 -152 210 -147 212 C-146 209 -144 207 -143 204 C-143 203 -142 202 -142 201 C-136 190 -141 176 -143 164 C-143 161 -144 158 -144 156 C-145 147 -147 139 -148 130 C-149 125 -150 120 -151 115 C-151 113 -151 111 -152 109 C-152 107 -152 104 -153 101 C-153 100 -153 100 -153 99 C-155 90 -153 81 -151 72 C-151 72 -151 71 -151 70 C-150 69 -150 68 -150 67 C-150 66 -150 66 -150 65 C-149 64 -149 64 -149 63 C-148 63 -148 62 -147 62 C-146 64 -145 66 -145 68 C-144 69 -143 71 -143 72 C-141 77 -139 82 -137 86 C-133 95 -130 103 -127 111 C-120 126 -114 142 -109 157 C-105 153 -101 150 -97 146 C-92 140 -86 134 -80 128 C-72 120 -67 112 -61 103 C-59 99 -58 96 -56 93 C-55 92 -55 92 -54 91 C-51 84 -47 78 -43 71 C-36 60 -29 48 -22 36 C-21 35 -20 34 -19 32 C-19 32 -19 31 -18 31 C-14 24 -10 17 -6 10 C-5 8 -4 6 -2 4 C-2 3 -1 1 0 0 Z " transform="translate(1363,0)"/></g>
+<g class="pl-shard" style="--i:0"><path d="M0 0 C3 1 5 3 8 5 C9 5 9 6 10 6 C11 7 12 8 12 8 C13 9 14 9 15 10 C26 18 36 26 47 34 C57 42 67 49 77 57 C83 61 89 66 95 71 C101 76 108 80 114 85 C120 89 126 94 132 99 C143 107 154 115 165 123 C172 128 178 133 185 139 C192 144 198 148 204 153 C210 157 216 162 221 166 C219 169 217 170 213 171 C212 172 211 172 210 172 C209 173 208 173 207 174 C206 174 205 175 204 175 C201 177 197 178 193 180 C191 181 188 182 186 183 C182 184 178 186 175 187 C165 192 155 196 145 200 C126 208 106 217 86 225 C85 226 84 226 83 227 C81 228 79 228 77 229 C72 231 68 233 63 235 C63 235 62 236 61 236 C60 237 58 237 57 238 C54 239 53 239 50 238 C50 237 49 236 49 234 C46 219 43 203 39 188 C39 186 39 184 38 182 C31 150 25 117 18 85 C18 84 18 84 17 83 C14 69 11 55 8 41 C7 36 6 31 5 26 C5 23 4 19 3 16 C3 14 2 12 2 10 C2 9 2 8 1 7 C0 1 0 1 0 0 Z " transform="translate(883,865)"/></g>
+<g class="pl-shard" style="--i:1"><path d="M0 0 C-2 8 -5 16 -8 24 C-9 26 -9 27 -10 29 C-11 32 -13 36 -14 40 C-16 44 -17 48 -19 52 C-21 58 -23 64 -26 70 C-29 78 -31 85 -34 93 C-42 113 -49 133 -57 153 C-60 152 -62 151 -65 149 C-65 149 -66 148 -67 148 C-68 147 -68 147 -69 146 C-75 141 -80 136 -86 132 C-93 127 -100 121 -106 116 C-111 112 -116 108 -122 103 C-131 96 -140 89 -149 82 C-153 78 -157 75 -162 72 C-167 68 -172 64 -177 60 C-182 56 -186 53 -190 49 C-191 49 -191 49 -192 48 C-194 47 -195 45 -197 44 C-206 37 -214 31 -222 24 C-225 22 -227 20 -229 19 C-230 18 -231 17 -232 16 C-233 16 -233 15 -234 15 C-236 13 -236 13 -237 11 C-212 9 -188 8 -163 7 C-160 7 -157 7 -154 7 C-143 6 -133 6 -122 5 C-113 5 -103 4 -93 4 C-85 3 -76 3 -68 2 C-63 2 -58 2 -53 2 C-48 1 -44 1 -39 1 C-37 1 -36 1 -34 1 C-23 0 -11 -0 0 0 Z " transform="translate(821,780)"/></g>
+<g class="pl-shard" style="--i:2"><path d="M0 0 C4 2 7 4 10 7 C11 7 11 8 12 8 C17 13 23 17 28 21 C33 25 38 29 44 33 C47 36 51 39 55 42 C60 46 65 50 70 54 C75 58 80 62 85 66 C89 69 92 72 95 74 C96 75 96 75 97 76 C98 76 99 77 100 78 C103 81 106 83 109 86 C95 88 81 89 68 90 C65 90 63 90 61 90 C56 91 52 91 47 92 C41 92 35 93 29 93 C25 93 20 94 16 94 C14 94 11 94 9 95 C6 95 3 95 0 95 C-1 95 -2 95 -2 96 C-9 96 -15 96 -21 96 C-19 85 -17 75 -15 65 C-15 63 -14 61 -14 59 C-13 55 -12 52 -11 48 C-10 43 -9 38 -8 33 C-7 29 -6 25 -6 22 C-5 20 -5 18 -4 16 C-4 14 -3 11 -3 9 C-2 7 -2 7 -2 6 C-1 1 -1 1 0 0 Z " transform="translate(782,971)"/></g>
+<g class="pl-shard" style="--i:3"><path d="M0 0 C1 0 1 0 2 1 C3 4 3 4 3 7 C3 8 3 8 3 9 C3 11 4 13 4 16 C4 17 4 19 4 20 C5 23 5 26 5 30 C6 34 6 38 6 42 C7 45 7 48 7 51 C7 52 8 54 8 55 C8 57 8 60 8 62 C9 63 9 63 9 65 C9 70 9 74 9 79 C-16 81 -40 82 -65 83 C-68 83 -71 83 -74 83 C-85 84 -95 84 -106 85 C-115 85 -125 86 -135 86 C-143 87 -152 87 -160 88 C-165 88 -170 88 -175 88 C-180 89 -184 89 -189 89 C-191 89 -192 89 -194 89 C-205 90 -216 90 -227 90 C-225 88 -223 87 -220 86 C-219 86 -218 85 -217 85 C-216 84 -215 84 -214 84 C-212 83 -210 82 -208 81 C-206 81 -204 80 -202 79 C-198 78 -194 76 -190 75 C-188 74 -187 74 -185 73 C-185 73 -184 73 -183 72 C-181 71 -179 71 -177 70 C-163 65 -149 59 -135 54 C-131 53 -128 51 -124 50 C-122 49 -119 48 -117 47 C-108 44 -98 40 -89 37 C-79 33 -68 29 -58 25 C-52 22 -45 20 -39 18 C-35 16 -32 15 -28 13 C-26 13 -25 12 -23 12 C-15 9 -7 5 0 0 Z " transform="translate(725,674)"/></g>
+<g class="pl-shard" style="--i:4"><path d="M0 0 C4 1 6 4 8 8 C9 9 10 11 11 12 C11 13 12 14 12 15 C15 18 17 22 20 25 C26 34 32 43 38 51 C40 54 42 57 44 60 C45 61 45 61 46 62 C47 64 48 66 50 68 C50 68 51 69 51 70 C52 71 52 71 53 72 C56 77 56 77 56 79 C55 82 53 83 50 85 C50 86 49 87 48 88 C46 89 46 89 45 90 C44 91 42 92 41 94 C40 94 40 95 39 95 C36 98 33 101 29 104 C27 106 25 108 23 109 C20 112 17 115 14 118 C10 121 6 125 2 128 C-0 130 -3 132 -5 134 C-8 137 -11 140 -14 142 C-17 145 -20 148 -24 151 C-36 162 -36 162 -38 162 C-37 154 -35 146 -33 138 C-33 137 -33 136 -32 135 C-32 131 -31 127 -30 124 C-29 121 -28 118 -28 116 C-26 110 -25 104 -23 97 C-21 86 -18 76 -15 65 C-14 60 -13 56 -12 51 C-8 34 -4 17 0 0 Z " transform="translate(642,1081)"/></g>
+<g class="pl-shard" style="--i:5"><path d="M0 0 C3 1 7 3 10 5 C11 5 11 6 12 6 C14 7 14 7 15 8 C16 8 17 9 18 9 C27 14 35 19 43 24 C50 28 58 33 66 37 C76 43 85 48 95 54 C103 58 110 63 118 67 C128 73 137 78 147 84 C152 87 158 90 164 93 C165 94 166 95 168 96 C170 97 171 98 173 99 C175 100 177 101 179 102 C180 102 181 103 182 103 C184 105 184 105 185 108 C184 108 184 108 183 109 C172 115 162 121 151 127 C141 133 130 139 119 145 C118 146 116 147 115 148 C114 148 113 148 112 149 C111 150 111 150 110 150 C108 151 108 151 106 150 C104 149 103 148 101 146 C101 145 101 144 100 144 C100 143 99 142 99 142 C98 140 96 139 95 137 C95 136 94 135 94 135 C91 130 88 126 85 122 C84 120 83 119 81 117 C78 112 75 108 72 104 C67 96 62 89 57 82 C53 77 50 72 46 66 C41 59 36 52 31 45 C27 40 24 35 20 30 C18 27 16 24 14 21 C13 20 13 19 12 18 C10 16 8 13 6 10 C6 9 5 8 4 7 C4 6 4 6 3 5 C2 4 2 4 1 3 C0 1 0 1 0 0 Z " transform="translate(614,990)"/></g>
+<g class="pl-shard" style="--i:6"><path d="M0 0 C4 2 7 5 11 7 C12 9 14 10 15 11 C16 11 16 12 17 12 C20 15 23 17 26 20 C27 20 27 20 28 21 C30 22 31 24 33 25 C41 31 49 37 56 44 C61 47 65 50 69 54 C70 54 70 54 71 55 C74 57 77 59 79 62 C86 67 92 72 98 77 C104 81 110 86 116 91 C125 98 134 105 143 112 C147 116 151 119 156 122 C161 126 166 130 171 134 C171 135 172 135 173 136 C174 136 174 137 175 137 C175 138 176 138 177 139 C178 140 178 140 179 142 C157 141 135 140 113 139 C108 139 103 139 98 138 C89 138 80 137 70 137 C60 136 49 136 38 135 C17 134 -5 133 -27 132 C-26 125 -25 118 -24 111 C-23 110 -23 108 -23 107 C-22 104 -22 101 -21 97 C-20 94 -19 91 -19 87 C-18 82 -16 76 -15 70 C-14 64 -13 57 -11 51 C-10 44 -9 38 -7 32 C-7 29 -6 26 -6 23 C-5 20 -4 16 -3 12 C-3 11 -3 10 -3 9 C-2 8 -2 7 -2 6 C-2 5 -2 4 -2 3 C-1 1 -1 1 0 0 Z " transform="translate(538,786)"/></g>
+<g class="pl-shard" style="--i:7"><path d="M0 0 C-1 8 -2 16 -3 23 C-4 25 -4 25 -4 27 C-5 30 -5 34 -6 37 C-7 40 -8 44 -8 47 C-10 53 -11 60 -12 66 C-14 73 -15 81 -17 88 C-20 103 -23 118 -26 133 C-28 132 -29 131 -31 131 C-32 130 -33 130 -33 129 C-36 128 -39 126 -42 124 C-43 124 -44 123 -46 122 C-46 122 -47 122 -47 121 C-57 115 -67 109 -77 103 C-87 98 -96 92 -105 87 C-113 82 -121 77 -129 73 C-168 49 -168 49 -185 39 C-184 37 -184 37 -181 36 C-180 36 -180 36 -178 35 C-177 35 -177 35 -176 34 C-174 34 -172 33 -170 33 C-169 32 -169 32 -167 32 C-162 30 -156 28 -150 27 C-149 27 -148 26 -147 26 C-101 13 -48 0 0 0 Z " transform="translate(462,790)"/></g>
+<g class="pl-shard" style="--i:8"><path d="M0 0 C8 2 15 4 22 6 C23 6 25 7 26 7 C29 8 31 9 34 10 C42 12 49 15 57 17 C57 17 58 18 59 18 C74 23 90 28 105 32 C131 40 156 48 182 57 C185 58 189 59 192 60 C193 60 193 60 194 61 C209 65 225 70 240 75 C240 76 240 76 240 77 C212 81 185 85 157 88 C145 90 132 92 119 94 C108 95 97 97 86 98 C80 99 74 100 68 101 C62 101 57 102 51 103 C49 103 47 103 45 104 C42 104 39 105 37 105 C36 105 35 105 34 105 C30 106 27 106 23 106 C20 92 17 79 14 65 C13 59 11 52 10 46 C8 40 7 34 6 28 C5 25 5 23 4 21 C4 17 3 14 2 11 C2 9 2 9 1 8 C1 7 1 6 1 5 C1 4 1 4 0 3 C0 1 0 1 0 0 Z " transform="translate(332,1019)"/></g>
+<g class="pl-shard" style="--i:9"><path d="M0 0 C32 -0 65 0 97 1 C104 1 111 1 118 1 C124 1 130 1 135 2 C137 2 140 2 142 2 C143 2 144 2 145 2 C151 2 156 2 162 2 C166 2 169 2 172 2 C174 2 175 2 177 2 C189 2 189 2 193 6 C196 9 197 13 199 17 C201 21 203 24 206 27 C207 29 208 30 209 32 C210 33 210 33 210 34 C214 39 217 44 221 49 C224 53 227 57 230 61 C230 62 231 62 231 63 C232 65 233 66 234 68 C236 70 238 73 239 76 C231 74 223 72 215 69 C214 69 213 68 212 68 C208 67 205 66 202 65 C200 64 197 64 195 63 C172 56 149 48 125 41 C101 33 77 25 53 18 C35 12 18 7 0 1 C0 1 0 0 0 0 Z " transform="translate(315,969)"/></g>
+<g class="pl-shard" style="--i:10"><path d="M0 0 C4 1 8 3 12 5 C13 6 14 7 15 7 C16 8 16 8 17 8 C20 10 23 12 26 14 C27 15 27 15 28 15 C35 20 42 24 49 28 C59 33 69 39 79 45 C89 52 99 58 110 64 C114 66 119 69 123 72 C124 72 125 73 126 73 C128 75 131 77 134 78 C136 79 138 81 140 82 C140 82 141 82 142 83 C145 85 148 86 151 88 C152 89 153 89 154 90 C155 91 156 91 157 92 C158 92 158 93 159 93 C159 93 159 94 159 94 C126 94 93 94 61 93 C56 93 51 93 47 93 C21 92 -4 92 -30 91 C-29 86 -28 81 -26 76 C-26 75 -26 74 -26 73 C-25 70 -24 68 -23 65 C-22 63 -22 61 -21 60 C-19 55 -18 50 -16 45 C-15 42 -14 39 -13 36 C-11 31 -10 26 -8 22 C-7 20 -7 18 -6 16 C-5 14 -5 11 -4 9 C-3 8 -3 7 -3 6 C-1 1 -1 1 0 0 Z " transform="translate(30,845)"/></g>
+    </svg>
+    <div class="pl-word">Deerzign</div>
+  </div>
+</div>
+<noscript><style>.preload{display:none}</style></noscript>
+<script>
+/* Preloader gate. Runs before anything else so the overlay is either kept or
+   removed on the same frame the page paints -- no flash either way.
+   Shown once per browsing session: entering the site, not moving inside it. */
+(function(){
+  var pl = document.getElementById('preload');
+  if (!pl) return;
+  var seen = false;
+  try { seen = sessionStorage.getItem('dz-entered') === '1'; } catch(e){}
+  var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (seen || still) { pl.parentNode.removeChild(pl); return; }
+  try { sessionStorage.setItem('dz-entered', '1'); } catch(e){}
+
+  document.documentElement.style.overflow = "hidden";
+  document.documentElement.classList.add("pl-on");
+  var started = Date.now(), done = false;
+  function dismiss(){
+    if (done) return; done = true;
+    pl.classList.add("gone");
+    /* release the page just after the cover starts moving, so its entrance
+       runs in the open */
+    setTimeout(function(){ document.documentElement.classList.remove("pl-on"); }, 180);
+    /* scroll stays locked until the cover has actually left -- unlocking at the
+       start of the slide lets the page move under a still-visible overlay */
+    setTimeout(function(){
+      document.documentElement.style.overflow = "";
+      if (pl.parentNode) pl.parentNode.removeChild(pl);
+    }, 1100);
+  }
+  function ready(){
+    /* hold long enough for the shards to finish, never longer than needed */
+    var wait = Math.max(0, 1750 - (Date.now() - started));
+    setTimeout(dismiss, wait);
+  }
+  if (document.readyState === 'complete') ready();
+  else addEventListener('load', ready);
+  /* a stalled asset must never hold the site hostage */
+  setTimeout(dismiss, 6000);
+})();
+</script>
+<div class="trail-rail" id="trailRail" aria-hidden="true"></div>
 
 <!-- ============================ NAV ============================ -->
 <header class="nav on-dark" id="nav">
@@ -872,7 +989,7 @@ section{position:relative}
 
   <div class="shell hero-in">
     <div class="tag rv"><span class="eyebrow" data-sr="Studio za dizajn i izradu sajtova" data-en="Web design &amp; development studio">Studio za dizajn i izradu sajtova</span></div>
-    <h1 class="rv" data-sr="Svaki brend ostavlja trag." data-en="Every brand leaves a trail.">Svaki brend ostavlja trag.</h1>
+    <h1 class="rv rv-lines" data-sr="Svaki brend ostavlja trag." data-en="Every brand leaves a trail.">Svaki brend ostavlja trag.</h1>
     <p class="lead rv" data-sr="Dizajniramo i izrađujemo sajtove koji pomažu firmama da steknu poverenje i pretvore više pravih posetilaca u upite." data-en="We design and build websites that help businesses earn trust and turn more of the right visitors into enquiries.">Dizajniramo i izrađujemo sajtove koji pomažu firmama da steknu poverenje i pretvore više pravih posetilaca u upite.</p>
     <div class="hero-actions rv">
       <a class="btn btn-light" href="brief.html" data-sr="Pokrenite projekat" data-en="Start a project">Pokrenite projekat</a>
@@ -894,7 +1011,7 @@ section{position:relative}
   <div class="shell">
     <div class="head">
       <div class="tag rv"><span class="eyebrow" data-sr="Prvi utisak" data-en="First impressions">Prvi utisak</span></div>
-      <h2 class="rv" data-sr="Vaš sajt progovori&lt;br&gt;pre nego što to učinite vi." data-en="Your website speaks&lt;br&gt;before you do.">Vaš sajt progovori<br>pre nego što to učinite vi.</h2>
+      <h2 class="rv rv-lines" data-sr="Vaš sajt progovori&lt;br&gt;pre nego što to učinite vi." data-en="Your website speaks&lt;br&gt;before you do.">Vaš sajt progovori<br>pre nego što to učinite vi.</h2>
       <div class="head-note rv">
         <p class="lead" data-sr="Slab sajt retko omane glasno. On jednostavno pošalje potencijalne klijente dalje, pre nego što uopšte čujete za njih." data-en="A weak website rarely fails loudly. It simply sends potential customers elsewhere before you ever hear from them.">Slab sajt retko omane glasno. On jednostavno pošalje potencijalne klijente dalje, pre nego što uopšte čujete za njih.</p>
       </div>
@@ -928,8 +1045,8 @@ section{position:relative}
   <div class="shell">
     <div class="head">
       <div class="tag rv"><span class="eyebrow" data-sr="Izabrani radovi" data-en="Selected work">Izabrani radovi</span></div>
-      <h2 class="rv" data-sr="Nedavni projekti,&lt;br&gt;i šta su morali da postignu." data-en="Recent projects,&lt;br&gt;and what they had to do.">Nedavni projekti,<br>i šta su morali da postignu.</h2>
-      <div class="head-note rv"><p class="small" data-sr="Parfemska kuća, audio brend, studentski investicioni klub i stambeno naselje. Četiri projekta sa četiri različita zadatka — od predstavljanja proizvoda do direktnog poziva." data-en="A fragrance house, an audio brand, a student investment club and a housing development. Four projects with four different jobs to do, from presenting a product to prompting a phone call.">Parfemska kuća, audio brend, studentski investicioni klub i stambeno naselje. Četiri projekta sa četiri različita zadatka — od predstavljanja proizvoda do direktnog poziva.</p></div>
+      <h2 class="rv rv-lines" data-sr="Nedavni projekti,&lt;br&gt;i šta su morali da postignu." data-en="Recent projects,&lt;br&gt;and what they had to do.">Nedavni projekti,<br>i šta su morali da postignu.</h2>
+      <div class="head-note rv"><p class="small" data-sr="Parfemska kuća, audio brend, studentski investicioni klub i brend satova. Četiri projekta sa četiri različita zadatka — od predstavljanja proizvoda do izgradnje poverenja u mladu organizaciju." data-en="A fragrance house, an audio brand, a student investment club and a watchmaker. Four projects with four different jobs to do, from presenting a product to building trust in a young organisation.">Parfemska kuća, audio brend, studentski investicioni klub i brend satova. Četiri projekta sa četiri različita zadatka — od predstavljanja proizvoda do izgradnje poverenja u mladu organizaciju.</p></div>
     </div>
 
     <!-- 01 — offset left, meta pinned to the top of the frame -->
@@ -987,18 +1104,18 @@ section{position:relative}
     </article>
 
     <!-- 04 — offset right, widest of the four to close the sequence -->
-    <article class="work-item" id="project-zlatar">
+    <article class="work-item" id="project-sector">
       <div class="work-visual rv" style="grid-column:6 / span 7">
         <div class="plate">
-          <img src="work-zlatar.jpg" width="1400" height="656" loading="lazy" decoding="async" data-sr-alt="Početna strana dizajnirana za stambeno naselje na planini Zlatar: vazdušni prikaz kućica, naslov na srpskom i broj telefona za prodaju istaknut iznad svega ostalog." data-en-alt="Homepage designed for a housing development on Zlatar mountain: an aerial render of the cabins, a headline in Serbian and the sales phone number placed above everything else." alt="Početna strana dizajnirana za stambeno naselje na planini Zlatar: vazdušni prikaz kućica, naslov na srpskom i broj telefona za prodaju istaknut iznad svega ostalog.">
+          <img src="work-sector.jpg" width="1400" height="646" loading="lazy" decoding="async" data-sr-alt="Početna strana koncepta za brend satova Sector: skoro crn, podeljen raspored — naslov The bezel does the math levo i krupan kadar čeličnog hronografa sa crnim tahimetarskim prstenom koji ispunjava desnu polovinu." data-en-alt="Homepage of the Sector watch concept: a near-black split layout with the headline The bezel does the math on the left and a close-up of a steel chronograph with a black tachymeter bezel filling the right half." alt="Početna strana koncepta za brend satova Sector: skoro crn, podeljen raspored — naslov The bezel does the math levo i krupan kadar čeličnog hronografa sa crnim tahimetarskim prstenom koji ispunjava desnu polovinu.">
         </div>
       </div>
       <div class="work-meta rv" style="grid-column:1 / span 4;grid-row:1">
         <span class="work-index">04</span>
-        <span class="work-cat" data-sr="Nekretnine" data-en="Real estate">Nekretnine</span>
-        <h3>Kuće Zlatar</h3>
-        <p class="lead" data-sr="Stambeno naselje kod kog većina prodajnih upita dolazi telefonom. Svaka strana drži broj telefona nadohvat ruke, tako da posetioci koji gledaju planove ili detalje o nekretninama mogu odmah da pozovu." data-en="A housing development where most sales enquiries happen over the phone. Every page keeps the number within reach, so visitors browsing floor plans or property details can call immediately.">Stambeno naselje kod kog većina prodajnih upita dolazi telefonom. Svaka strana drži broj telefona nadohvat ruke, tako da posetioci koji gledaju planove ili detalje o nekretninama mogu odmah da pozovu.</p>
-        <a class="arrow-link" href="https://kucezlatar.com/" target="_blank" rel="noopener noreferrer"><span class="ln" data-sr="Pogledajte sajt" data-en="View site">Pogledajte sajt</span>
+        <span class="work-cat" data-sr="Sat — koncept" data-en="Watch — concept">Sat — koncept</span>
+        <h3>Sector</h3>
+        <p class="lead" data-sr="Koncept za brend satova. Ceo hero je izgrađen oko jedne komplikacije — tahimetarskog prstena — uz studijski snimak čeličnog kućišta u petlji i naslov koji običnim rečima objašnjava čemu taj prsten zapravo služi." data-en="A concept for a watch brand. The whole hero is built around a single complication — the tachymeter bezel — with a looping studio film of the steel case and a headline that explains, in plain words, what that bezel is actually for.">Koncept za brend satova. Ceo hero je izgrađen oko jedne komplikacije — tahimetarskog prstena — uz studijski snimak čeličnog kućišta u petlji i naslov koji običnim rečima objašnjava čemu taj prsten zapravo služi.</p>
+        <a class="arrow-link" href="https://sector-tau.vercel.app/" target="_blank" rel="noopener noreferrer"><span class="ln" data-sr="Pogledajte sajt" data-en="View site">Pogledajte sajt</span>
           <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8h11"></path><path d="m8.5 3.5 4.5 4.5-4.5 4.5"></path></svg>
         </a>
       </div>
@@ -1012,7 +1129,7 @@ section{position:relative}
   <div class="lux-in">
     <div class="lux-copy">
       <div class="tag rv"><span class="eyebrow" data-sr="Luksuzne nekretnine" data-en="Luxury real estate">Luxury real estate</span></div>
-      <h2 class="lux-h rv" data-sr="Za nekretnine koje zaslužuju više od oglasa."
+      <h2 class="lux-h rv rv-lines" data-sr="Za nekretnine koje zaslužuju više od oglasa."
         data-en="For properties that deserve more than a listing.">For properties that deserve more than a listing.</h2>
       <p class="lead rv" data-sr="Zasebna linija za izuzetne nekretnine i agencije koje ih zastupaju. Prezentacije građene oko fotografije i arhitekture, umesto oko filtera i sličica."
         data-en="A separate practice for exceptional homes and the brokerages that represent them. Presentations built around photography and architecture rather than filters and thumbnails.">A separate practice for exceptional homes and the brokerages that represent them. Presentations built around photography and architecture rather than filters and thumbnails.</p>
@@ -1037,7 +1154,7 @@ section{position:relative}
   <div class="shell">
     <div class="head">
       <div class="tag rv"><span class="eyebrow" data-sr="Šta radimo" data-en="What we do">Šta radimo</span></div>
-      <h2 class="rv" data-sr="Sve što je sajtu potrebno,&lt;br&gt;kroz jedinstven proces." data-en="Everything your website needs,&lt;br&gt;handled as one process.">Sve što je sajtu potrebno,<br>kroz jedinstven proces.</h2>
+      <h2 class="rv rv-lines" data-sr="Sve što je sajtu potrebno,&lt;br&gt;kroz jedinstven proces." data-en="Everything your website needs,&lt;br&gt;handled as one process.">Sve što je sajtu potrebno,<br>kroz jedinstven proces.</h2>
       <div class="head-note rv"><p class="lead" data-sr="Strategija, dizajn i razvoj ostaju povezani od prvog razgovora do lansiranja, tako da se prvobitni cilj prenosi kroz svaku odluku." data-en="Strategy, design and development stay connected from the first conversation to launch, so the original goal is carried through every decision.">Strategija, dizajn i razvoj ostaju povezani od prvog razgovora do lansiranja, tako da se prvobitni cilj prenosi kroz svaku odluku.</p></div>
     </div>
 
@@ -1057,7 +1174,7 @@ section{position:relative}
   <div class="shell">
     <div class="head">
       <div class="tag rv"><span class="eyebrow" data-sr="Cene" data-en="Pricing">Cene</span></div>
-      <h2 class="rv" data-sr="Jedna fiksna cena,&lt;br&gt;dogovorena pre početka." data-en="One fixed price,&lt;br&gt;agreed before we start.">Jedna fiksna cena,<br>dogovorena pre početka.</h2>
+      <h2 class="rv rv-lines" data-sr="Jedna fiksna cena,&lt;br&gt;dogovorena pre početka." data-en="One fixed price,&lt;br&gt;agreed before we start.">Jedna fiksna cena,<br>dogovorena pre početka.</h2>
       <div class="head-note rv"><p class="lead" data-sr="Punu cenu dobijate u pisanoj formi pre početka rada. Bez naplate po satu i bez računa koji raste tokom projekta." data-en="You get the full price in writing before any work begins. No hourly billing, and no invoice that grows during the project.">Punu cenu dobijate u pisanoj formi pre početka rada. Bez naplate po satu i bez računa koji raste tokom projekta.</p></div>
     </div>
 
@@ -1247,7 +1364,7 @@ section{position:relative}
   <div class="shell">
     <div class="head">
       <div class="tag rv"><span class="eyebrow" data-sr="Naš proces" data-en="Our process">Naš proces</span></div>
-      <h2 class="rv" data-sr="Jasan proces&lt;br&gt;od početka do kraja." data-en="A clear process&lt;br&gt;from start to finish.">Jasan proces<br>od početka do kraja.</h2>
+      <h2 class="rv rv-lines" data-sr="Jasan proces&lt;br&gt;od početka do kraja." data-en="A clear process&lt;br&gt;from start to finish.">Jasan proces<br>od početka do kraja.</h2>
       <div class="head-note rv"><p class="lead" data-sr="Šest koraka. Znaćete šta se dešava u svakom od njih i šta je potrebno od vas pre nego što počne." data-en="Six steps. You will know what is happening at each one, and what is needed from you before it starts.">Šest koraka. Znaćete šta se dešava u svakom od njih i šta je potrebno od vas pre nego što počne.</p></div>
     </div>
 
@@ -1274,7 +1391,7 @@ section{position:relative}
     <div class="about-grid">
       <div style="grid-column:span 5">
         <div class="tag rv" style="margin-bottom:26px"><span class="eyebrow" data-sr="Zašto Deerzign" data-en="Why Deerzign">Zašto Deerzign</span></div>
-        <h2 class="rv" style="font-size:var(--d2);line-height:1.02" data-sr="Mali studio.&lt;br&gt;Puna pažnja." data-en="Small studio.&lt;br&gt;Full attention.">Mali studio.<br>Puna pažnja.</h2>
+        <h2 class="rv rv-lines" style="font-size:var(--d2);line-height:1.02" data-sr="Mali studio.&lt;br&gt;Puna pažnja." data-en="Small studio.&lt;br&gt;Full attention.">Mali studio.<br>Puna pažnja.</h2>
       </div>
       <div class="about-copy">
         <p class="lead rv" data-sr="Deerzign je mali nezavisni studio, tako da direktno sarađujete sa osobom koja dizajnira i izrađuje vaš sajt, od prvog razgovora do lansiranja. Nema account menadžera, nepotrebnih predaja niti slojeva odobravanja." data-en="Deerzign is a small independent studio, so you deal directly with the person designing and building your website from the first conversation to launch. There are no account managers, unnecessary handovers or layers of approval.">Deerzign je mali nezavisni studio, tako da direktno sarađujete sa osobom koja dizajnira i izrađuje vaš sajt, od prvog razgovora do lansiranja. Nema account menadžera, nepotrebnih predaja niti slojeva odobravanja.</p>
@@ -1302,7 +1419,7 @@ section{position:relative}
   <div class="shell cta-grid">
     <div class="cta-main">
       <div class="tag rv" style="margin-bottom:26px"><span class="eyebrow" data-sr="Imate projekat na umu?" data-en="Have a project in mind?">Imate projekat na umu?</span></div>
-      <h2 class="rv" data-sr="Sajt treba&lt;br&gt;sam sebe da isplati." data-en="A website should&lt;br&gt;pay for itself.">Sajt treba<br>sam sebe da isplati.</h2>
+      <h2 class="rv rv-lines" data-sr="Sajt treba&lt;br&gt;sam sebe da isplati." data-en="A website should&lt;br&gt;pay for itself.">Sajt treba<br>sam sebe da isplati.</h2>
       <p class="lead rv" style="margin-top:28px;max-width:56ch" data-sr="Sajt treba da vaš biznis učini razumljivijim, pouzdanijim i dostupnijim za kontakt — pretvarajući više pravih posetilaca u stvarne prilike." data-en="A website should make your business easier to understand, easier to trust and easier to contact — turning more of the right visitors into real opportunities.">Sajt treba da vaš biznis učini razumljivijim, pouzdanijim i dostupnijim za kontakt — pretvarajući više pravih posetilaca u stvarne prilike.</p>
       <div class="rv" style="margin-top:36px;display:flex;flex-wrap:wrap;align-items:center;gap:16px 24px">
         <a class="btn btn-light" href="brief.html" data-sr="Pokrenite projekat" data-en="Start a project">Pokrenite projekat</a>
@@ -1436,6 +1553,86 @@ section{position:relative}
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(lay);
   })();
 
+  /* ---- headlines: split into lines so each can rise from behind its own edge.
+     Measured at runtime rather than hard-coded, because the break points move
+     with the viewport, with the display face once it loads, and with the
+     language. Re-run after any of those. ---- */
+  function splitLines(){
+    document.querySelectorAll('.rv-lines').forEach(function(el){
+      if(!el._raw) el._raw = el.textContent.replace(/\s+/g,' ').trim();
+      if(!el._raw) return;
+      /* a hidden or zero-width box measures every word onto its own line, which
+         would shred the heading -- leave it alone until it has a real width */
+      if(!el.offsetWidth) return;
+      /* lay the words out first and read where each one landed */
+      el.innerHTML = el._raw.split(' ').map(function(w){
+        return '<span class="ln-w">' + w + '</span>';
+      }).join(' ');
+      var lines = [], cur = null, top = null;
+      el.querySelectorAll('.ln-w').forEach(function(w){
+        var t = w.offsetTop;
+        if(top === null || Math.abs(t - top) > 2){ top = t; cur = []; lines.push(cur); }
+        cur.push(w.textContent);
+      });
+      el.innerHTML = lines.map(function(l, i){
+        /* trailing space keeps copy/paste and screen readers from running the
+           last word of one line into the first of the next */
+        return '<span class="ln"><i style="--d:' + (i * 90) + 'ms">' + l.join(' ') + (i < lines.length - 1 ? ' ' : '') + '</i></span>';
+      }).join('');
+    });
+  }
+  if(!reduce){
+    splitLines();
+    if(document.fonts && document.fonts.ready) document.fonts.ready.then(splitLines);
+    var lineT;
+    addEventListener('resize', function(){
+      clearTimeout(lineT);
+      lineT = setTimeout(splitLines, 160);
+    });
+  }
+
+  /* ---- the trail down the left margin, lit by how far the page has come.
+     Colour flips to the lit ember over dark sections, sampled from whatever
+     actually sits behind the rail rather than from a hard-coded scroll range. ---- */
+  (function(){
+    if(reduce) return;
+    var rail = document.getElementById('trailRail');
+    if(!rail) return;
+    var HOOF = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">'
+      + '<path d="M9.4 3.2c1.6 0 2.6 2 2.4 4.6-.2 2.6-1.3 4.4-2.8 4.3-1.6-.1-2.6-2.1-2.4-4.7.2-2.5 1.3-4.2 2.8-4.2Z"/>'
+      + '<path d="M15.6 4.6c1.5.2 2.3 2.2 1.9 4.7-.4 2.5-1.7 4.2-3.2 3.9-1.5-.3-2.3-2.3-1.9-4.8.4-2.4 1.7-4 3.2-3.8Z"/>'
+      + '<path d="M11 15.4c2.2 0 4 1.5 4 3.3s-1.8 2.6-4 2.6-4-.8-4-2.6 1.8-3.3 4-3.3Z" opacity=".55"/></svg>';
+    var N = 24, marks = [], html = '';
+    for(var i = 0; i < N; i++){
+      html += '<i style="top:' + (7 + i * (86 / (N - 1))).toFixed(2) + '%;--r:'
+        + (i % 2 ? 9 : -9) + 'deg;margin-left:' + (i % 2 ? 4 : -4) + 'px">' + HOOF + '</i>';
+    }
+    rail.innerHTML = html;
+    marks = rail.querySelectorAll('i');
+
+    var raf = 0;
+    function paint(){
+      raf = 0;
+      var max = document.documentElement.scrollHeight - innerHeight;
+      var p = max > 0 ? Math.min(1, Math.max(0, scrollY / max)) : 0;
+      var lit = Math.round(p * (N - 1));
+      for(var i = 0; i < marks.length; i++) marks[i].classList.toggle('on', i <= lit);
+      /* read the section actually behind the rail, not a guessed scroll offset */
+      var under = document.elementFromPoint(33, Math.round(innerHeight * 0.5));
+      rail.classList.toggle('over-dark', !!(under && under.closest && under.closest('.on-dark')));
+    }
+    /* A hidden tab parks rAF. Cancel-and-rerequest rather than latching a flag,
+       so the rail cannot wedge and stop updating once the tab comes back. */
+    function schedule(){
+      if(raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(paint);
+    }
+    addEventListener("scroll", schedule, {passive:true});
+    addEventListener("resize", schedule, {passive:true});
+    document.addEventListener("visibilitychange", function(){ if(!document.hidden) schedule(); });
+    paint();
+  })();
+
   /* ---- language: SR / EN, shared with brief.html and hvala.html via localStorage ---- */
   function applyLang(l){
     document.documentElement.lang = l;
@@ -1455,6 +1652,7 @@ section{position:relative}
       b.setAttribute('aria-pressed', String(b.dataset.lang === l));
     });
     try { localStorage.setItem('dz-lang', l); } catch(e){}
+    if(typeof splitLines === 'function') { document.querySelectorAll('.rv-lines').forEach(function(el){ el._raw = null; }); splitLines(); }
   }
   document.querySelectorAll('.lang-switch button').forEach(function(b){
     b.addEventListener('click', function(){ applyLang(b.dataset.lang); });
