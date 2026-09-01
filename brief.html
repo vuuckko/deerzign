@@ -11,29 +11,40 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
 /* ============================================================
-   TOKENS — same set as index.html
+   TOKENS — the main site's set (index.html), with two values
+   deliberately darkened for this page.
+
+   The site's --brown (#8A8177) is a decorative mark colour and reads
+   3.39:1 on the paper. Here it carries field labels and helper text —
+   functional copy at 13px — so it drops to #6B6459 (5.18:1). Same hue
+   family, clears AA. --text-dim gets the same treatment on the rail
+   (#7C766D measured 4.26:1 there, #8A8177 measures 5.01:1).
    ============================================================ */
 :root{
-  --warm:#F2F0E9;
-  --warm-2:#ECE7DA;
-  --ink:#151815;
-  --ink-2:#1B1E1B;
-  --forest:#263D32;
-  --forest-deep:#16241D;
-  --brown:#756B5E;
-  --text-dim:#AAA99F;
-  --line:rgba(20,21,15,.14);
+  --warm:#F4F1EA;
+  --warm-2:#E9E4D8;
+  --ink:#0A0A0A;
+  --ink-2:#131313;
+  --forest:#A6210C;
+  --ember-lit:#EF4025;
+  --forest-deep:#0A0A0A;
+  --brown:#6B6459;
+  --text-dim:#8A8177;
+  --line:rgba(10,10,10,.15);
   --line-lt:rgba(242,240,233,.18);
+  /* red is the brand accent now, so an error can no longer just be "the red
+     one". They are kept apart by where each is allowed to appear: the accent
+     never touches a field, and this only ever appears on one. */
   --err:#9A3B2B;
 
-  --display:"Marcellus",Georgia,"Times New Roman",serif;
+  --display:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
   --text:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
 
-  --d2:clamp(1.45rem,2.4vw,2rem);
+  --d2:clamp(1.5rem,2.5vw,2.15rem);
   --d3:clamp(1.35rem,2.1vw,1.9rem);
 
   --pad:clamp(1.25rem,4vw,3.25rem);
@@ -50,17 +61,22 @@ body{
 img{max-width:100%;display:block}
 a{color:inherit;text-decoration:none}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
-h1,h2,h3,h4{font-family:var(--display);font-weight:600;margin:0;letter-spacing:-.032em;line-height:1.06}
+h1,h2,h3,h4{font-family:var(--display);font-weight:600;margin:0;letter-spacing:-.032em;line-height:1.04}
 p{margin:0}
 ul,ol{margin:0;padding:0;list-style:none}
 ::selection{background:var(--forest);color:var(--warm)}
-:focus-visible{outline:2px solid var(--forest);outline-offset:3px;border-radius:3px}
+/* the focus ring stays ink: a red ring around a text field would read as the
+   field being wrong rather than being active */
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px;border-radius:3px}
 .on-dark :focus-visible{outline-color:var(--warm)}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 
+/* the site sets eyebrows in spaced caps; this page keeps them as a plain
+   small sentence, because an intake form that shouts STEP 01 reads as a
+   survey rather than as a few questions */
 .eyebrow{font-family:var(--text);font-size:.8rem;font-weight:500;letter-spacing:0;text-transform:none;color:var(--brown)}
 .on-dark .eyebrow{color:var(--text-dim)}
-.small{font-size:.9375rem;line-height:1.6;color:rgba(20,21,15,.68)}
+.small{font-size:.9375rem;line-height:1.6;color:rgba(10,10,10,.68)}
 .on-dark .small{color:var(--text-dim)}
 
 .btn{
@@ -70,7 +86,8 @@ ul,ol{margin:0;padding:0;list-style:none}
   transition:background .45s var(--ease),color .45s var(--ease),opacity .3s var(--ease);
 }
 .btn-dark{background:var(--ink);color:var(--warm)}
-.btn-dark:hover{background:var(--forest)}
+/* warm on the accent, not ink: ink measures 2.68:1 there, warm 6.55:1 */
+.btn-dark:hover{background:var(--forest);color:var(--warm)}
 .btn-quiet{border-color:var(--line);color:var(--ink)}
 .btn-quiet:hover{background:var(--warm-2)}
 .btn[disabled]{opacity:.45;pointer-events:none}
@@ -82,19 +99,24 @@ ul,ol{margin:0;padding:0;list-style:none}
 /* ============================================================
    LAYOUT — a dark rail with the trail, the form beside it
    ============================================================ */
-.wrap{display:grid;grid-template-columns:clamp(290px,25vw,392px) 1fr;min-height:100vh}
+/* minmax(0,1fr), not 1fr: a bare 1fr track refuses to shrink below its
+   content min-width, so one wide child pushes the whole page past the
+   viewport instead of wrapping inside it */
+.wrap{display:grid;grid-template-columns:clamp(258px,21vw,330px) minmax(0,1fr);min-height:100vh}
 
 .rail{
   position:sticky;top:0;height:100vh;overflow:hidden;
-  background:var(--ink);color:var(--warm);
+  /* the same material as the site's dark panels, not a flat fill */
+  background:linear-gradient(150deg,#171717 0%,#050505 100%);
+  color:var(--warm);
   padding:clamp(1.6rem,2.6vw,2.6rem);
   display:flex;flex-direction:column;gap:2rem;
 }
 /* the mark, large and quiet, the way it sits in the dark panels on the site */
 .rail::after{
-  content:"";position:absolute;right:-16%;bottom:-8%;width:78%;aspect-ratio:1;
+  content:"";position:absolute;right:-6%;bottom:13%;width:90%;aspect-ratio:1;
   background:url(deer.png) center/contain no-repeat;
-  filter:brightness(0) invert(1);opacity:.06;pointer-events:none;
+  filter:brightness(0) invert(1);opacity:.075;pointer-events:none;
 }
 .rail>*{position:relative;z-index:1}
 
@@ -105,30 +127,35 @@ ul,ol{margin:0;padding:0;list-style:none}
 .rail-title{font-size:clamp(1.5rem,1.9vw,1.9rem);margin-top:.9rem}
 .rail-sub{margin-top:.85rem;max-width:30ch}
 
-/* ---- the trail: tracks pressed in one after another ---- */
-.trail{margin-top:clamp(2rem,5vh,3.4rem);position:relative;display:flex;flex-direction:column;gap:6px}
-.tstep .n{display:none}
-.trail::before{
-  content:"";position:absolute;left:15px;top:18px;bottom:18px;width:1px;
-  background:linear-gradient(rgba(244,241,233,0),rgba(244,241,233,.22),rgba(244,241,233,0));
-}
-.tstep{position:relative;padding:9px 0 9px 46px;display:flex;flex-direction:column;gap:2px}
-.tstep .track{
-  position:absolute;left:0;top:8px;width:31px;height:31px;display:grid;place-items:center;
-  background:var(--ink);border-radius:50%;
-}
-.tstep .track svg{width:22px;height:22px;color:var(--warm);opacity:.24;transition:opacity .5s var(--ease),transform .5s var(--ease)}
-.tstep:nth-child(even) .track svg{transform:rotate(9deg)}
-.tstep:nth-child(odd) .track svg{transform:rotate(-7deg)}
-.tstep.done .track svg{opacity:.6}
-.tstep.now .track svg{opacity:1}
-.tstep .n{font-size:.625rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--text-dim)}
-.tstep .t{font-size:.9375rem;font-weight:600;color:var(--text-dim);transition:color .5s var(--ease)}
-.tstep.done .t{color:rgba(244,241,233,.72)}
+/* ---- progress: a ladder down the column ----
+   A bar per step, lit once you reach it, with the step number set the way the
+   site sets its section numerals — outlined while it is ahead of you, solid on
+   the one you are on. Fills the height of the rail instead of floating in it.
+   The script still does nothing but toggle .done / .now. */
+.trail{margin-top:clamp(2rem,5vh,3.4rem);display:flex;flex-direction:column;gap:2px}
+.tstep{position:relative;display:grid;grid-template-columns:2.1rem 1fr;align-items:center;
+  gap:14px;padding:14px 0 14px 20px;
+  border-left:2px solid rgba(244,241,233,.13);
+  transition:border-color .5s var(--ease)}
+.tstep.done{border-left-color:rgba(244,241,233,.42)}
+.tstep.now{border-left-color:var(--warm)}
+/* the hoof mark belonged to the old trail */
+.tstep .track{display:none}
+.tstep .n{display:block;font-family:var(--display);font-size:1.3rem;font-weight:700;
+  letter-spacing:-.03em;line-height:1;text-transform:none;
+  color:transparent;-webkit-text-stroke:1px rgba(244,241,233,.3);
+  transition:color .5s var(--ease),-webkit-text-stroke-color .5s var(--ease)}
+.tstep.done .n{-webkit-text-stroke-color:rgba(244,241,233,.5)}
+.tstep.now .n{color:var(--warm);-webkit-text-stroke-color:transparent}
+.tstep .t{font-size:.9375rem;font-weight:600;color:var(--text-dim);
+  transition:color .5s var(--ease)}
+.tstep.done .t{color:rgba(244,241,233,.68)}
 .tstep.now .t{color:var(--warm)}
 
-.rail-foot{display:flex;align-items:center;justify-content:space-between;gap:16px;
+.rail-foot{margin-top:auto;display:flex;flex-direction:column;align-items:flex-start;gap:14px;
   padding-top:1.25rem;border-top:1px solid var(--line-lt)}
+/* and it never shrinks again, whatever it is put next to */
+.rail-foot .lang{flex:none}
 
 /* ---- language switch ---- */
 .lang{display:inline-flex;border:1px solid var(--line-lt);border-radius:999px;overflow:hidden}
@@ -139,97 +166,167 @@ ul,ol{margin:0;padding:0;list-style:none}
 .stage .lang button[aria-pressed="true"]{background:var(--ink);color:var(--warm)}
 
 /* ---- mobile head: the rail folds into a bar ---- */
-.mhead{display:none;position:sticky;top:0;z-index:30;background:var(--ink);color:var(--warm);
+.mhead{display:none;position:sticky;top:0;z-index:30;
+  background:linear-gradient(150deg,#171717 0%,#050505 100%);color:var(--warm);
   padding:12px var(--pad) 0}
 .mhead-in{display:flex;align-items:center;justify-content:space-between;gap:14px}
 .mhead .meta{font-size:.75rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim)}
 .mbar{margin-top:12px;height:2px;background:var(--line-lt);position:relative}
+/* warm, not ember: red on this page means something is wrong, and a progress
+   bar is not a warning */
 .mbar i{position:absolute;inset:0 auto 0 0;background:var(--warm);width:25%;transition:width .5s var(--ease)}
 
 /* ============================================================
    FORM
    ============================================================ */
 .stage{padding:clamp(2.2rem,5vw,4.5rem) var(--pad) clamp(4rem,8vw,6rem)}
-.stage-in{max-width:760px;margin-inline:auto}
+.stage-in{max-width:920px;margin-inline:auto}
 
 .step[hidden]{display:none}
-.step{animation:rise .55s var(--ease) both}
-@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-@media (prefers-reduced-motion:reduce){.step{animation:none}}
+/* the site brings a section in a part at a time rather than as one slab, and
+   the form does the same — a step opens instead of simply appearing */
+.step > *{animation:rise .5s var(--ease) both}
+.step > *:nth-child(1){animation-delay:0ms}
+.step > *:nth-child(2){animation-delay:55ms}
+.step > *:nth-child(3){animation-delay:110ms}
+.step > *:nth-child(4){animation-delay:165ms}
+.step > *:nth-child(5){animation-delay:220ms}
+.step > *:nth-child(6){animation-delay:275ms}
+.step > *:nth-child(7){animation-delay:330ms}
+.step > *:nth-child(8){animation-delay:385ms}
+.step > *:nth-child(9){animation-delay:440ms}
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.step > *{animation:none}}
 
 .step-head{padding-bottom:1.1rem;margin-bottom:1.5rem;border-bottom:1px solid var(--line)}
-.step-head h2{font-family:var(--display);font-weight:400;letter-spacing:-.004em;font-size:var(--d2);margin-top:.45rem}
+.step-head h2{font-family:var(--display);font-weight:600;letter-spacing:-.032em;font-size:var(--d2);margin-top:.45rem}
 .step-head .small{margin-top:.55rem;max-width:58ch;font-size:.875rem}
 
-.q{padding:1.35rem 0;border-bottom:1px solid var(--line)}
+/* Question on the left, answer on the right — the step reads as an intake
+   document rather than as a stack of identical rows, which is what made every
+   question look the same weight as every other. */
+.q{display:grid;grid-template-columns:minmax(0,14.5rem) minmax(0,1fr);
+  gap:clamp(1rem,2.6vw,2.4rem);align-items:start;
+  padding:1.5rem 0;border-bottom:1px solid var(--line)}
 .q:last-of-type{border-bottom:0}
-/* each real question gets a quiet outlined index mark, echoing the numerals
-   used for services/pricing/process on the main site — :has() skips the
-   contact-details block, which has no .q-t and so isn't really "a question" */
+/* the consent line closes the form and has no question to put beside it */
+.q:has(.consent){grid-template-columns:1fr}
 /* A question reads as a form label, not as a headline — the page is an
    intake, and numbering every line made it feel like a survey. */
-.q-t{display:block;font-family:var(--text);font-size:.9rem;font-weight:600;
-  letter-spacing:0;line-height:1.4;color:var(--ink)}
+/* the question column: one block, so it cannot be pulled apart by the height
+   of the answer beside it */
+.q-ask{grid-column:1}
+.q-t{display:block;font-family:var(--text);font-size:.9375rem;font-weight:600;
+  letter-spacing:-.005em;line-height:1.35;color:var(--ink)}
 .q-t .req{color:var(--brown);font-weight:500}
-.q-h{margin-top:.3rem;font-size:.85rem;line-height:1.5;color:rgba(20,21,15,.52);max-width:56ch}
-.q-body{margin-top:.75rem}
+.q-h{margin-top:.35rem;font-size:.8125rem;line-height:1.5;color:rgba(10,10,10,.55)}
+.q-body{grid-column:2;margin-top:0}
+.q:has(.consent) .q-body{grid-column:1}
 
 /* two fields side by side */
 .row{display:grid;grid-template-columns:1fr 1fr;gap:1.05rem 1.2rem}
 .stack{display:flex;flex-direction:column;gap:.7rem}
 
 label.f{display:block}
-label.f .lb{display:block;font-size:.8125rem;font-weight:600;color:var(--brown);margin-bottom:.45rem}
+label.f .lb{display:block;font-size:.8125rem;font-weight:600;color:var(--brown);
+  margin-bottom:.45rem;transition:color .3s var(--ease)}
+label.f:focus-within .lb{color:var(--ink)}
 
+/* 6px, not the 2px this page used to run: every surface on the site is softly
+   cornered (plates 14px, panels 20px), and a hard-square field inside that
+   reads as a different kit. Still well short of the 12px pill-and-glow version
+   that made the form look generated. */
 input[type=text],input[type=email],input[type=tel],input[type=url],input[type=number],textarea,select{
   width:100%;font:inherit;color:var(--ink);background:rgba(255,255,255,.55);
-  border:1px solid var(--line);border-radius:2px;padding:11px 13px;
+  border:1px solid var(--line);border-radius:6px;padding:11px 13px;
   transition:border-color .3s var(--ease),background .3s var(--ease);
 }
 textarea{resize:vertical;min-height:82px;line-height:1.55}
-input::placeholder,textarea::placeholder{color:rgba(20,21,15,.34)}
-input:hover,textarea:hover,select:hover{border-color:rgba(20,21,15,.26)}
-input:focus,textarea:focus,select:focus{outline:none;border-color:var(--forest);background:#fff}
+input::placeholder,textarea::placeholder{color:rgba(10,10,10,.34)}
+input:hover,textarea:hover,select:hover{border-color:rgba(10,10,10,.28)}
+input:focus,textarea:focus,select:focus{outline:none;
+  border-color:rgba(10,10,10,.62);background:#FDFCF8;
+  box-shadow:0 1px 0 rgba(10,10,10,.05),0 8px 18px -14px rgba(10,10,10,.4)}
 .invalid input,.invalid textarea,.invalid select,input.invalid,textarea.invalid{border-color:var(--err)}
 .num{max-width:170px}
 
-/* ---- choices: pills ---- */
-.chips{display:flex;flex-wrap:wrap;gap:7px;border:0;padding:0;margin:0}
+/* ---- choices ----
+   A grid, not a wrapping row. Intrinsically-sized options wrap to a ragged
+   right edge and leave the last one stranded on its own line, which reads as
+   spillage rather than as a set. On a shared column track every row starts and
+   ends on the same two lines, all cells in a row are the same height, and the
+   short final row lines up under the one above it. */
+.chips{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,208px),1fr));
+  gap:8px;border:0;padding:0;margin:0;
+}
 .chips legend{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
-.chip{position:relative}
-/* the real control sits over the pill rather than being sized to nothing —
-   a 0×0 input drops out of the accessibility tree in some browsers */
+/* an option whose label is a full phrase gets two tracks instead of being
+   forced to wrap inside one */
+.chip--wide{grid-column:span 2}
+.chip{position:relative;display:flex}
+/* the real control sits over the chip rather than being sized to nothing —
+   a 0x0 input drops out of the accessibility tree in some browsers */
 .chip input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
 .chip span{
-  display:inline-flex;align-items:center;cursor:pointer;
-  padding:8px 14px;border:1px solid var(--line);border-radius:2px;
-  font-size:.85rem;font-weight:500;background:transparent;
-  transition:background .3s var(--ease),color .3s var(--ease),border-color .3s var(--ease);
+  position:relative;flex:1;display:flex;align-items:center;cursor:pointer;
+  padding:12px 34px 12px 15px;border:1px solid var(--line);border-radius:8px;
+  font-size:.85rem;font-weight:500;line-height:1.35;background:rgba(255,255,255,.45);
+  transition:background .3s var(--ease),color .3s var(--ease),
+             border-color .3s var(--ease),box-shadow .3s var(--ease);
 }
-.chip span:hover{border-color:rgba(20,21,15,.3)}
-.chip input:checked+span{background:var(--ink);color:var(--warm);border-color:var(--ink)}
+/* the tick sits in the corner, out of the way of the label, and the right
+   padding is reserved on every option so nothing reflows when one is picked */
+.chip span::after{content:"";position:absolute;top:10px;right:11px;width:13px;height:13px;
+  background-color:var(--ink);opacity:0;transform:scale(.5);
+  -webkit-mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%223.2%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M4%2012.5%209.5%2018%2020%206.5%22%2F%3E%3C%2Fsvg%3E") center/contain no-repeat;
+          mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%223.2%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M4%2012.5%209.5%2018%2020%206.5%22%2F%3E%3C%2Fsvg%3E") center/contain no-repeat;
+  transition:opacity .22s var(--ease),transform .3s cubic-bezier(.22,1.35,.36,1)}
+.chip input:checked+span::after{opacity:1;transform:none}
+.chip span--unused::before{
+  content:"";flex:none;width:15px;height:15px;margin-right:9px;
+  background-color:var(--ink);
+  -webkit-mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M9.4%203.2c1.6%200%202.6%202%202.4%204.6-.2%202.6-1.3%204.4-2.8%204.3-1.6-.1-2.6-2.1-2.4-4.7.2-2.5%201.3-4.2%202.8-4.2Z%22%2F%3E%3Cpath%20d%3D%22M15.6%204.6c1.5.2%202.3%202.2%201.9%204.7-.4%202.5-1.7%204.2-3.2%203.9-1.5-.3-2.3-2.3-1.9-4.8.4-2.4%201.7-4%203.2-3.8Z%22%2F%3E%3Cpath%20d%3D%22M11%2015.4c2.2%200%204%201.5%204%203.3s-1.8%202.6-4%202.6-4-.8-4-2.6%201.8-3.3%204-3.3Z%22%20opacity%3D%22.55%22%2F%3E%3C%2Fsvg%3E") center/contain no-repeat;
+          mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M9.4%203.2c1.6%200%202.6%202%202.4%204.6-.2%202.6-1.3%204.4-2.8%204.3-1.6-.1-2.6-2.1-2.4-4.7.2-2.5%201.3-4.2%202.8-4.2Z%22%2F%3E%3Cpath%20d%3D%22M15.6%204.6c1.5.2%202.3%202.2%201.9%204.7-.4%202.5-1.7%204.2-3.2%203.9-1.5-.3-2.3-2.3-1.9-4.8.4-2.4%201.7-4%203.2-3.8Z%22%2F%3E%3Cpath%20d%3D%22M11%2015.4c2.2%200%204%201.5%204%203.3s-1.8%202.6-4%202.6-4-.8-4-2.6%201.8-3.3%204-3.3Z%22%20opacity%3D%22.55%22%2F%3E%3C%2Fsvg%3E") center/contain no-repeat;
+  opacity:0;transform:scale(.72) rotate(-6deg);
+  transition:opacity .3s var(--ease),transform .4s cubic-bezier(.22,1.3,.36,1);
+}
+.chip span:hover{border-color:rgba(10,10,10,.28);background:rgba(255,255,255,.85)}
+/* Chosen reads as warm paper lifted off the page with a print pressed into it,
+   not as a block of ink. At chip size the old solid fill put a heavy black
+   rectangle in the middle of a form three times over — right for one tier on
+   the pricing strip, far too hard for an answer. */
+/* clean white against the warm paper, with a second inset hairline so the edge
+   reads as 2px without the border actually changing width and reflowing */
+.chip input:checked+span{
+  background:#fff;color:var(--ink);font-weight:600;
+  border-color:var(--ink);
+  box-shadow:inset 0 0 0 1px var(--ink),0 6px 16px -12px rgba(10,10,10,.5);
+}
 
-.chip input:focus-visible+span{outline:2px solid var(--forest);outline-offset:3px}
+.chip input:focus-visible+span{outline:2px solid var(--ink);outline-offset:3px}
 .chips.invalid .chip span{border-color:var(--err)}
 
 /* ---- file drop ---- */
 .drop{
   display:flex;align-items:center;gap:14px;width:100%;text-align:left;
-  padding:13px 16px;border:1px dashed rgba(20,21,15,.24);border-radius:2px;
+  padding:13px 16px;border:1px dashed rgba(10,10,10,.24);border-radius:6px;
   background:rgba(255,255,255,.4);transition:border-color .3s var(--ease),background .3s var(--ease);
 }
-.drop:hover,.drop.over{border-color:var(--forest);background:#fff}
+.drop:hover,.drop.over{border-color:rgba(10,10,10,.5);background:#FDFCF8}
+.drop.over{box-shadow:0 8px 18px -12px rgba(10,10,10,.45)}
 .drop svg{width:19px;height:19px;color:var(--brown);flex:none}
 .drop .dt{font-size:.9rem;font-weight:600}
-.drop .dh{font-size:.8125rem;color:rgba(20,21,15,.55)}
+.drop .dh{font-size:.8125rem;color:rgba(10,10,10,.58)}
 .files{margin-top:.7rem;display:flex;flex-direction:column;gap:6px}
-.file{display:flex;align-items:center;gap:10px;font-size:.85rem;color:rgba(20,21,15,.72)}
+.file{display:flex;align-items:center;gap:10px;font-size:.85rem;color:rgba(10,10,10,.72)}
 .file b{font-weight:600}
 .file button{color:var(--brown);font-size:.8125rem;text-decoration:underline;margin-left:auto}
 
 /* ---- consent ---- */
 .consent{display:flex;gap:12px;align-items:flex-start;font-size:.9rem;line-height:1.55;cursor:pointer}
-.consent input{margin-top:4px;accent-color:var(--forest);width:17px;height:17px;flex:none}
+.consent input{margin-top:4px;accent-color:var(--ink);width:17px;height:17px;flex:none}
 
 /* ---- errors ---- */
 .err{display:none;margin-top:.6rem;font-size:.8125rem;font-weight:600;color:var(--err)}
@@ -240,7 +337,9 @@ input:focus,textarea:focus,select:focus{outline:none;border-color:var(--forest);
 .summary.on{display:block}
 
 /* ---- nav row ---- */
-.nav-row{display:flex;align-items:center;gap:14px;margin-top:2.4rem;padding-top:1.9rem;border-top:1px solid var(--line)}
+/* wraps: the Serbian send label is longer than the English one and the row
+   would not fit a 320px screen on the last step */
+.nav-row{display:flex;flex-wrap:wrap;align-items:center;gap:12px 14px;margin-top:2.4rem;padding-top:1.9rem;border-top:1px solid var(--line)}
 .nav-row .save{margin-left:auto;font-size:.8125rem;color:var(--brown);opacity:0;transition:opacity .4s var(--ease)}
 .nav-row .save.on{opacity:1}
 #send .spin{display:none;width:15px;height:15px;border:2px solid currentColor;border-right-color:transparent;
@@ -251,14 +350,21 @@ input:focus,textarea:focus,select:focus{outline:none;border-color:var(--forest);
 .sending-note.on{display:block}
 
 @media (max-width:980px){
-  .wrap{grid-template-columns:1fr}
+  .wrap{grid-template-columns:minmax(0,1fr)}
   .rail{display:none}
   .mhead{display:block}
   .stage{padding-top:2.2rem}
 }
+@media (max-width:820px){
+  /* the document folds back into a single column */
+  .q,.q:has(.consent){grid-template-columns:1fr;gap:.75rem}
+  .q-ask,.q-body,.q:has(.consent) .q-body{grid-column:1}
+}
 @media (max-width:620px){
   .row{grid-template-columns:1fr;gap:1.2rem}
   .num{max-width:none}
+  /* one track wide, so nothing can span two of them */
+  .chip--wide{grid-column:span 1}
 }
 </style>
 
@@ -363,6 +469,10 @@ src="https://www.facebook.com/tr?id=1056070890490241&ev=PageView&noscript=1"
           </header>
 
           <div class="q">
+            <div class="q-ask"><span class="q-t" data-sr="Kontakt" data-en="Contact">Kontakt</span>
+            <p class="q-h" data-sr="Koga zovemo i kome šaljemo predlog."
+               data-en="Who to call, and where the proposal goes.">Koga zovemo i kome šaljemo predlog.</p></div>
+            <div class="q-body">
             <div class="row">
               <label class="f">
                 <span class="lb" data-sr="Ime i prezime *" data-en="Full name *">Ime i prezime *</span>
@@ -382,15 +492,16 @@ src="https://www.facebook.com/tr?id=1056070890490241&ev=PageView&noscript=1"
               </label>
             </div>
             <div class="err" id="e-kontakt" data-sr="Popunite ime, firmu, telefon i ispravnu email adresu." data-en="Please add your name, company, phone and a valid email.">Popunite ime, firmu, telefon i ispravnu email adresu.</div>
+            </div>
           </div>
 
           <div class="q">
-            <span class="q-t" data-sr="Šta vam je potrebno? *" data-en="What do you need? *">Šta vam je potrebno? *</span>
+            <div class="q-ask"><span class="q-t" data-sr="Šta vam je potrebno? *" data-en="What do you need? *">Šta vam je potrebno? *</span></div>
             <div class="q-body">
               <fieldset class="chips group" data-required data-col="Šta vam je potrebno" id="g-potreba">
                 <legend data-sr="Šta vam je potrebno?" data-en="What do you need?">Šta vam je potrebno?</legend>
                 <label class="chip"><input type="radio" name="potreba" value="Novi sajt" data-en-val="New website"><span data-sr="Novi sajt" data-en="New website">Novi sajt</span></label>
-                <label class="chip"><input type="radio" name="potreba" value="Redizajn postojećeg" data-en-val="Redesign of an existing site"><span data-sr="Redizajn postojećeg" data-en="Redesign of an existing site">Redizajn postojećeg</span></label>
+                <label class="chip chip--wide"><input type="radio" name="potreba" value="Redizajn postojećeg" data-en-val="Redesign of an existing site"><span data-sr="Redizajn postojećeg" data-en="Redesign of an existing site">Redizajn postojećeg</span></label>
                 <label class="chip"><input type="radio" name="potreba" value="Landing stranica" data-en-val="Landing page"><span data-sr="Landing stranica" data-en="Landing page">Landing stranica</span></label>
                 <label class="chip"><input type="radio" name="potreba" value="Onlajn prodavnica" data-en-val="Online shop"><span data-sr="Onlajn prodavnica" data-en="Online shop">Onlajn prodavnica</span></label>
                 <label class="chip"><input type="radio" name="potreba" value="Nisam siguran/na" data-en-val="Not sure yet"><span data-sr="Nisam siguran/na" data-en="Not sure yet">Nisam siguran/na</span></label>
@@ -400,7 +511,7 @@ src="https://www.facebook.com/tr?id=1056070890490241&ev=PageView&noscript=1"
           </div>
 
           <div class="q">
-            <span class="q-t" data-sr="Kada želite da sajt bude online? *" data-en="When do you want to be live? *">Kada želite da sajt bude online? *</span>
+            <div class="q-ask"><span class="q-t" data-sr="Kada želite da sajt bude online? *" data-en="When do you want to be live? *">Kada želite da sajt bude online? *</span></div>
             <div class="q-body">
               <fieldset class="chips group" data-required data-col="Željeni rok" id="g-rok">
                 <legend data-sr="Željeni rok" data-en="Timeline">Željeni rok</legend>
@@ -408,26 +519,25 @@ src="https://www.facebook.com/tr?id=1056070890490241&ev=PageView&noscript=1"
                 <label class="chip"><input type="radio" name="rok" value="1–2 meseca" data-en-val="1–2 months"><span data-sr="1–2 meseca" data-en="1–2 months">1–2 meseca</span></label>
                 <label class="chip"><input type="radio" name="rok" value="2–3 meseca" data-en-val="2–3 months"><span data-sr="2–3 meseca" data-en="2–3 months">2–3 meseca</span></label>
                 <label class="chip"><input type="radio" name="rok" value="Nije hitno, planiramo unapred" data-en-val="No rush, planning ahead"><span data-sr="Nije hitno, planiramo unapred" data-en="No rush, planning ahead">Nije hitno, planiramo unapred</span></label>
-                <label class="chip"><input type="radio" name="rok" value="Vezano za datum (sajam, otvaranje, sezona)" data-en-val="Tied to a date (fair, opening, season)"><span data-sr="Vezano za datum (sajam, otvaranje, sezona)" data-en="Tied to a date (fair, opening, season)">Vezano za datum</span></label>
+                <label class="chip chip--wide"><input type="radio" name="rok" value="Vezano za datum (sajam, otvaranje, sezona)" data-en-val="Tied to a date (fair, opening, season)"><span data-sr="Vezano za datum (sajam, otvaranje, sezona)" data-en="Tied to a date (fair, opening, season)">Vezano za datum</span></label>
               </fieldset>
               <div class="err" id="e-rok" data-sr="Izaberite jednu opciju." data-en="Please choose one option.">Izaberite jednu opciju.</div>
             </div>
           </div>
 
           <div class="q">
-            <span class="q-t" data-sr="Okvirni budžet za sajt *" data-en="Rough budget for the site *">Okvirni budžet za sajt *</span>
+            <div class="q-ask"><span class="q-t" data-sr="Okvirni budžet za sajt *" data-en="Rough budget for the site *">Okvirni budžet za sajt *</span>
             <p class="q-h" data-sr="Raspon nam govori koliko dubok posao možemo da predložimo — bez pogađanja u prazno. Ako još ne znate, izaberite poslednju opciju."
-               data-en="A range tells us how deep a scope we can propose, with no guessing. If you don't know yet, pick the last option.">Raspon nam govori koliko dubok posao možemo da predložimo — bez pogađanja u prazno. Ako još ne znate, izaberite poslednju opciju.</p>
+               data-en="A range tells us how deep a scope we can propose, with no guessing. If you don't know yet, pick the last option.">Raspon nam govori koliko dubok posao možemo da predložimo — bez pogađanja u prazno. Ako još ne znate, izaberite poslednju opciju.</p></div>
             <div class="q-body stack" style="gap:1.1rem">
               <fieldset class="chips group" data-required data-col="Budžet" id="g-budzet">
                 <legend data-sr="Budžet" data-en="Budget">Budžet</legend>
-                <label class="chip"><input type="radio" name="budzet" value="do 300 €"><span data-sr="do 300 €" data-en="under €300">do 300 €</span></label>
-                <label class="chip"><input type="radio" name="budzet" value="300–500 €"><span data-sr="300–500 €" data-en="€300–500">300–500 €</span></label>
-                <label class="chip"><input type="radio" name="budzet" value="500–1.000 €"><span data-sr="500–1.000 €" data-en="€500–1,000">500–1.000 €</span></label>
-                <label class="chip"><input type="radio" name="budzet" value="1.000–2.500 €"><span data-sr="1.000–2.500 €" data-en="€1,000–2,500">1.000–2.500 €</span></label>
-                <label class="chip"><input type="radio" name="budzet" value="2.500–5.000 €"><span data-sr="2.500–5.000 €" data-en="€2,500–5,000">2.500–5.000 €</span></label>
-                <label class="chip"><input type="radio" name="budzet" value="preko 5.000 €"><span data-sr="preko 5.000 €" data-en="over €5,000">preko 5.000 €</span></label>
-                <label class="chip"><input type="radio" name="budzet" value="Nisam siguran/na — predložite" data-en-val="Not sure — advise me"><span data-sr="Nisam siguran/na — predložite" data-en="Not sure — advise me">Nisam siguran/na — predložite</span></label>
+                <label class="chip"><input type="radio" name="budzet" value="do 400 €"><span data-sr="do 400 €" data-en="under €400">do 400 €</span></label>
+                <label class="chip"><input type="radio" name="budzet" value="400–700 €"><span data-sr="400–700 €" data-en="€400–700">400–700 €</span></label>
+                <label class="chip"><input type="radio" name="budzet" value="700–1.500 €"><span data-sr="700–1.500 €" data-en="€700–1,500">700–1.500 €</span></label>
+                <label class="chip"><input type="radio" name="budzet" value="1.500–3.000 €"><span data-sr="1.500–3.000 €" data-en="€1,500–3,000">1.500–3.000 €</span></label>
+                <label class="chip"><input type="radio" name="budzet" value="preko 3.000 €"><span data-sr="preko 3.000 €" data-en="over €3,000">preko 3.000 €</span></label>
+                <label class="chip"><input type="radio" name="budzet" value="Nisam siguran/na — predložite"><span data-sr="Nisam siguran/na — predložite" data-en="Not sure — advise me">Nisam siguran/na — predložite</span></label>
               </fieldset>
               <div class="err" id="e-budzet" data-sr="Izaberite jedan raspon." data-en="Pick one range.">Izaberite jedan raspon.</div>
             </div>
@@ -445,9 +555,9 @@ src="https://www.facebook.com/tr?id=1056070890490241&ev=PageView&noscript=1"
           </header>
 
           <div class="q">
-            <label class="q-t" for="delatnost" data-sr="Opišite nam vaš biznis *" data-en="Tell us about your business *">Opišite nam vaš biznis *</label>
+            <div class="q-ask"><label class="q-t" for="delatnost" data-sr="Opišite nam vaš biznis *" data-en="Tell us about your business *">Opišite nam vaš biznis *</label>
             <p class="q-h" data-sr="Čime se bavite, šta prodajete ili radite, šta vas izdvaja — pišite slobodno, kao da nam to objašnjavate uživo."
-               data-en="What you do, what you sell or offer, what sets you apart — write freely, as if explaining it to us in person.">Čime se bavite, šta prodajete ili radite, šta vas izdvaja — pišite slobodno, kao da nam to objašnjavate uživo.</p>
+               data-en="What you do, what you sell or offer, what sets you apart — write freely, as if explaining it to us in person.">Čime se bavite, šta prodajete ili radite, šta vas izdvaja — pišite slobodno, kao da nam to objašnjavate uživo.</p></div>
             <div class="q-body">
               <textarea id="delatnost" name="delatnost" required data-col="Čime se bavite" style="min-height:168px"
                 data-sr-ph="Npr. Radimo adaptacije kupatila u Beogradu, uglavnom stanovi u novogradnji. Najviše tražena usluga nam je kompletna adaptacija ključ u ruke, a izdvaja nas brza isporuka i fiksna cena dogovorena unapred."
@@ -469,23 +579,23 @@ src="https://www.facebook.com/tr?id=1056070890490241&ev=PageView&noscript=1"
           </header>
 
           <div class="q">
-            <span class="q-t" data-sr="Logo firme" data-en="Company logo">Logo firme</span>
+            <div class="q-ask"><span class="q-t" data-sr="Logo firme" data-en="Company logo">Logo firme</span>
             <p class="q-h" data-sr="Ako imate vektor (.ai, .eps, .svg, .pdf), pošaljite njega — iz njega se sve ostalo izvodi."
-               data-en="If you have a vector file (.ai, .eps, .svg, .pdf), send that one — everything else derives from it.">Ako imate vektor (.ai, .eps, .svg, .pdf), pošaljite njega — iz njega se sve ostalo izvodi.</p>
+               data-en="If you have a vector file (.ai, .eps, .svg, .pdf), send that one — everything else derives from it.">Ako imate vektor (.ai, .eps, .svg, .pdf), pošaljite njega — iz njega se sve ostalo izvodi.</p></div>
             <div class="q-body" data-file="logo" data-col="Logo"></div>
           </div>
 
           <div class="q">
-            <span class="q-t" data-sr="Fotografije" data-en="Photographs">Fotografije</span>
+            <div class="q-ask"><span class="q-t" data-sr="Fotografije" data-en="Photographs">Fotografije</span>
             <p class="q-h" data-sr="Radovi, proizvodi, tim, prostor. Bolje deset dobrih nego sto nasumičnih. Slobodno ovde ubacite i cenovnik, katalog ili brošuru u PDF-u ili sličnom formatu."
-               data-en="Work, products, team, premises. Ten good ones beat a hundred random ones. Feel free to drop your price list, catalogue or brochure here too — PDF or similar.">Radovi, proizvodi, tim, prostor. Bolje deset dobrih nego sto nasumičnih. Slobodno ovde ubacite i cenovnik, katalog ili brošuru u PDF-u ili sličnom formatu.</p>
+               data-en="Work, products, team, premises. Ten good ones beat a hundred random ones. Feel free to drop your price list, catalogue or brochure here too — PDF or similar.">Radovi, proizvodi, tim, prostor. Bolje deset dobrih nego sto nasumičnih. Slobodno ovde ubacite i cenovnik, katalog ili brošuru u PDF-u ili sličnom formatu.</p></div>
             <div class="q-body" data-file="fotografije" data-col="Fotografije" data-multiple></div>
           </div>
 
           <div class="q">
-            <label class="q-t" for="mreze" data-sr="Linkovi" data-en="Links">Linkovi</label>
+            <div class="q-ask"><label class="q-t" for="mreze" data-sr="Linkovi" data-en="Links">Linkovi</label>
             <p class="q-h" data-sr="Društvene mreže, Google profil, link ka Drive-u/WeTransferu ako je materijal prevelik — i slobodno linkove ili nazive sajtova koji vam se dopadaju."
-               data-en="Social profiles, Google listing, a Drive/WeTransfer link if material is too big — and feel free to add links or names of sites you like.">Društvene mreže, Google profil, link ka Drive-u/WeTransferu ako je materijal prevelik — i slobodno linkove ili nazive sajtova koji vam se dopadaju.</p>
+               data-en="Social profiles, Google listing, a Drive/WeTransfer link if material is too big — and feel free to add links or names of sites you like.">Društvene mreže, Google profil, link ka Drive-u/WeTransferu ako je materijal prevelik — i slobodno linkove ili nazive sajtova koji vam se dopadaju.</p></div>
             <div class="q-body">
               <textarea id="mreze" name="mreze" data-col="Linkovi" style="min-height:84px"
                 data-sr-ph="Jedan link po redu — Instagram, Facebook, Google profil, Drive…"
@@ -495,9 +605,9 @@ src="https://www.facebook.com/tr?id=1056070890490241&ev=PageView&noscript=1"
           </div>
 
           <div class="q">
-            <label class="q-t" for="kontakt_podaci" data-sr="Adresa, radno vreme i kontakt podaci" data-en="Address, opening hours and contact details">Adresa, radno vreme i kontakt podaci</label>
+            <div class="q-ask"><label class="q-t" for="kontakt_podaci" data-sr="Adresa, radno vreme i kontakt podaci" data-en="Address, opening hours and contact details">Adresa, radno vreme i kontakt podaci</label>
             <p class="q-h" data-sr="Tačno onako kako treba da stoji na sajtu i na Google mapi. Ako radite onlajn ili bez fiksnog radnog vremena, preskočite."
-               data-en="Exactly as it should appear on the site and on Google Maps. Skip it if you work online or without fixed hours.">Tačno onako kako treba da stoji na sajtu i na Google mapi. Ako radite onlajn ili bez fiksnog radnog vremena, preskočite.</p>
+               data-en="Exactly as it should appear on the site and on Google Maps. Skip it if you work online or without fixed hours.">Tačno onako kako treba da stoji na sajtu i na Google mapi. Ako radite onlajn ili bez fiksnog radnog vremena, preskočite.</p></div>
             <div class="q-body">
               <textarea id="kontakt_podaci" name="kontakt_podaci" data-col="Adresa, radno vreme, kontakt"
                 data-sr-ph="Adresa&#10;Radno vreme&#10;Telefon i email za sajt&#10;PIB i matični broj (za podnožje sajta)"
@@ -507,9 +617,9 @@ src="https://www.facebook.com/tr?id=1056070890490241&ev=PageView&noscript=1"
           </div>
 
           <div class="q">
-            <label class="q-t" for="ostalo" data-sr="Bilo šta drugo što treba da znamo" data-en="Anything else we should know">Bilo šta drugo što treba da znamo</label>
+            <div class="q-ask"><label class="q-t" for="ostalo" data-sr="Bilo šta drugo što treba da znamo" data-en="Anything else we should know">Bilo šta drugo što treba da znamo</label>
             <p class="q-h" data-sr="Ovde nam slobodno ostavite i dva-tri sajta koja vam se sviđaju i zašto — bilo koja branša."
-               data-en="Feel free to drop in two or three websites you like, and why — any industry.">Ovde nam slobodno ostavite i dva-tri sajta koja vam se sviđaju i zašto — bilo koja branša.</p>
+               data-en="Feel free to drop in two or three websites you like, and why — any industry.">Ovde nam slobodno ostavite i dva-tri sajta koja vam se sviđaju i zašto — bilo koja branša.</p></div>
             <div class="q-body">
               <textarea id="ostalo" name="ostalo" data-col="Ostalo"></textarea>
             </div>

@@ -89,6 +89,11 @@ src="https://www.facebook.com/tr?id=1056070890490241&ev=PageView&noscript=1"
   --nav-top:16px;
   --pad:clamp(1.25rem,4.6vw,4.5rem);
   --ease:cubic-bezier(.16,1,.3,1);
+  /* the package swap: ease-OUT, so it answers the click on the first frame
+     and then settles. A curve soft at both ends delayed the response by ~100ms,
+     which reads as the page hanging, and the expo-out --ease is the opposite
+     problem — it throws 60% of the move into the first 60ms. */
+  --soft:cubic-bezier(.33,1,.68,1);
 }
 
 *,*::before,*::after{box-sizing:border-box}
@@ -133,7 +138,10 @@ ul{margin:0;padding:0;list-style:none}
 .btn-light{background:var(--warm);color:var(--ink)}
 .btn-light:hover{background:var(--forest);color:var(--ink)}
 .btn-dark{background:var(--ink);color:var(--warm)}
-.btn-dark:hover{background:var(--forest);color:var(--ink)}
+/* warm, not ink: ink on the accent measures 2.68:1 and fails AA. This is the
+   light-ground button, where --forest stays #A6210C; the on-dark buttons swap it
+   for --ember-lit, which ink does clear. */
+.btn-dark:hover{background:var(--forest);color:var(--warm)}
 .btn-ghost{border-color:rgba(244,241,233,.4);color:var(--warm)}
 .btn-ghost:hover{background:var(--warm);color:var(--ink)}
 
@@ -441,13 +449,32 @@ section{position:relative}
 /* the flag line is reserved on all three, filled on one — so the three names
    sit on one baseline whether or not a tier carries a flag */
 .tier{position:relative;display:flex;flex-direction:column;gap:0;cursor:pointer;
-  padding:clamp(44px,4.6vw,64px) clamp(22px,2.6vw,38px) clamp(30px,3.2vw,44px);
-  background:var(--warm);
-  transition:background .4s var(--ease),color .4s var(--ease)}
+  min-height:clamp(190px,17vw,236px);
+  padding:clamp(30px,3vw,42px) clamp(22px,2.6vw,38px) clamp(24px,2.6vw,34px);
+  /* Paper, lit from above — the same way the plates in Work are rendered. The
+     panel below is a real surface; leaving the light half as one flat fill is
+     what made the strip read as half-finished. */
+  background:transparent;
+  box-shadow:inset 0 1px 0 rgba(248,234,216,.14);
+  transition:color .26s var(--soft)}
+/* the paper is a layer that fades, not a background that swaps. ::before rather
+   than ::after so it paints behind the label's own content in DOM order. */
+.tier::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,#F9F7F2 0%,var(--warm) 46%,#EDE9DF 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.8);
+  transition:opacity .26s var(--soft),background .3s var(--ease)}
+/* static text paints under positioned boxes, so the three lines have to be
+   lifted or the paper layer would cover them */
+.tier-name,.tier-cost,.tier-hint{position:relative}
 .tier + .tier{border-left:1px solid rgba(20,21,15,.20)}
-.tier:hover{background:var(--warm-2)}
-.tier-flag{position:absolute;top:clamp(20px,2.2vw,30px);left:clamp(22px,2.6vw,38px);right:14px;
-  font-family:var(--text);font-size:.72rem;font-weight:700;color:var(--forest);
+.tier:hover::before{background:linear-gradient(180deg,#FFFDF9 0%,#F8F5EF 46%,#F0ECE3 100%)}
+/* a kicker sitting just above the name, in the same micro-register the Work
+   categories use — as a loose red note it read as an afterthought. It is only
+   ~14px of reserved space now: at the old 44-64px, the two tabs without a flag
+   opened with a large unexplained void. */
+.tier-flag{position:absolute;top:clamp(14px,1.5vw,20px);left:clamp(22px,2.6vw,38px);right:14px;
+  font-family:var(--text);font-size:.6375rem;font-weight:700;
+  letter-spacing:.15em;text-transform:uppercase;color:var(--forest);
   transition:color .4s var(--ease)}
 .tier-name{font-family:var(--display);font-size:1.0625rem;font-weight:600;letter-spacing:-.02em;
   color:var(--ink);line-height:1.15;transition:color .4s var(--ease)}
@@ -457,18 +484,25 @@ section{position:relative}
 .tier-cost{display:flex;align-items:flex-end;
   min-height:clamp(1.9rem,3.4vw,2.7rem);
   font-family:var(--display);font-size:clamp(1.9rem,3.4vw,2.7rem);font-weight:700;line-height:1;
-  letter-spacing:-.038em;color:var(--ink);margin-top:clamp(12px,1.4vw,18px);transition:color .4s var(--ease)}
+  /* the two figures are read against each other, so the digits are set on one
+     width — 399 and 649 line up rather than drifting by a few pixels */
+  font-variant-numeric:tabular-nums;
+  letter-spacing:-.038em;color:var(--ink);margin-top:clamp(10px,1.2vw,15px);transition:color .4s var(--ease)}
 .tier-cost.is-text{font-size:clamp(1.15rem,2vw,1.55rem);letter-spacing:-.025em}
+/* pushed to the foot of the tab and given a rule, so the three hints sit on one
+   line along the bottom of the strip and each tab has an internal structure
+   instead of three items stacked in the middle. The rule is the same device the
+   panel uses under its own lead line. */
 .tier-hint{font-size:.8125rem;line-height:1.4;color:var(--brown);
-  margin-top:clamp(10px,1.2vw,14px);transition:color .4s var(--ease)}
+  margin-top:auto;padding-top:clamp(14px,1.6vw,20px);
+  border-top:1px solid rgba(20,21,15,.13);
+  transition:color .4s var(--ease),border-color .4s var(--ease)}
 
 /* the lit tab simply stops covering the wrapper's ink, so it is the panel's
    own surface carried upward — not a second black matched to it by hand */
-#t-landing:checked ~ .tiers [for="t-landing"],
-#t-poslovni:checked ~ .tiers [for="t-poslovni"],
-#t-signature:checked ~ .tiers [for="t-signature"]{
-  background:transparent;
-  box-shadow:inset 0 1px 0 rgba(248,234,216,.14)}
+#t-landing:checked ~ .tiers [for="t-landing"]::before,
+#t-poslovni:checked ~ .tiers [for="t-poslovni"]::before,
+#t-signature:checked ~ .tiers [for="t-signature"]::before{opacity:0}
 #t-landing:checked ~ .tiers [for="t-landing"] .tier-name,
 #t-poslovni:checked ~ .tiers [for="t-poslovni"] .tier-name,
 #t-signature:checked ~ .tiers [for="t-signature"] .tier-name,
@@ -476,9 +510,21 @@ section{position:relative}
 #t-poslovni:checked ~ .tiers [for="t-poslovni"] .tier-cost,
 #t-signature:checked ~ .tiers [for="t-signature"] .tier-cost{color:var(--warm)}
 #t-poslovni:checked ~ .tiers [for="t-poslovni"] .tier-flag{color:var(--ember-lit)}
+/* the price of the tier being pointed at carries the same red as its flag, so
+   the two read as one mark instead of a label and an unrelated number. Paper
+   takes the deep brand red (6.55:1); the lit tab has to take the ember value —
+   the deep one measures 2.45:1 on that ink and would sink into it. */
+.tiers [for="t-poslovni"] .tier-cost{color:var(--forest)}
+#t-poslovni:checked ~ .tiers [for="t-poslovni"] .tier-cost{color:var(--ember-lit)}
+/* and the same figure repeated in the panel below takes the same red — the tab
+   and the panel are one object, so the one number appearing twice in two
+   colours was the part that looked wrong. The card only renders when its own
+   tier is picked, so no :checked guard is needed here. */
+.stage .card[data-tier="poslovni"] .card-price{color:var(--ember-lit)}
 #t-landing:checked ~ .tiers [for="t-landing"] .tier-hint,
 #t-poslovni:checked ~ .tiers [for="t-poslovni"] .tier-hint,
-#t-signature:checked ~ .tiers [for="t-signature"] .tier-hint{color:rgba(244,241,233,.66)}
+#t-signature:checked ~ .tiers [for="t-signature"] .tier-hint{
+  color:rgba(244,241,233,.66);border-top-color:rgba(244,241,233,.15)}
 /* the divider next to a dark tab would cut across the join — take it out on
    both sides of whichever tab is lit */
 #t-landing:checked ~ .tiers [for="t-landing"] + .tier,
@@ -496,21 +542,30 @@ section{position:relative}
 .stage{position:relative;overflow:hidden;border-radius:0 0 20px 20px;color:var(--warm);
   margin-top:0;
   padding:clamp(30px,3.8vw,56px) clamp(28px,3.6vw,52px) clamp(32px,4vw,58px);
-  background:transparent}
+  background:transparent;display:grid}
 /* the shared panel rim would draw a hairline across the join — only the foot
    of the panel keeps its edge */
 .stage::after{box-shadow:inset 0 -1px 0 rgba(14,8,4,.55)}
 .stage .deer-mark{position:absolute;right:-8%;bottom:-22%;width:46%;opacity:.13;filter:brightness(0) invert(1);pointer-events:none}
-.card{display:none;position:relative;z-index:1;grid-template-columns:repeat(12,1fr);
-  gap:18px clamp(20px,3vw,48px);align-items:start}
-/* the two columns arrive one behind the other, not as one block */
-.card > *{animation:cardPart .58s var(--ease) both}
-.card > .card-lead{animation-delay:.02s}
-.card > .card-body{animation-delay:.13s}
-@keyframes cardPart{from{opacity:0;transform:translateY(11px)}to{opacity:1;transform:none}}
+.card{grid-area:1 / 1;display:grid;position:relative;z-index:1;
+  grid-template-columns:repeat(12,1fr);
+  gap:18px clamp(20px,3vw,48px);align-items:start;
+  /* visibility, not display: it still drops the hidden cards out of the tab
+     order and the accessibility tree, but it can be transitioned */
+  opacity:0;visibility:hidden;pointer-events:none;
+  transition:opacity .26s var(--soft),visibility .26s}
+/* the two columns still arrive one behind the other, now on every switch
+   rather than only on first paint */
+.card > *{opacity:0;transform:translateY(8px);
+  transition:opacity .3s var(--soft),transform .3s var(--soft)}
+.card > .card-body{transition-delay:.045s}
 #t-landing:checked ~ .stage .card[data-tier="landing"],
 #t-poslovni:checked ~ .stage .card[data-tier="poslovni"],
-#t-signature:checked ~ .stage .card[data-tier="signature"]{display:grid}
+#t-signature:checked ~ .stage .card[data-tier="signature"]{
+  opacity:1;visibility:visible;pointer-events:auto}
+#t-landing:checked ~ .stage .card[data-tier="landing"] > *,
+#t-poslovni:checked ~ .stage .card[data-tier="poslovni"] > *,
+#t-signature:checked ~ .stage .card[data-tier="signature"] > *{opacity:1;transform:none}
 .card-lead{grid-column:1 / span 4;display:flex;flex-direction:column;gap:12px}
 .card-lead h3{font-size:var(--d3)}
 .card-price{font-family:var(--display);font-size:clamp(1.9rem,2.8vw,2.6rem);font-weight:700;letter-spacing:-.03em;line-height:1}
@@ -712,7 +767,9 @@ html.pl-on .rv-lines .ln > i{transform:translateY(106%)}
   .tier-name{grid-column:1;font-size:1.0625rem}
   .tier-cost{grid-column:2;grid-row:span 2;font-size:1.45rem;margin-top:0;min-height:0}
   .tier-cost.is-text{font-size:1.05rem}
-  .tier-hint{grid-column:1;margin-top:0}
+  /* the rule under the price is a device for the tall desktop tab; in a
+     compact row there is no gap for it to close, so it just cuts the name off */
+  .tier-hint{grid-column:1;margin-top:0;padding-top:0;border-top:0}
   /* the vertical-divider rules above don't apply once these are rows */
   #t-landing:checked ~ .tiers [for="t-landing"] + .tier,
   #t-poslovni:checked ~ .tiers [for="t-poslovni"] + .tier{border-top-color:transparent}
@@ -926,7 +983,7 @@ html.pl-on .rv-lines .ln > i{transform:translateY(106%)}
   <div class="shell">
     <div class="head">
       <div class="tag rv"><span class="eyebrow" data-sr="Prvi utisak" data-en="First impressions">Prvi utisak</span></div>
-      <h2 class="rv rv-lines" data-sr="Vaš sajt progovori&lt;br&gt;pre nego što to učinite vi." data-en="Your website speaks&lt;br&gt;before you do.">Vaš sajt progovori<br>pre nego što to učinite vi.</h2>
+      <h2 class="rv rv-lines" data-sr="Vaš sajt progovori &lt;br&gt;pre nego što to učinite vi." data-en="Your website speaks &lt;br&gt;before you do.">Vaš sajt progovori <br>pre nego što to učinite vi.</h2>
       <div class="head-note rv">
         <p class="lead" data-sr="Slab sajt retko omane glasno. On jednostavno pošalje potencijalne klijente dalje, pre nego što uopšte čujete za njih." data-en="A weak website rarely fails loudly. It simply sends potential customers elsewhere before you ever hear from them.">Slab sajt retko omane glasno. On jednostavno pošalje potencijalne klijente dalje, pre nego što uopšte čujete za njih.</p>
       </div>
@@ -960,7 +1017,7 @@ html.pl-on .rv-lines .ln > i{transform:translateY(106%)}
   <div class="shell">
     <div class="head">
       <div class="tag rv"><span class="eyebrow" data-sr="Izabrani radovi" data-en="Selected work">Izabrani radovi</span></div>
-      <h2 class="rv rv-lines" data-sr="Nedavni projekti,&lt;br&gt;i šta su morali da postignu." data-en="Recent projects,&lt;br&gt;and what they had to do.">Nedavni projekti,<br>i šta su morali da postignu.</h2>
+      <h2 class="rv rv-lines" data-sr="Nedavni projekti, &lt;br&gt;i šta su morali da postignu." data-en="Recent projects, &lt;br&gt;and what they had to do.">Nedavni projekti, <br>i šta su morali da postignu.</h2>
       <div class="head-note rv"><p class="small" data-sr="Parfemska kuća, audio brend, studentski investicioni klub i brend satova. Četiri projekta sa četiri različita zadatka — od predstavljanja proizvoda do izgradnje poverenja u mladu organizaciju." data-en="A fragrance house, an audio brand, a student investment club and a watchmaker. Four projects with four different jobs to do, from presenting a product to building trust in a young organisation.">Parfemska kuća, audio brend, studentski investicioni klub i brend satova. Četiri projekta sa četiri različita zadatka — od predstavljanja proizvoda do izgradnje poverenja u mladu organizaciju.</p></div>
     </div>
 
@@ -1069,7 +1126,7 @@ html.pl-on .rv-lines .ln > i{transform:translateY(106%)}
   <div class="shell">
     <div class="head">
       <div class="tag rv"><span class="eyebrow" data-sr="Šta radimo" data-en="What we do">Šta radimo</span></div>
-      <h2 class="rv rv-lines" data-sr="Sve što je sajtu potrebno,&lt;br&gt;kroz jedinstven proces." data-en="Everything your website needs,&lt;br&gt;handled as one process.">Sve što je sajtu potrebno,<br>kroz jedinstven proces.</h2>
+      <h2 class="rv rv-lines" data-sr="Sve što je sajtu potrebno, &lt;br&gt;kroz jedinstven proces." data-en="Everything your website needs, &lt;br&gt;handled as one process.">Sve što je sajtu potrebno, <br>kroz jedinstven proces.</h2>
       <div class="head-note rv"><p class="lead" data-sr="Strategija, dizajn i razvoj ostaju povezani od prvog razgovora do lansiranja, tako da se prvobitni cilj prenosi kroz svaku odluku." data-en="Strategy, design and development stay connected from the first conversation to launch, so the original goal is carried through every decision.">Strategija, dizajn i razvoj ostaju povezani od prvog razgovora do lansiranja, tako da se prvobitni cilj prenosi kroz svaku odluku.</p></div>
     </div>
 
@@ -1206,7 +1263,7 @@ html.pl-on .rv-lines .ln > i{transform:translateY(106%)}
   <div class="shell">
     <div class="head">
       <div class="tag rv"><span class="eyebrow" data-sr="Naš proces" data-en="Our process">Naš proces</span></div>
-      <h2 class="rv rv-lines" data-sr="Jasan proces&lt;br&gt;od početka do kraja." data-en="A clear process&lt;br&gt;from start to finish.">Jasan proces<br>od početka do kraja.</h2>
+      <h2 class="rv rv-lines" data-sr="Jasan proces &lt;br&gt;od početka do kraja." data-en="A clear process &lt;br&gt;from start to finish.">Jasan proces <br>od početka do kraja.</h2>
       <div class="head-note rv"><p class="lead" data-sr="Šest koraka. Znaćete šta se dešava u svakom od njih i šta je potrebno od vas pre nego što počne." data-en="Six steps. You will know what is happening at each one, and what is needed from you before it starts.">Šest koraka. Znaćete šta se dešava u svakom od njih i šta je potrebno od vas pre nego što počne.</p></div>
     </div>
 
@@ -1233,7 +1290,7 @@ html.pl-on .rv-lines .ln > i{transform:translateY(106%)}
     <div class="about-grid">
       <div style="grid-column:span 5">
         <div class="tag rv" style="margin-bottom:26px"><span class="eyebrow" data-sr="Zašto Deerzign" data-en="Why Deerzign">Zašto Deerzign</span></div>
-        <h2 class="rv rv-lines" style="font-size:var(--d2);line-height:1.02" data-sr="Mali studio.&lt;br&gt;Puna pažnja." data-en="Small studio.&lt;br&gt;Full attention.">Mali studio.<br>Puna pažnja.</h2>
+        <h2 class="rv rv-lines" style="font-size:var(--d2);line-height:1.02" data-sr="Mali studio. &lt;br&gt;Puna pažnja." data-en="Small studio. &lt;br&gt;Full attention.">Mali studio. <br>Puna pažnja.</h2>
       </div>
       <div class="about-copy">
         <p class="lead rv" data-sr="Deerzign je mali nezavisni studio, tako da direktno sarađujete sa osobom koja dizajnira i izrađuje vaš sajt, od prvog razgovora do lansiranja. Nema account menadžera, nepotrebnih predaja niti slojeva odobravanja." data-en="Deerzign is a small independent studio, so you deal directly with the person designing and building your website from the first conversation to launch. There are no account managers, unnecessary handovers or layers of approval.">Deerzign je mali nezavisni studio, tako da direktno sarađujete sa osobom koja dizajnira i izrađuje vaš sajt, od prvog razgovora do lansiranja. Nema account menadžera, nepotrebnih predaja niti slojeva odobravanja.</p>
@@ -1261,7 +1318,7 @@ html.pl-on .rv-lines .ln > i{transform:translateY(106%)}
   <div class="shell cta-grid">
     <div class="cta-main">
       <div class="tag rv" style="margin-bottom:26px"><span class="eyebrow" data-sr="Imate projekat na umu?" data-en="Have a project in mind?">Imate projekat na umu?</span></div>
-      <h2 class="rv rv-lines" data-sr="Sajt treba&lt;br&gt;sam sebe da isplati." data-en="A website should&lt;br&gt;pay for itself.">Sajt treba<br>sam sebe da isplati.</h2>
+      <h2 class="rv rv-lines" data-sr="Sajt treba &lt;br&gt;sam sebe da isplati." data-en="A website should &lt;br&gt;pay for itself.">Sajt treba <br>sam sebe da isplati.</h2>
       <p class="lead rv" style="margin-top:28px;max-width:56ch" data-sr="Sajt treba da vaš biznis učini razumljivijim, pouzdanijim i dostupnijim za kontakt — pretvarajući više pravih posetilaca u stvarne prilike." data-en="A website should make your business easier to understand, easier to trust and easier to contact — turning more of the right visitors into real opportunities.">Sajt treba da vaš biznis učini razumljivijim, pouzdanijim i dostupnijim za kontakt — pretvarajući više pravih posetilaca u stvarne prilike.</p>
       <div class="rv" style="margin-top:36px;display:flex;flex-wrap:wrap;align-items:center;gap:16px 24px">
         <a class="btn btn-light" href="brief.html" data-sr="Pokrenite projekat" data-en="Start a project">Pokrenite projekat</a>

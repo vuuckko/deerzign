@@ -15,6 +15,11 @@
  *   GET  ?action=testWonDeal&email=&phone=&value=&testCode=  -> diagnostic only,
  *        see onCrmValueEdit(e) below for the real (non-HTTP) won-deal mechanism
  *
+ * And the Supabase CRM at crm/ (see crm/README.md):
+ *   POST {action:"wonDeal", email, phone, value}          -> Meta "Purchase", called by the CRM
+ *   POST {action:"setAnaliza", sheetRow, analiza, ...}    -> writes the analysis onto the CRM card
+ *   POST {action:"backfillSupabase"}                      -> one-off copy of existing sheet rows
+ *
  * SETUP
  *  1. Open the sheet → Extensions → Apps Script.
  *  2. Paste this file over Code.gs and save.
@@ -79,6 +84,22 @@ var META_LEADS_TRACK_SHEET_NAME = 'Meta Leads — obrađeno';
    this file — see automation/PLAYBOOK.md for the one-time setup note. */
 var META_PIXEL_ID = '1056070890490241';
 
+/* Supabase — CRM baza (crm/schema.sql). Sheet ostaje primarni prijemnik:
+   red se UVEK prvo upiše ovde u tabelu, pa se tek onda pokuša Supabase, i
+   svaki neuspeh je tih. Ako baza spava (free projekat se pauzira posle 7
+   dana bez saobraćaja) ili je nedostupna, prijava je i dalje sačuvana i
+   može se kasnije prekopirati — nijedan lead ne propada zbog CRM-a.
+
+   SERVICE_ROLE ključ NIKAD ne ide u ovaj fajl. Stoji u Project Settings →
+   Script Properties, pod imenom SUPABASE_SERVICE_KEY. On zaobilazi RLS,
+   pa je jedini razlog zašto upis uopšte prolazi bez prijave. */
+var SUPABASE_URL = 'https://TVOJ-PROJEKAT.supabase.co';
+var SUPABASE_BUCKET = 'brief-uploads';
+
+function getSupabaseKey_() {
+  return PropertiesService.getScriptProperties().getProperty('SUPABASE_SERVICE_KEY') || '';
+}
+
 function doPost(e) {
   var lock = LockService.getScriptLock();
   lock.waitLock(30000);
@@ -103,6 +124,15 @@ function doPost(e) {
     if (body.action === 'markMetaLeadsProcessed') {
       return json_(markMetaLeadsProcessed_(body.ids || []));
     }
+    if (body.action === 'wonDeal') {
+      return json_(wonDealFromCrm_(body));
+    }
+    if (body.action === 'setAnaliza') {
+      return json_(setAnalizaInSupabase_(body));
+    }
+    if (body.action === 'backfillSupabase') {
+      return json_(backfillSupabase_());
+    }
 
     var fields = body.fields || [];
     var meta = body.meta || {};
@@ -124,8 +154,13 @@ function doPost(e) {
     var header = syncHeader_(sheet, META_COLS.concat(EXTRA_COLS).concat(fields.map(function (f) { return f.label; })));
     var row = header.map(function (h) { return values[h] !== undefined ? values[h] : ''; });
     sheet.appendRow(row);
+    var sheetRow = sheet.getLastRow();
 
     if (NOTIFY) notify_(values, fields);
+
+    /* best-effort, isto kao Meta poziv ispod — red je već u tabeli, pa
+       pad baze ne sme da vrati grešku klijentu koji je popunio formu */
+    try { pushToSupabase_(values, incoming, sheetRow); } catch (sbErr) { console.error(sbErr); }
 
     /* best-effort — a Meta hiccup must never fail the actual submission */
     try { sendMetaLead_(values, meta, body.eventId || ''); } catch (capiErr) { console.error(capiErr); }
@@ -443,7 +478,18 @@ function estimateLeadValue_(values) {
   if (paket === 'Osnovni' || paket === 'Starter') return 399;
   if (paket === 'Landmark') return 649;
 
+  /* Bands as the form offers them since 2026-09-01. They straddle the real
+     prices (399 / 649) rather than sitting between them, so every band maps to
+     something that can actually be sold. Longest prefixes first: 'do 400'
+     would otherwise never be reached past a bare '400' test. */
   var budzet = values['Budžet'] || '';
+  if (budzet.indexOf('do 400') === 0) return 399;
+  if (budzet.indexOf('400') === 0) return 550;
+  if (budzet.indexOf('700') === 0) return 900;
+  if (budzet.indexOf('1.500') === 0) return 2000;
+  if (budzet.indexOf('preko 3.000') === 0) return 3500;
+
+  /* pre-2026-09-01 bands, kept so historical rows still carry a value */
   if (budzet.indexOf('do 500') === 0) return 399;
   if (budzet.indexOf('do 300') === 0) return 399;
   if (budzet.indexOf('300') === 0) return 399;
@@ -738,4 +784,284 @@ function json_(obj) {
   return ContentService
     .createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+/* =====================================================================
+ * Supabase — CRM baza (crm/schema.sql)
+ * ===================================================================== */
+
+/* data-col labela iz brief.html  ->  kolona u tabeli `leads`.
+   Labele su ugovor sa formom (vidi automation/PLAYBOOK.md) — ako se neka
+   promeni u brief.html, mora i ovde, inače to polje tiho ostane prazno.
+   'Logo' i 'Fotografije' namerno NISU tu: oni postaju redovi u lead_files. */
+var SB_FIELD_MAP = {
+  'Ime i prezime':                 'ime',
+  'Naziv firme':                   'firma',
+  'Telefon':                       'telefon',
+  'Email':                         'email',
+  'Šta vam je potrebno':           'sta_treba',
+  'Željeni rok':                   'rok',
+  'Budžet':                        'budzet',
+  'Čime se bavite':                'cime_se_bavite',
+  'Linkovi':                       'linkovi',
+  'Adresa, radno vreme, kontakt':  'adresa',
+  'Ostalo':                        'ostalo',
+  'Saglasnost':                    'saglasnost',
+  'Paket sa cenovnika':            'paket_sa_cenovnika',
+  'Vreme':                         'poslato_u',
+  'Jezik':                         'jezik',
+  'Stranica':                      'stranica',
+  'Izvor':                         'izvor',
+  'Folder materijala':             'drive_folder',
+};
+
+function sbHeaders_() {
+  var key = getSupabaseKey_();
+  return { 'apikey': key, 'Authorization': 'Bearer ' + key };
+}
+
+/** Storage ključ ne trpi naša slova ni razmake — ime fajla se čuva
+    netaknuto u lead_files.name, ovo je samo putanja. */
+function sbSafeName_(name) {
+  var map = { 'š':'s','đ':'dj','č':'c','ć':'c','ž':'z','Š':'S','Đ':'Dj','Č':'C','Ć':'C','Ž':'Z' };
+  return String(name || 'fajl')
+    .replace(/[šđčćžŠĐČĆŽ]/g, function (c) { return map[c]; })
+    .replace(/[^A-Za-z0-9._-]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 120) || 'fajl';
+}
+
+/**
+ * Upisuje jednu prijavu u Supabase i prebacuje fajlove u Storage.
+ * Nikad ne baca — poziva se iz doPost-a posle upisa u Sheet, pa svaki
+ * problem ovde sme samo da se zabeleži u log.
+ */
+function pushToSupabase_(values, incoming, sheetRow) {
+  if (!getSupabaseKey_() || SUPABASE_URL.indexOf('TVOJ-PROJEKAT') !== -1) {
+    return { skipped: 'not configured' };
+  }
+
+  var lead = { source: 'brief', sheet_row: sheetRow };
+  Object.keys(SB_FIELD_MAP).forEach(function (label) {
+    var v = values[label];
+    if (v !== undefined && v !== '') lead[SB_FIELD_MAP[label]] = String(v);
+  });
+
+  var h = sbHeaders_();
+  h['Prefer'] = 'return=representation';
+
+  var resp = UrlFetchApp.fetch(SUPABASE_URL + '/rest/v1/leads', {
+    method: 'post',
+    contentType: 'application/json',
+    headers: h,
+    payload: JSON.stringify(lead),
+    muteHttpExceptions: true,
+  });
+
+  var code = resp.getResponseCode();
+  /* 409 = već postoji red za ovaj sheet_row (parcijalni unique indeks).
+     To je uspeh, ne greška — znači da je raniji pokušaj ipak prošao. */
+  if (code === 409) return { ok: true, duplicate: true };
+  if (code < 200 || code >= 300) {
+    console.error('Supabase leads ' + code + ': ' + resp.getContentText());
+    return { ok: false, code: code };
+  }
+
+  var created = JSON.parse(resp.getContentText());
+  var leadId = created && created[0] && created[0].id;
+  if (!leadId) return { ok: false, error: 'no id returned' };
+
+  (incoming || []).forEach(function (f, i) {
+    try { sbUploadFile_(leadId, f, i); } catch (err) { console.error(err); }
+  });
+
+  return { ok: true, id: leadId };
+}
+
+/** Jedan fajl: bajtovi u Storage, pa red u lead_files.
+    Redni broj u putanji jer dve fotografije iz istog telefona umeju da
+    stignu pod istim imenom (IMG_1234.jpg) — Storage bi drugu odbio.
+    Pravo ime ostaje u lead_files.name i to je ono što se preuzima. */
+function sbUploadFile_(leadId, f, index) {
+  var polje = f.field === 'logo' ? 'Logo'
+            : (f.field === 'fotografije' ? 'Fotografije' : (f.field || ''));
+  var path = leadId + '/' + (index + 1) + '-' + sbSafeName_(f.name);
+  var bytes = Utilities.base64Decode(f.data);
+
+  var up = UrlFetchApp.fetch(
+    SUPABASE_URL + '/storage/v1/object/' + SUPABASE_BUCKET + '/' + path,
+    {
+      method: 'post',
+      contentType: f.type || 'application/octet-stream',
+      headers: sbHeaders_(),
+      payload: bytes,
+      muteHttpExceptions: true,
+    }
+  );
+
+  var code = up.getResponseCode();
+  if (code < 200 || code >= 300) {
+    console.error('Supabase storage ' + code + ': ' + up.getContentText());
+    return;
+  }
+
+  UrlFetchApp.fetch(SUPABASE_URL + '/rest/v1/lead_files', {
+    method: 'post',
+    contentType: 'application/json',
+    headers: sbHeaders_(),
+    payload: JSON.stringify({
+      lead_id: leadId,
+      polje: polje,
+      name: f.name,
+      storage_path: path,
+      file_size: bytes.length,
+      mime_type: f.type || '',
+    }),
+    muteHttpExceptions: true,
+  });
+}
+
+/**
+ * POST {action:"wonDeal", email, phone, value} — zove ga CRM kad prevučeš
+ * karticu na "Dobijen posao" i upišeš vrednost.
+ *
+ * ZAŠTO POSTOJI, a ne upis u CRM tab: instalirani "on edit" triger
+ * (onCrmValueEdit) okida se SAMO na izmenu koju čovek napravi u tabeli.
+ * Izmena koju napiše skripta ga ne okida. Da CRM upisuje status u Sheet i
+ * čeka triger, Purchase signal bi tiho prestao da se šalje — bez greške,
+ * bez traga, samo bi kvalitet leadova iz Mete polako opao.
+ *
+ * onCrmValueEdit ostaje netaknut i dalje radi za ručne izmene u tabeli.
+ * Ista sendWonDealToMeta_() se zove iz oba puta, pa je logika jedna.
+ */
+function wonDealFromCrm_(body) {
+  var email = String(body.email || '').trim();
+  var phone = String(body.phone || '').trim();
+  var value = Number(body.value) || 0;
+  if (!email && !phone) return { ok: false, error: 'no email or phone' };
+
+  var result = sendWonDealToMeta_({
+    'Email': email,
+    'Telefon': phone,
+    'Stvarna vrednost (€)': value,
+  });
+
+  var sent = result && result.code >= 200 && result.code < 300;
+
+  /* Ako isti klijent postoji i u CRM tabu, pečatira se i tamo — tako
+     ručni triger kasnije ne pošalje isti posao po drugi put. */
+  if (sent) {
+    try { stampCrmMetaSignal_(email, phone); } catch (err) { console.error(err); }
+  }
+
+  return { ok: !!sent, meta: result };
+}
+
+function stampCrmMetaSignal_(email, phone) {
+  var sheet = getCrmSheet_();
+  var lastRow = sheet.getLastRow();
+  if (lastRow < 2) return;
+
+  var lastCol = sheet.getLastColumn();
+  var header = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
+  var emailCol = header.indexOf('Email');
+  var phoneCol = header.indexOf('Telefon');
+  var sentCol = header.indexOf('Meta signal poslat');
+  if (sentCol < 0) return;
+
+  var data = sheet.getRange(2, 1, lastRow - 1, lastCol).getValues();
+  var stamp = Utilities.formatDate(new Date(), 'Europe/Belgrade', 'dd.MM.yyyy HH:mm');
+
+  for (var i = 0; i < data.length; i++) {
+    if (data[i][sentCol]) continue;
+    var rowEmail = emailCol > -1 ? String(data[i][emailCol] || '').trim().toLowerCase() : '';
+    var rowPhone = phoneCol > -1 ? normalizePhone_(data[i][phoneCol]) : '';
+    var match = (email && rowEmail === email.toLowerCase()) ||
+                (phone && rowPhone && rowPhone === normalizePhone_(phone));
+    if (match) {
+      sheet.getRange(i + 2, sentCol + 1).setValue(stamp + ' (CRM)');
+      return;
+    }
+  }
+}
+
+/**
+ * POST {action:"setAnaliza", sheetRow, analiza, paket, cena}
+ * Zove ga /proveri-prijave posle appendReport/upsertCrm, da isti tekst
+ * analize sleti i u karticu u CRM-u. Bez ovoga polje "Analiza" u kartici
+ * ostaje trajno prazno, jer Doc i Supabase ne znaju jedan za drugog.
+ *
+ * Uparuje se po `sheet_row` — isti broj reda koji `?action=unprocessed`
+ * već vraća kao `_row`, pa automatika nema šta novo da pamti.
+ */
+function setAnalizaInSupabase_(body) {
+  if (!getSupabaseKey_() || SUPABASE_URL.indexOf('TVOJ-PROJEKAT') !== -1) {
+    return { skipped: 'not configured' };
+  }
+  var sheetRow = Number(body.sheetRow) || 0;
+  if (!sheetRow) return { ok: false, error: 'no sheetRow' };
+
+  var patch = {};
+  if (body.analiza) patch.analiza = String(body.analiza);
+  if (body.paket) patch.paket = String(body.paket);
+  if (body.cena !== undefined && body.cena !== '' && body.cena !== null) {
+    var n = Number(String(body.cena).replace(/[^\d.]/g, ''));
+    if (n) patch.cena = n;
+  }
+  if (!Object.keys(patch).length) return { ok: false, error: 'nothing to set' };
+
+  var url = SUPABASE_URL + '/rest/v1/leads?sheet_row=eq.' + sheetRow + '&source=eq.brief';
+  var resp = UrlFetchApp.fetch(url, {
+    method: 'patch',
+    contentType: 'application/json',
+    headers: sbHeaders_(),
+    payload: JSON.stringify(patch),
+    muteHttpExceptions: true,
+  });
+
+  var code = resp.getResponseCode();
+  if (code < 200 || code >= 300) {
+    console.error('Supabase patch ' + code + ': ' + resp.getContentText());
+    return { ok: false, code: code };
+  }
+  return { ok: true };
+}
+
+/**
+ * POST {action:"backfillSupabase"} — jednokratno, za redove koji su u
+ * Sheet-u nastali PRE nego što je Supabase uključen (ili dok je baza
+ * spavala). Prepisuje samo tekstualna polja; materijali ostaju u Drive-u,
+ * njihov link se prenosi kroz `drive_folder`.
+ *
+ * Bezbedno je pokrenuti više puta — parcijalni unique indeks na
+ * `sheet_row` odbija duplikate sa 409, što se ovde broji kao preskočeno.
+ */
+function backfillSupabase_() {
+  if (!getSupabaseKey_() || SUPABASE_URL.indexOf('TVOJ-PROJEKAT') !== -1) {
+    return { skipped: 'not configured' };
+  }
+  var sheet = getSheet_();
+  var lastRow = sheet.getLastRow();
+  if (lastRow < 2) return { ok: true, added: 0, skipped: 0 };
+
+  var lastCol = sheet.getLastColumn();
+  var header = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
+  var data = sheet.getRange(2, 1, lastRow - 1, lastCol).getValues();
+
+  var added = 0, skipped = 0, failed = 0;
+
+  for (var i = 0; i < data.length; i++) {
+    var values = {};
+    header.forEach(function (h, c) { values[h] = data[i][c]; });
+
+    /* prazan red (obrisan sadržaj) nema šta da doprinese */
+    if (!values['Ime i prezime'] && !values['Email'] && !values['Telefon']) { skipped++; continue; }
+
+    var res = pushToSupabase_(values, [], i + 2);
+    if (res && res.duplicate) skipped++;
+    else if (res && res.ok) added++;
+    else failed++;
+  }
+
+  return { ok: true, added: added, skipped: skipped, failed: failed };
 }
