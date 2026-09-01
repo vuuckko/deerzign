@@ -436,19 +436,20 @@ function normalizePhone_(raw) {
    optimises toward higher-value leads, not just any submitted form */
 function estimateLeadValue_(values) {
   var paket = values['Paket sa cenovnika'];
-  if (paket === 'Osnovni') return 249;
-  if (paket === 'Starter') return 499;
-  if (paket === 'Landmark') return 849;
-  if (paket === 'Signature') return 1800;
+  if (paket === 'Landing') return 399;
+  if (paket === 'Poslovni') return 649;
+  if (paket === 'Signature') return 1500;
+  /* pre-2026-08-31 pricing-page package names, kept for historical rows */
+  if (paket === 'Osnovni' || paket === 'Starter') return 399;
+  if (paket === 'Landmark') return 649;
 
   var budzet = values['Budžet'] || '';
-  /* kept for rows submitted before the bands were split at 300 € */
-  if (budzet.indexOf('do 500') === 0) return 400;
-  if (budzet.indexOf('do 300') === 0) return 249;
-  if (budzet.indexOf('300') === 0) return 499;
-  if (budzet.indexOf('500') === 0) return 849;
-  if (budzet.indexOf('1.000') === 0) return 1800;
-  if (budzet.indexOf('2.500') === 0) return 3500;
+  if (budzet.indexOf('do 500') === 0) return 399;
+  if (budzet.indexOf('do 300') === 0) return 399;
+  if (budzet.indexOf('300') === 0) return 399;
+  if (budzet.indexOf('500') === 0) return 649;
+  if (budzet.indexOf('1.000') === 0) return 1500;
+  if (budzet.indexOf('2.500') === 0) return 3000;
   if (budzet.indexOf('preko 5.000') === 0) return 5000;
   return 0; // unknown — still send the Lead, just with no value attached
 }

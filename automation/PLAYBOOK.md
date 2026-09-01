@@ -87,30 +87,27 @@ cenovniku), Vreme, Jezik, Stranica, Izvor, Obrađeno, Folder materijala`
 
 ## Pravila analize
 
-**Preporučeni paket + okvirna cena** (stvarne cene sa cenovnika na `index.html` — ako se ovo
-ikad promeni na sajtu, ažuriraj i ovde):
-- **Osnovni — €249**, jednokratno, jedna strana do 5 sekcija. Klijent šalje gotov tekst i
-  fotografije, mi ih uklapamo — bez rada na strukturi sadržaja, 1 runda izmena, 7 dana podrške.
-- **Starter — €499**, jednokratno, jedna strana do 6 sekcija + naš rad na strukturi i redosledu
-  sadržaja, SEO osnove i analitika, 2 runde izmena, 14 dana podrške.
-- **Landmark — €849**, jednokratno, do 5 strana.
-- **Signature — po dogovoru**, 6+ strana / po meri.
+**Preporučeni paket + okvirna cena** (stvarne cene sa cenovnika na `index.html` / `sr.html` — ako
+se ovo ikad promeni na sajtu, ažuriraj i ovde; ovo su STARTNE cene od 2026-08-31, namerno niske
+dok se ne uhvate prvi klijenti, dići će se kasnije):
+- **Landing — €399**, jednokratno, jedna strana do 6 sekcija + rad na strukturi i redosledu
+  sadržaja, kontakt forma, SEO osnove i analitika, 2 runde izmena, 14 dana podrške.
+- **Poslovni sajt — €649**, jednokratno, do 5 strana + planiranje strukture sajta i sadržaja,
+  sekcija portfolija/galerije/lokacije, SEO po strani, Search Console, 3 runde, 30 dana podrške.
+- **Signature — po dogovoru**, 6+ strana / po meri (CMS, integracije, custom sekcije).
 
-Razlika Osnovni ↔ Starter nije broj strana (obe su jedna strana) nego **koliko posla mi radimo
-na sadržaju**: Osnovni je samo izrada od onoga što klijent pošalje, Starter uključuje i
-oblikovanje strukture. Ako neko sa budžetom za Osnovni traži i pomoć oko sadržaja — to je
-Starter, reci to otvoreno u tački 2 umesto da se obim tiho proširi po ceni Osnovnog.
+Paketi **„Osnovni €249" i „Starter €499" su ukinuti 2026-08-31** — spojeni u Landing (€399), koji
+je sada ulazna cena. Stariji CRM redovi mogu i dalje nositi te nazive — ne diraj ih.
 
 Logika:
 - Ako je polje **"Paket sa cenovnika"** popunjeno (klijent je kliknuo CTA sa cenovnika) —
-  koristi taj paket direktno, cena kao gore.
+  koristi taj paket direktno, cena kao gore. Vrednosti koje sajt sada šalje: `Landing`,
+  `Poslovni`, `Signature` (stariji redovi: `Osnovni`, `Starter`, `Landmark`).
 - Inače mapiraj po **"Budžet"**:
-  - `do 300 €` → Osnovni (€249)
-  - `300–500 €` → Starter (€499)
-  - `500–1.000 €` → Landmark (€849)
+  - `do 300 €` → Landing (€399) — u tački 2 napiši da je €399 minimalna cena, budžet je ispod toga
+  - `do 500 €` ili `300–500 €` → Landing (€399)
+  - `500–1.000 €` → Poslovni sajt (€649)
   - `1.000–2.500 €` ili `2.500–5.000 €` ili `preko 5.000 €` → Signature (po dogovoru)
-  - `do 500 €` → stara vrednost (opsezi su razdvojeni na 300 € tek 2026-08-04); za takve
-    starije redove tretiraj kao Starter (€499)
   - `Nisam siguran/na — predložite` → nema tvrde preporuke, napomena "budžet nije
     naveden, predložiti paket na pozivu na osnovu onoga što piše u Čime se bavite"
 
@@ -184,11 +181,10 @@ created_time.
 
 **Preporučeni paket + okvirna cena** (isti paketi kao gore, drugo mapiranje jer su opsezi
 drugačiji od brief.html-a):
-- `300€ - 500€` → **Starter (€499)**
-- `500€ - 1000€` → **Landmark (€849)**
+- `300€ - 500€` → **Landing (€399)**
+- `500€ - 1000€` → **Poslovni sajt (€649)**
 - `Preko 1000€` → **Signature (po dogovoru)**
-- ako se u Meta formi ikad doda opcija ispod 300 € (planirano — "sajt do 300 €, osnovni") →
-  **Osnovni (€249)**
+- ako se u Meta formi ikad doda opcija ispod 300 € → **Landing (€399)** (minimalna cena je €399)
 
 **Sledeći korak** — iz "Rok (Meta forma)":
 - `Odmah` → "Pozvati u naredna 24h" (najviši prioritet)

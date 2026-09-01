@@ -99,7 +99,7 @@ node serve.js
 - `<head>` carries a full set of tags: title, meta description, canonical,
   Open Graph + Twitter card (both pointing at `og-image.jpg`), and a JSON-LD
   `Organization`/`ProfessionalService` block with `makesOffer` listing all
-  four pricing tiers (kept in sync with the `.ladder` section by hand — if a
+  three pricing tiers (kept in sync with the `.ladder` section by hand — if a
   price or tier name changes there, update the JSON-LD too).
 - **`og-image.jpg`** is a rendered still, not a photo — same dark panel
   treatment as the rest of the site (`deer.png` watermark, Archivo headline),

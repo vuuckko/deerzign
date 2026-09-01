@@ -32,7 +32,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=Marcellus&display=swap" rel="stylesheet">
 
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":["Organization","ProfessionalService"],"name":"Deerzign","url":"https://www.deerzign.com/","image":"https://www.deerzign.com/og-image.jpg","description":"Deerzign designs and builds custom websites that make a company look more professional and bring in more of the right enquiries. One fixed price, agreed before the work starts.","email":"mailto:team@deerzign.com","slogan":"Every brand leaves a trail.","priceRange":"€249+","knowsAbout":["Web design","Web development","Brand strategy","User experience design","Search engine optimization"],"makesOffer":[{"@type":"Offer","name":"Osnovni","price":"249","priceCurrency":"EUR","description":"One-page website, build only — up to five sections from your own text and photos, contact form, one revision round."},{"@type":"Offer","name":"Starter","price":"499","priceCurrency":"EUR","description":"One-page website with content structure and copywriting support, up to six sections, two revision rounds."},{"@type":"Offer","name":"Landmark","price":"849","priceCurrency":"EUR","description":"Multi-page business website, up to five pages, two revision rounds."},{"@type":"Offer","name":"Signature","description":"Six or more custom pages, editable content, integrations — quoted to scope, three revision rounds.","priceSpecification":{"@type":"PriceSpecification","priceCurrency":"EUR","description":"Quoted to scope"}}],"logo":"https://www.deerzign.com/deer.png","address":{"@type":"PostalAddress","addressLocality":"Belgrade","addressCountry":"RS"},"areaServed":["Serbia","Germany"],"contactPoint":{"@type":"ContactPoint","email":"team@deerzign.com","contactType":"customer service"}}
+{"@context":"https://schema.org","@type":["Organization","ProfessionalService"],"name":"Deerzign","url":"https://www.deerzign.com/","image":"https://www.deerzign.com/og-image.jpg","description":"Deerzign designs and builds custom websites that make a company look more professional and bring in more of the right enquiries. One fixed price, agreed before the work starts.","email":"mailto:team@deerzign.com","slogan":"Every brand leaves a trail.","priceRange":"€399+","knowsAbout":["Web design","Web development","Brand strategy","User experience design","Search engine optimization"],"makesOffer":[{"@type":"Offer","name":"Landing","price":"399","priceCurrency":"EUR","description":"One-page website with work on content structure and order, up to six sections, contact form, SEO foundations and analytics, two revision rounds."},{"@type":"Offer","name":"Business","price":"649","priceCurrency":"EUR","description":"Multi-page business website, up to five pages, site structure and content planning, per-page SEO, three revision rounds."},{"@type":"Offer","name":"Signature","description":"Six or more custom pages, editable content, integrations — quoted to scope.","priceSpecification":{"@type":"PriceSpecification","priceCurrency":"EUR","description":"Quoted to scope"}}],"logo":"https://www.deerzign.com/deer.png","address":{"@type":"PostalAddress","addressLocality":"Belgrade","addressCountry":"RS"},"areaServed":["Serbia","Germany"],"contactPoint":{"@type":"ContactPoint","email":"team@deerzign.com","contactType":"customer service"}}
 </script>
 
 <style>
@@ -398,172 +398,90 @@ section{position:relative}
 .svc-cell h3{font-size:var(--d3);letter-spacing:-.03em}
 .svc-cell p{margin-top:14px;max-width:34ch}
 
-/* ---- pricing: a ladder, not four parallel lists ----
-   Every tier contains the one below it, so the section is drawn as an
-   ascent rather than four equal rows: four stops climbing left to right,
-   and one dark stage beneath them showing whichever stop is selected.
-   The carry line inside each card ("everything in X, plus") does the
-   comparing, which is why only one card needs to be on screen at a time.
-   Radio inputs drive it — works with no JS, and arrow-key navigation
-   between tiers comes for free. */
-.ladder{margin-top:clamp(3rem,7vh,5.5rem);position:relative}
+/* ---- pricing: three tiers on one line, then a dark stage showing the
+   selected one in full. The carry line inside each card ("everything in X,
+   plus") does the comparing, so only one card is on screen at a time.
+   Radio inputs drive it — works with no JS, arrow keys move between tiers. */
+/* The ink is painted once, on the wrapper, and the tab strip and panel are
+   both transparent over it — so the lit tab and the panel below are literally
+   the same gradient rather than two blacks that have to be kept in step.
+   Unselected tabs are opaque paper and mask it off. */
+.ladder{margin-top:clamp(3rem,7vh,5.5rem);position:relative;
+  border-radius:20px;
+  background:linear-gradient(160deg,#171717 0%,#050505 100%);
+  box-shadow:0 18px 44px -30px rgba(20,21,15,.55)}
 .ladder-pick{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;margin:0}
 
-/* the floor of the clamp is set by the topmost label, not by taste: Signature
-   sits at 31% and its label stacks above the marker, so anything under ~340px
-   leaves it crowding the heading above */
-.ridge{position:relative;height:clamp(340px,28vw,375px)}
-/* The range is drawn, not filled in — a hairline crest over a barely-there
-   body, plus one hazy layer behind for depth. Keeping it light matters: a
-   solid dark mountain put a second heavy mass directly above the stage
-   panel, and the two competed instead of reading as one composition. Now
-   the card below is the only dark thing here. */
-/* and sideways too: the horizon used to start and stop dead at the shell's
-   padding, which announced the box it was drawn in. Fading both ends lets
-   the range read as continuing past the frame. */
-.ridge-peak{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;
-  -webkit-mask:linear-gradient(to right,transparent 0,#000 7%,#000 93%,transparent 100%);
-  mask:linear-gradient(to right,transparent 0,#000 7%,#000 93%,transparent 100%)}
-/* Both bodies dissolve downward instead of ending on a straight cut. Filled
-   flat, they stopped dead at the foot of the box and read as a grey rectangle
-   with a mountain drawn on top — the same reason the hero video is dissolved
-   into the page through a gradient band rather than butted against it. */
-.ridge-peak-far{fill:url(#ridgeFadeFar)}
-.ridge-peak-body{fill:url(#ridgeFadeNear)}
-.ridge-peak-crest{fill:none;stroke:rgba(20,21,15,.34);stroke-width:1;
-  stroke-linejoin:round;vector-effect:non-scaling-stroke}
-/* the crest itself thins out as it runs down to the foot, so the horizon
-   never terminates in a hard hairline either */
-.ridge-peak-crest{-webkit-mask:linear-gradient(to bottom,#000 62%,rgba(0,0,0,.25) 88%,transparent 100%);
-  mask:linear-gradient(to bottom,#000 62%,rgba(0,0,0,.25) 88%,transparent 100%)}
-/* the dashed line is the no-JS floor. Once the script has laid the tracks
-   it hides, because the prints then are the path. */
-.ridge-line{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
-.ridge-line polyline{fill:none;stroke:rgba(20,21,15,.32);stroke-width:1;
-  stroke-dasharray:4 7;vector-effect:non-scaling-stroke}
-.ridge.has-paws .ridge-line{display:none}
+/* The three tiers are one strip cut into three tabs, sitting directly on top of
+   the dark panel. The selected tab fills with the panel's own ink and loses the
+   line between them, so the tab and the detail below read as a single object —
+   that is what says "this opened because you pressed that", without an arrow or
+   a caption having to announce it. Widths are 1 / 1.12 / 1 so the strip is not
+   three identical boxes; the middle one carries an extra line and gets the room. */
+.tiers{display:grid;grid-template-columns:1fr 1.12fr 1fr;
+  border:1px solid rgba(20,21,15,.20);border-bottom:0;border-radius:20px 20px 0 0;overflow:hidden}
+/* the flag line is reserved on all three, filled on one — so the three names
+   sit on one baseline whether or not a tier carries a flag */
+.tier{position:relative;display:flex;flex-direction:column;gap:0;cursor:pointer;
+  padding:clamp(44px,4.6vw,64px) clamp(22px,2.6vw,38px) clamp(30px,3.2vw,44px);
+  background:var(--warm);
+  transition:background .4s var(--ease),color .4s var(--ease)}
+.tier + .tier{border-left:1px solid rgba(20,21,15,.20)}
+.tier:hover{background:var(--warm-2)}
+.tier-flag{position:absolute;top:clamp(20px,2.2vw,30px);left:clamp(22px,2.6vw,38px);right:14px;
+  font-family:var(--text);font-size:.72rem;font-weight:700;color:var(--forest);
+  transition:color .4s var(--ease)}
+.tier-name{font-family:var(--display);font-size:1.0625rem;font-weight:600;letter-spacing:-.02em;
+  color:var(--ink);line-height:1.15;transition:color .4s var(--ease)}
+/* the price box keeps one height across all three whatever it holds, so the
+   hint lines below stay on a single line — "By arrangement" is set smaller and
+   dropped to the same baseline rather than being allowed to push its row up */
+.tier-cost{display:flex;align-items:flex-end;
+  min-height:clamp(1.9rem,3.4vw,2.7rem);
+  font-family:var(--display);font-size:clamp(1.9rem,3.4vw,2.7rem);font-weight:700;line-height:1;
+  letter-spacing:-.038em;color:var(--ink);margin-top:clamp(12px,1.4vw,18px);transition:color .4s var(--ease)}
+.tier-cost.is-text{font-size:clamp(1.15rem,2vw,1.55rem);letter-spacing:-.025em}
+.tier-hint{font-size:.8125rem;line-height:1.4;color:var(--brown);
+  margin-top:clamp(10px,1.2vw,14px);transition:color .4s var(--ease)}
 
-/* the trail the deer actually walks — one print per step, alternating to
-   either side of the line and turned to face the way it is going. Laid out
-   in JS because the slope between two stops depends on how wide the ridge
-   is, and a print rotated to the wrong angle reads as a smudge. */
-.paws{position:absolute;inset:0;pointer-events:none}
-/* Both delays are worked out per print in JS and written onto the element:
-   --da for walking up, --dr for coming back down. They are counted from the
-   segment that is actually changing, not from the start of the whole trail —
-   anchoring them to the global index meant that picking Signature from
-   Landmark left the first print waiting 630ms, which just reads as lag. */
-.paw{position:absolute;width:17px;height:17px;color:var(--forest);
-  /* at rest a print is a small faint mark, so the path still reads when
-     nothing is lit; landing presses it to full size and squares it up */
-  transform:translate(-50%,-50%) rotate(calc(var(--rot) - 12deg)) scale(.5);
-  opacity:.13;
-  transition:opacity .26s var(--ease),
-             transform .44s cubic-bezier(.22,1.35,.36,1);
-  transition-delay:var(--dr)}
-.paw svg{width:100%;height:100%;display:block}
+/* the lit tab simply stops covering the wrapper's ink, so it is the panel's
+   own surface carried upward — not a second black matched to it by hand */
+#t-landing:checked ~ .tiers [for="t-landing"],
+#t-poslovni:checked ~ .tiers [for="t-poslovni"],
+#t-signature:checked ~ .tiers [for="t-signature"]{
+  background:transparent;
+  box-shadow:inset 0 1px 0 rgba(248,234,216,.14)}
+#t-landing:checked ~ .tiers [for="t-landing"] .tier-name,
+#t-poslovni:checked ~ .tiers [for="t-poslovni"] .tier-name,
+#t-signature:checked ~ .tiers [for="t-signature"] .tier-name,
+#t-landing:checked ~ .tiers [for="t-landing"] .tier-cost,
+#t-poslovni:checked ~ .tiers [for="t-poslovni"] .tier-cost,
+#t-signature:checked ~ .tiers [for="t-signature"] .tier-cost{color:var(--warm)}
+#t-poslovni:checked ~ .tiers [for="t-poslovni"] .tier-flag{color:var(--ember-lit)}
+#t-landing:checked ~ .tiers [for="t-landing"] .tier-hint,
+#t-poslovni:checked ~ .tiers [for="t-poslovni"] .tier-hint,
+#t-signature:checked ~ .tiers [for="t-signature"] .tier-hint{color:rgba(244,241,233,.66)}
+/* the divider next to a dark tab would cut across the join — take it out on
+   both sides of whichever tab is lit */
+#t-landing:checked ~ .tiers [for="t-landing"] + .tier,
+#t-poslovni:checked ~ .tiers [for="t-poslovni"],
+#t-poslovni:checked ~ .tiers [for="t-poslovni"] + .tier,
+#t-signature:checked ~ .tiers [for="t-signature"]{border-left-color:transparent}
+/* the input sits off-screen, so its focus ring is drawn on the label */
+#t-landing:focus-visible ~ .tiers [for="t-landing"],
+#t-poslovni:focus-visible ~ .tiers [for="t-poslovni"],
+#t-signature:focus-visible ~ .tiers [for="t-signature"]{outline:2px solid var(--forest);outline-offset:-3px}
 
-/* the marker centre lands exactly on its own anchor point at any size,
-   which is what keeps the prints and the stops on one line */
-/* column-reverse puts the label above the marker while keeping the marker
-   first in the DOM. The label has to clear the mountain: sitting below, it
-   crossed the crest line and half of it landed on the dark body. Above, it
-   is always on the page's own cream, at any width. */
-.stop{--mk:56px;position:absolute;left:var(--x);top:var(--y);
-  transform:translate(-50%,calc(-100% + var(--mk) / 2));
-  display:flex;flex-direction:column-reverse;align-items:center;gap:12px;cursor:pointer;width:max-content}
-.stop-mark{position:relative;width:var(--mk);height:var(--mk);flex:none;border-radius:50%;
-  display:grid;place-items:center;
-  background:var(--warm);border:1px solid rgba(20,21,15,.26);
-  /* a fine rim set in from the edge, plus just enough lift to read as a made
-     object rather than a drawn dot. The plain tier gets neither, so the two
-     kinds of offer differ in how they are finished, not only in outline. */
-  box-shadow:inset 0 0 0 4px var(--warm),
-             inset 0 0 0 5px rgba(20,21,15,.13),
-             0 3px 8px -4px rgba(20,21,15,.3);
-  transition:background .5s var(--ease),border-color .5s var(--ease),
-             box-shadow .5s var(--ease),transform .5s var(--ease)}
-.stop-mark svg{width:27px;height:27px;color:var(--forest);opacity:.4;
-  transition:opacity .5s var(--ease),color .5s var(--ease)}
-.stop:hover .stop-mark{transform:scale(1.07)}
-
-/* Basic is a different kind of offer, not a smaller step on the same climb —
-   so it gets a different shape rather than a smaller circle, and it sits
-   outside the gate that opens the three full-service tiers */
-.stop--basic{--mk:50px}
-.stop--basic .stop-mark{border-radius:13px;box-shadow:none}
-.stop--basic .stop-mark svg{width:23px;height:23px}
-.stop-note{font-family:var(--text);font-size:.6875rem;font-weight:600;letter-spacing:.14em;
-  text-transform:uppercase;color:var(--brown);opacity:.85}
-.ridge-gate{position:absolute;left:25%;top:5%;bottom:5%;width:1px;pointer-events:none;
-  background:repeating-linear-gradient(to bottom,rgba(20,21,15,.2) 0 5px,transparent 5px 13px)}
-.ridge-zone{position:absolute;left:calc(25% + 14px);top:3%;pointer-events:none;
-  font-family:var(--text);font-size:.625rem;font-weight:600;letter-spacing:.18em;
-  text-transform:uppercase;color:var(--brown)}
-.stop-text{display:flex;flex-direction:column;align-items:center;gap:5px}
-.stop-name{font-family:var(--display);font-size:1.0625rem;font-weight:600;letter-spacing:-.02em;
-  color:var(--brown);transition:color .5s var(--ease)}
-/* the four prices are the reason the ridge exists — all of them stay solid
-   and readable, and selection is carried by weight of colour, not by
-   outlining the ones you haven't picked into near-invisibility */
-.stop-price{font-family:var(--display);font-size:clamp(1.3rem,1.9vw,1.7rem);font-weight:700;line-height:1;
-  letter-spacing:-.03em;color:var(--brown);transition:color .5s var(--ease)}
-.stop-flag{position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);white-space:nowrap;
-  font-family:var(--text);font-size:.625rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--brown)}
-
-#t-osnovni:checked ~ .ridge [for="t-osnovni"] .stop-mark,
-#t-starter:checked ~ .ridge [for="t-starter"] .stop-mark,
-#t-landmark:checked ~ .ridge [for="t-landmark"] .stop-mark,
-#t-signature:checked ~ .ridge [for="t-signature"] .stop-mark{background:var(--forest);border-color:var(--forest);transform:scale(1.12)}
-/* the rim survives the fill turning dark — it just changes which side of the
-   contrast it sits on. Basic is left out, so selecting it stays flat. */
-#t-starter:checked   ~ .ridge [for="t-starter"] .stop-mark,
-#t-landmark:checked  ~ .ridge [for="t-landmark"] .stop-mark,
-#t-signature:checked ~ .ridge [for="t-signature"] .stop-mark{
-  box-shadow:inset 0 0 0 4px var(--forest),
-             inset 0 0 0 5px rgba(244,241,233,.34),
-             0 7px 18px -7px rgba(20,21,15,.45)}
-#t-osnovni:checked ~ .ridge [for="t-osnovni"] .stop-mark svg,
-#t-starter:checked ~ .ridge [for="t-starter"] .stop-mark svg,
-#t-landmark:checked ~ .ridge [for="t-landmark"] .stop-mark svg,
-#t-signature:checked ~ .ridge [for="t-signature"] .stop-mark svg{color:var(--warm);opacity:1}
-#t-osnovni:checked ~ .ridge [for="t-osnovni"] .stop-name,
-#t-starter:checked ~ .ridge [for="t-starter"] .stop-name,
-#t-landmark:checked ~ .ridge [for="t-landmark"] .stop-name,
-#t-signature:checked ~ .ridge [for="t-signature"] .stop-name{color:var(--ink)}
-#t-osnovni:checked ~ .ridge [for="t-osnovni"] .stop-price,
-#t-starter:checked ~ .ridge [for="t-starter"] .stop-price,
-#t-landmark:checked ~ .ridge [for="t-landmark"] .stop-price,
-#t-signature:checked ~ .ridge [for="t-signature"] .stop-price{color:var(--ink)}
-/* the input sits off-screen, so its focus ring has to be drawn on the label */
-#t-osnovni:focus-visible ~ .ridge [for="t-osnovni"],
-#t-starter:focus-visible ~ .ridge [for="t-starter"],
-#t-landmark:focus-visible ~ .ridge [for="t-landmark"],
-#t-signature:focus-visible ~ .ridge [for="t-signature"]{outline:2px solid var(--forest);outline-offset:8px;border-radius:10px}
-
-/* the walk: every print up to the selected stop lights, staggered by index,
-   so the tracks run toward whichever tier you pick */
-/* .in gates the whole walk on the section actually being looked at — without
-   it the deer crosses the ridge during page load, while the pricing block is
-   still several screens down, and the one moment worth seeing is spent */
-.ladder.in #t-starter:checked   ~ .ridge .paw[data-seg="0"],
-.ladder.in #t-landmark:checked  ~ .ridge .paw[data-seg="0"],
-.ladder.in #t-landmark:checked  ~ .ridge .paw[data-seg="1"],
-.ladder.in #t-signature:checked ~ .ridge .paw[data-seg="0"],
-.ladder.in #t-signature:checked ~ .ridge .paw[data-seg="1"],
-.ladder.in #t-signature:checked ~ .ridge .paw[data-seg="2"]{
-  opacity:.95;transform:translate(-50%,-50%) rotate(var(--rot)) scale(1);
-  transition-delay:var(--da)}
-
-/* the stage — one dark panel the selected tier steps onto */
-/* the range fades out well before the foot of its box, so the panel is set
-   deliberately clear of it — butted straight underneath, the two surfaces
-   met at a seam with no relationship to each other */
-.stage{position:relative;overflow:hidden;border-radius:22px;color:var(--warm);
-  margin-top:clamp(18px,2.6vh,34px);
-  padding:clamp(28px,3.6vw,52px);
-  background:linear-gradient(150deg,#171717 0%,#050505 100%);
-  box-shadow:0 18px 44px -30px rgba(20,21,15,.55)}
+/* the stage — the panel the selected tab opens into. Transparent: the ink it
+   shows is the wrapper's, the same one the lit tab shows, so the two are one
+   continuous surface with no seam to line up */
+.stage{position:relative;overflow:hidden;border-radius:0 0 20px 20px;color:var(--warm);
+  margin-top:0;
+  padding:clamp(30px,3.8vw,56px) clamp(28px,3.6vw,52px) clamp(32px,4vw,58px);
+  background:transparent}
+/* the shared panel rim would draw a hairline across the join — only the foot
+   of the panel keeps its edge */
+.stage::after{box-shadow:inset 0 -1px 0 rgba(14,8,4,.55)}
 .stage .deer-mark{position:absolute;right:-8%;bottom:-22%;width:46%;opacity:.13;filter:brightness(0) invert(1);pointer-events:none}
 .card{display:none;position:relative;z-index:1;grid-template-columns:repeat(12,1fr);
   gap:18px clamp(20px,3vw,48px);align-items:start}
@@ -572,9 +490,8 @@ section{position:relative}
 .card > .card-lead{animation-delay:.02s}
 .card > .card-body{animation-delay:.13s}
 @keyframes cardPart{from{opacity:0;transform:translateY(11px)}to{opacity:1;transform:none}}
-#t-osnovni:checked ~ .stage .card[data-tier="osnovni"],
-#t-starter:checked ~ .stage .card[data-tier="starter"],
-#t-landmark:checked ~ .stage .card[data-tier="landmark"],
+#t-landing:checked ~ .stage .card[data-tier="landing"],
+#t-poslovni:checked ~ .stage .card[data-tier="poslovni"],
 #t-signature:checked ~ .stage .card[data-tier="signature"]{display:grid}
 .card-lead{grid-column:1 / span 4;display:flex;flex-direction:column;gap:12px}
 .card-lead h3{font-size:var(--d3)}
@@ -767,21 +684,20 @@ html.pl-on .rv-lines .ln > i{transform:translateY(106%)}
   .svc{grid-template-columns:1fr;gap:clamp(28px,5vh,44px)}
   .svc-cell,.svc-cell:nth-child(2n){margin-top:0}
   .svc-cell{padding-top:clamp(38px,14vw,54px)}
-  /* the climb doesn't survive a narrow screen — the stops become a plain
-     two-up list of buttons, and the line that connected them goes away
-     rather than being redrawn as something it isn't */
-  .ridge{height:auto;display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .ridge-peak,.ridge-line,.paws,.ridge-gate,.ridge-zone{display:none}
-  .stop{--mk:42px;position:static;transform:none;flex-direction:row;align-items:center;flex-wrap:wrap;gap:12px;
-    width:auto;padding:14px 16px;border:1px solid var(--line);border-radius:14px}
-  .stop-mark svg{width:21px;height:21px}
-  .stop--basic{--mk:42px;border-style:dashed}
-  .stop--basic .stop-mark svg{width:19px;height:19px}
-  .stop-text{align-items:flex-start;gap:2px}
-  .stop-price{font-size:1.25rem}
-  .stop-flag{position:static;transform:none;width:100%;order:3}
-  .stop-note{width:100%;order:4}
-  .stage{margin-top:14px}
+  /* stacked, the strip stays one object: rows divided by the same hairline,
+     price held at the right edge so the three stay comparable at a glance */
+  .tiers{grid-template-columns:1fr}
+  .tier{display:grid;grid-template-columns:1fr auto;align-items:center;
+    column-gap:18px;row-gap:3px;padding:20px 22px}
+  .tier + .tier{border-left:0;border-top:1px solid rgba(20,21,15,.20)}
+  .tier-flag{position:static;grid-column:1 / -1;margin-bottom:3px}
+  .tier-name{grid-column:1;font-size:1.0625rem}
+  .tier-cost{grid-column:2;grid-row:span 2;font-size:1.45rem;margin-top:0;min-height:0}
+  .tier-cost.is-text{font-size:1.05rem}
+  .tier-hint{grid-column:1;margin-top:0}
+  /* the vertical-divider rules above don't apply once these are rows */
+  #t-landing:checked ~ .tiers [for="t-landing"] + .tier,
+  #t-poslovni:checked ~ .tiers [for="t-poslovni"] + .tier{border-top-color:transparent}
 }
 /* below this the price no longer fits beside the name — give it its own row.
    Must come after the 860 block to override it. */
@@ -790,7 +706,6 @@ html.pl-on .rv-lines .ln > i{transform:translateY(106%)}
      column gap is invisible anyway once everything stacks full width */
   .head,.intro-grid,.about-grid,.cta-grid,.foot-grid,
   .work-item,.principles,.card,.step{column-gap:16px}
-  .ridge{grid-template-columns:1fr}
 }
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
@@ -1203,148 +1118,73 @@ src="https://www.facebook.com/tr?id=1056070890490241&ev=PageView&noscript=1"
   <div class="shell">
     <div class="head">
       <div class="tag rv"><span class="eyebrow" data-sr="Cene" data-en="Pricing">Pricing</span></div>
-      <h2 class="rv rv-lines" data-sr="Jedna fiksna cena,<br>dogovorena pre početka." data-en="One fixed price,<br>agreed before we start.">One fixed price,<br>agreed before we start.</h2>
+      <h2 class="rv rv-lines" data-sr="Jedna fiksna cena, <br>dogovorena pre početka." data-en="One fixed price, <br>agreed before we start.">One fixed price, <br>agreed before we start.</h2>
       <div class="head-note rv"><p class="lead" data-sr="Punu cenu dobijate u pisanoj formi pre početka rada. Bez naplate po satu i bez računa koji raste tokom projekta."
         data-en="You get the full price in writing before any work begins. No hourly billing, and no invoice that grows during the project.">You get the full price in writing before any work begins. No hourly billing, and no invoice that grows during the project.</p></div>
     </div>
 
-    <!-- the tiers are a ladder, so they're drawn as a climb: four stops on a
-         dashed trail, and one dark stage below showing the selected one.
+    <!-- three tiers on the trail, then one dark stage showing the selected one.
          Radios, not JS — keyboard arrows move between tiers for free. -->
     <div class="ladder rv">
-      <input class="ladder-pick" type="radio" name="dz-tier" id="t-osnovni">
-      <input class="ladder-pick" type="radio" name="dz-tier" id="t-starter">
-      <input class="ladder-pick" type="radio" name="dz-tier" id="t-landmark" checked>
+      <input class="ladder-pick" type="radio" name="dz-tier" id="t-landing">
+      <input class="ladder-pick" type="radio" name="dz-tier" id="t-poslovni" checked>
       <input class="ladder-pick" type="radio" name="dz-tier" id="t-signature">
 
-      <div class="ridge">
-        <!-- the climb made literal: a low mountain range in the same dark
-             material as the stage panel below, cresting exactly where
-             Signature sits. Basic stays off it, on flat ground before the
-             gate — it was never part of this ascent. -->
-        <!-- each summit lands under its own marker, so a tier literally
-             stands on the peak its price buys. Basic is left off the range
-             entirely — it sits on flat ground before the climb begins. -->
-        <svg class="ridge-peak" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-          <defs>
-            <linearGradient id="ridgeFadeNear" x1="0" y1="0" x2="0" y2="1">
-              <stop offset=".34" stop-color="#171717" stop-opacity=".095"/>
-              <stop offset=".78" stop-color="#171717" stop-opacity=".05"/>
-              <stop offset="1" stop-color="#171717" stop-opacity="0"/>
-            </linearGradient>
-            <linearGradient id="ridgeFadeFar" x1="0" y1="0" x2="0" y2="1">
-              <stop offset=".34" stop-color="#171717" stop-opacity=".055"/>
-              <stop offset=".8" stop-color="#171717" stop-opacity=".025"/>
-              <stop offset="1" stop-color="#171717" stop-opacity="0"/>
-            </linearGradient>
-          </defs>
-          <polygon class="ridge-peak-far" points="30,100 38,84 46,91 56,70 64,80 74,60 82,68 90,52 100,58 100,100"/>
-          <polygon class="ridge-peak-body" points="0,94 21,94 27,86 37.5,71 45,83 53,77 62.5,55 70,71 78,63 87.5,39 94,53 100,47 100,100 0,100"/>
-          <polyline class="ridge-peak-crest" points="0,94 21,94 27,86 37.5,71 45,83 53,77 62.5,55 70,71 78,63 87.5,39 94,53 100,47"/>
-        </svg>
-
-        <svg class="ridge-line" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-          <polyline points="12.5,86 37.5,63 62.5,47 87.5,31"/>
-        </svg>
-
-        <div class="paws" aria-hidden="true"></div>
-        <span class="ridge-gate" aria-hidden="true"></span>
-        <span class="ridge-zone" aria-hidden="true">Premium</span>
-
-        <label class="stop stop--basic" for="t-osnovni" style="--x:12.5%;--y:86%">
-          <span class="stop-mark"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.4 3.2c1.6 0 2.6 2 2.4 4.6-.2 2.6-1.3 4.4-2.8 4.3-1.6-.1-2.6-2.1-2.4-4.7.2-2.5 1.3-4.2 2.8-4.2Z"/><path d="M15.6 4.6c1.5.2 2.3 2.2 1.9 4.7-.4 2.5-1.7 4.2-3.2 3.9-1.5-.3-2.3-2.3-1.9-4.8.4-2.4 1.7-4 3.2-3.8Z"/><path d="M11 15.4c2.2 0 4 1.5 4 3.3s-1.8 2.6-4 2.6-4-.8-4-2.6 1.8-3.3 4-3.3Z" opacity=".55"/></svg></span>
-          <span class="stop-text">
-            <span class="stop-name" data-sr="Osnovni" data-en="Basic">Basic</span>
-            <span class="stop-price">€249</span>
-            <span class="stop-note" data-sr="Samo izrada" data-en="Build only">Build only</span>
-          </span>
+      <div class="tiers">
+        <label class="tier" for="t-landing">
+          <span class="tier-name" data-sr="Landing" data-en="Landing">Landing</span>
+          <span class="tier-cost">€399</span>
+          <span class="tier-hint" data-sr="Jedna strana" data-en="One page">One page</span>
         </label>
 
-        <label class="stop" for="t-starter" style="--x:37.5%;--y:63%">
-          <span class="stop-mark"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.4 3.2c1.6 0 2.6 2 2.4 4.6-.2 2.6-1.3 4.4-2.8 4.3-1.6-.1-2.6-2.1-2.4-4.7.2-2.5 1.3-4.2 2.8-4.2Z"/><path d="M15.6 4.6c1.5.2 2.3 2.2 1.9 4.7-.4 2.5-1.7 4.2-3.2 3.9-1.5-.3-2.3-2.3-1.9-4.8.4-2.4 1.7-4 3.2-3.8Z"/><path d="M11 15.4c2.2 0 4 1.5 4 3.3s-1.8 2.6-4 2.6-4-.8-4-2.6 1.8-3.3 4-3.3Z" opacity=".55"/></svg></span>
-          <span class="stop-text">
-            <span class="stop-name">Starter</span>
-            <span class="stop-price">€499</span>
-          </span>
+        <label class="tier" for="t-poslovni">
+          <span class="tier-flag" data-sr="Najčešći izbor" data-en="Most chosen">Most chosen</span>
+          <span class="tier-name" data-sr="Poslovni sajt" data-en="Business">Business</span>
+          <span class="tier-cost">€649</span>
+          <span class="tier-hint" data-sr="Do pet strana" data-en="Up to five pages">Up to five pages</span>
         </label>
 
-        <label class="stop" for="t-landmark" style="--x:62.5%;--y:47%">
-          <span class="stop-mark"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.4 3.2c1.6 0 2.6 2 2.4 4.6-.2 2.6-1.3 4.4-2.8 4.3-1.6-.1-2.6-2.1-2.4-4.7.2-2.5 1.3-4.2 2.8-4.2Z"/><path d="M15.6 4.6c1.5.2 2.3 2.2 1.9 4.7-.4 2.5-1.7 4.2-3.2 3.9-1.5-.3-2.3-2.3-1.9-4.8.4-2.4 1.7-4 3.2-3.8Z"/><path d="M11 15.4c2.2 0 4 1.5 4 3.3s-1.8 2.6-4 2.6-4-.8-4-2.6 1.8-3.3 4-3.3Z" opacity=".55"/></svg></span>
-          <span class="stop-text">
-            <span class="stop-name">Landmark</span>
-            <span class="stop-price">€849</span>
-          </span>
-          <span class="stop-flag" data-sr="Najčešći izbor" data-en="Most chosen">Most chosen</span>
-        </label>
-
-        <label class="stop" for="t-signature" style="--x:87.5%;--y:31%">
-          <span class="stop-mark"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.4 3.2c1.6 0 2.6 2 2.4 4.6-.2 2.6-1.3 4.4-2.8 4.3-1.6-.1-2.6-2.1-2.4-4.7.2-2.5 1.3-4.2 2.8-4.2Z"/><path d="M15.6 4.6c1.5.2 2.3 2.2 1.9 4.7-.4 2.5-1.7 4.2-3.2 3.9-1.5-.3-2.3-2.3-1.9-4.8.4-2.4 1.7-4 3.2-3.8Z"/><path d="M11 15.4c2.2 0 4 1.5 4 3.3s-1.8 2.6-4 2.6-4-.8-4-2.6 1.8-3.3 4-3.3Z" opacity=".55"/></svg></span>
-          <span class="stop-text">
-            <span class="stop-name">Signature</span>
-            <span class="stop-price" data-sr="Po dogovoru" data-en="By arrangement">By arrangement</span>
-          </span>
+        <label class="tier" for="t-signature">
+          <span class="tier-name">Signature</span>
+          <span class="tier-cost is-text" data-sr="Po dogovoru" data-en="By arrangement">By arrangement</span>
+          <span class="tier-hint" data-sr="Šest i više strana" data-en="Six pages and up">Six pages and up</span>
         </label>
       </div>
 
       <div class="stage on-dark">
         <img class="deer-mark" src="deer.png" alt="" aria-hidden="true">
 
-        <article class="card" data-tier="osnovni">
+        <article class="card" data-tier="landing">
           <div class="card-lead">
             <span class="eyebrow" data-sr="Jedna strana" data-en="One page">One page</span>
-            <h3 data-sr="Osnovni" data-en="Basic">Basic</h3>
-            <span class="card-price">€249</span>
+            <h3 data-sr="Landing" data-en="Landing">Landing</h3>
+            <span class="card-price">€399</span>
             <span class="small" data-sr="Jednokratno" data-en="One-time">One-time</span>
-            <p class="card-for" data-sr="Imate tekst i fotografije — treba vam sajt."
-              data-en="You have the text and the photos — you need a site.">You have the text and the photos — you need a site.</p>
+            <p class="card-for" data-sr="Treba vam jedna jaka strana koja predstavlja firmu."
+              data-en="You need one strong page that presents the business.">You need one strong page that presents the business.</p>
           </div>
           <div class="card-body">
-            <p class="lead" data-sr="Najbrži put do sajta. Pošaljete tekst i fotografije, mi ih složimo u čistu stranu od pet sekcija sa kontakt formom. Bez dugog procesa i bez sastanaka."
-              data-en="The quickest route to a website. You send the text and photos, we set them into a clean five-section page with a contact form. No long process, no meetings.">The quickest route to a website. You send the text and photos, we set them into a clean five-section page with a contact form. No long process, no meetings.</p>
+            <p class="lead" data-sr="Kompletna jednostrana prezentacija. Radimo na strukturi i redosledu sadržaja — šta ide prvo, šta se izostavlja i čime se posetilac vodi ka kontaktu."
+              data-en="A complete one-page presentation. We work on the structure and order of the content — what comes first, what gets left out, and what leads the visitor to get in touch.">A complete one-page presentation. We work on the structure and order of the content — what comes first, what gets left out, and what leads the visitor to get in touch.</p>
             <ul class="feature-list">
               <li data-sr="Prilagođen dizajn jedne strane" data-en="Custom one-page design">Custom one-page design</li>
-              <li data-sr="Do pet sekcija" data-en="Up to five sections">Up to five sections</li>
-              <li data-sr="Vaš tekst i fotografije uneti u sajt" data-en="Your text and photos placed into the site">Your text and photos placed into the site</li>
-              <li data-sr="Kontakt forma" data-en="Contact form">Contact form</li>
-              <li data-sr="Prilagođeno mobilnim uređajima" data-en="Mobile-ready">Mobile-ready</li>
-              <li data-sr="Osnovno SEO podešavanje" data-en="Basic SEO setup">Basic SEO setup</li>
-              <li data-sr="Jedna runda izmena" data-en="One revision round">One revision round</li>
-              <li data-sr="7 dana podrške nakon lansiranja" data-en="7 days of post-launch support">7 days of post-launch support</li>
-            </ul>
-            <a class="btn btn-light" href="brief.html?paket=Osnovni" data-sr="Krenite sa Osnovnim" data-en="Start with Basic">Start with Basic</a>
-          </div>
-        </article>
-
-        <article class="card" data-tier="starter">
-          <div class="card-lead">
-            <span class="eyebrow" data-sr="Jedna strana, prošireno" data-en="One page, extended">One page, extended</span>
-            <h3>Starter</h3>
-            <span class="card-price">€499</span>
-            <span class="small" data-sr="Jednokratno" data-en="One-time">One-time</span>
-            <p class="card-for" data-sr="Treba vam i pomoć da se sadržaj složi kako treba."
-              data-en="You also want help getting the content right.">You also want help getting the content right.</p>
-          </div>
-          <div class="card-body">
-            <p class="lead" data-sr="Ista jedna strana, ali sa našim radom na strukturi i redosledu sadržaja — šta ide prvo, šta se izostavlja i čime se posetilac vodi ka kontaktu."
-              data-en="The same single page, but with our work on structure and order — what comes first, what gets left out, and what leads the visitor to get in touch.">The same single page, but with our work on structure and order — what comes first, what gets left out, and what leads the visitor to get in touch.</p>
-            <p class="card-carry" data-sr="Sve iz Osnovnog, plus:" data-en="Everything in Basic, plus:">Everything in Basic, plus:</p>
-            <ul class="feature-list">
-              <li data-sr="Do šest sadržajnih sekcija" data-en="Up to six content sections">Up to six content sections</li>
+              <li data-sr="Do šest sekcija" data-en="Up to six sections">Up to six sections</li>
               <li data-sr="Rad na strukturi i redosledu sadržaja" data-en="Work on content structure and order">Work on content structure and order</li>
-              <li data-sr="Jasni pozivi na akciju" data-en="Clear calls to action">Clear calls to action</li>
+              <li data-sr="Kontakt forma i jasni pozivi na akciju" data-en="Contact form and clear calls to action">Contact form and clear calls to action</li>
+              <li data-sr="Prilagođeno mobilnim uređajima" data-en="Mobile-ready">Mobile-ready</li>
               <li data-sr="SEO osnove i podešavanje analitike" data-en="SEO foundations and analytics setup">SEO foundations and analytics setup</li>
               <li data-sr="Dve runde izmena" data-en="Two revision rounds">Two revision rounds</li>
               <li data-sr="14 dana podrške nakon lansiranja" data-en="14 days of post-launch support">14 days of post-launch support</li>
             </ul>
-            <a class="btn btn-light" href="brief.html?paket=Starter" data-sr="Krenite sa Starterom" data-en="Start with Starter">Start with Starter</a>
+            <a class="btn btn-light" href="brief.html?paket=Landing" data-sr="Krenite sa Landingom" data-en="Start with Landing">Start with Landing</a>
           </div>
         </article>
 
-        <article class="card" data-tier="landmark">
+        <article class="card" data-tier="poslovni">
           <div class="card-lead">
             <span class="eyebrow" data-sr="Do pet strana" data-en="Up to five pages">Up to five pages</span>
-            <h3>Landmark</h3>
-            <span class="card-price">€849</span>
+            <h3 data-sr="Poslovni sajt" data-en="Business">Business</h3>
+            <span class="card-price">€649</span>
             <span class="small" data-sr="Jednokratno" data-en="One-time">One-time</span>
             <p class="card-for" data-sr="Više usluga i više toga da se ispriča nego što staje na jednu stranu."
               data-en="More services, and more to say than fits on a single page.">More services, and more to say than fits on a single page.</p>
@@ -1352,16 +1192,17 @@ src="https://www.facebook.com/tr?id=1056070890490241&ev=PageView&noscript=1"
           <div class="card-body">
             <p class="lead" data-sr="Kompletan poslovni sajt sa dovoljno prostora da objasnite usluge, pokažete radove i izgradite poverenje, bez gomilanja svega na jednu stranu."
               data-en="A complete business website with enough space to explain your services, show your work and build trust without crowding everything onto one page.">A complete business website with enough space to explain your services, show your work and build trust without crowding everything onto one page.</p>
-            <p class="card-carry" data-sr="Sve iz Startera, plus:" data-en="Everything in Starter, plus:">Everything in Starter, plus:</p>
+            <p class="card-carry" data-sr="Sve iz Landinga, plus:" data-en="Everything in Landing, plus:">Everything in Landing, plus:</p>
             <ul class="feature-list">
               <li data-sr="Do pet prilagođenih strana" data-en="Up to five custom pages">Up to five custom pages</li>
               <li data-sr="Planiranje strukture sajta i sadržaja" data-en="Site structure and content planning">Site structure and content planning</li>
               <li data-sr="Sekcija portfolija, galerije ili lokacije" data-en="Portfolio, gallery or location section">Portfolio, gallery or location section</li>
               <li data-sr="SEO podešavanje za svaku stranu" data-en="SEO setup for every page">SEO setup for every page</li>
               <li data-sr="Podešavanje Search Console-a" data-en="Search Console setup">Search Console setup</li>
+              <li data-sr="Tri runde izmena" data-en="Three revision rounds">Three revision rounds</li>
               <li data-sr="30 dana podrške nakon lansiranja" data-en="30 days of post-launch support">30 days of post-launch support</li>
             </ul>
-            <a class="btn btn-light" href="brief.html?paket=Landmark" data-sr="Krenite sa Landmarkom" data-en="Start with Landmark">Start with Landmark</a>
+            <a class="btn btn-light" href="brief.html?paket=Poslovni" data-sr="Krenite sa Poslovnim sajtom" data-en="Start with Business">Start with Business</a>
           </div>
         </article>
 
@@ -1377,14 +1218,13 @@ src="https://www.facebook.com/tr?id=1056070890490241&ev=PageView&noscript=1"
           <div class="card-body">
             <p class="lead" data-sr="Veći sajt za firme kojima su potrebne dodatne strane, sadržaj koji se menja, integracije ili funkcionalnosti van standardnog poslovnog sajta."
               data-en="A larger website for businesses that need additional pages, editable content, integrations or functionality beyond a standard company website.">A larger website for businesses that need additional pages, editable content, integrations or functionality beyond a standard company website.</p>
-            <p class="card-carry" data-sr="Sve iz Landmarka, plus:" data-en="Everything in Landmark, plus:">Everything in Landmark, plus:</p>
+            <p class="card-carry" data-sr="Sve iz Poslovnog sajta, plus:" data-en="Everything in Business, plus:">Everything in Business, plus:</p>
             <ul class="feature-list">
               <li data-sr="Šest ili više prilagođenih strana" data-en="Six or more custom pages">Six or more custom pages</li>
               <li data-sr="Sadržaj koji sami menjate — projekti, članci" data-en="Content you edit yourself — projects, articles">Content you edit yourself — projects, articles</li>
               <li data-sr="Prilagođene forme i interaktivne sekcije" data-en="Custom forms and interactive sections">Custom forms and interactive sections</li>
               <li data-sr="Integracije za zakazivanje ili sa drugim servisima" data-en="Booking or third-party integrations">Booking or third-party integrations</li>
               <li data-sr="Prošireno podešavanje analitike i SEO-a" data-en="Extended analytics and SEO setup">Extended analytics and SEO setup</li>
-              <li data-sr="Tri runde izmena" data-en="Three revision rounds">Three revision rounds</li>
               <li data-sr="45 dana podrške nakon lansiranja" data-en="45 days of post-launch support">45 days of post-launch support</li>
             </ul>
             <a class="btn btn-light" href="brief.html?paket=Signature" data-sr="Razgovarajmo o projektu po meri" data-en="Discuss a custom project">Discuss a custom project</a>
@@ -1534,78 +1374,6 @@ src="https://www.facebook.com/tr?id=1056070890490241&ev=PageView&noscript=1"
 <script>
 (function(){
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  /* ---- the pricing trail ----
-     One hoof print per step between the stops, alternating to either side of
-     the line and turned to face the way it is walking. The positions are
-     computed rather than authored: the slope between two stops changes with
-     the width of the ridge, and a print rotated to the wrong angle stops
-     reading as a track and starts reading as a smudge. If this never runs,
-     the dashed polyline underneath is what shows. */
-  (function(){
-    var ridge = document.querySelector('.ridge');
-    var layer = ridge && ridge.querySelector('.paws');
-    if (!layer) return;
-
-    var HOOF = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">'
-      + '<path d="M9.4 3.2c1.6 0 2.6 2 2.4 4.6-.2 2.6-1.3 4.4-2.8 4.3-1.6-.1-2.6-2.1-2.4-4.7.2-2.5 1.3-4.2 2.8-4.2Z"/>'
-      + '<path d="M15.6 4.6c1.5.2 2.3 2.2 1.9 4.7-.4 2.5-1.7 4.2-3.2 3.9-1.5-.3-2.3-2.3-1.9-4.8.4-2.4 1.7-4 3.2-3.8Z"/>'
-      + '<path d="M11 15.4c2.2 0 4 1.5 4 3.3s-1.8 2.6-4 2.6-4-.8-4-2.6 1.8-3.3 4-3.3Z" opacity=".55"/></svg>';
-
-    function lay(){
-      /* below 860 the stops become a plain list — there is no line to walk */
-      if (getComputedStyle(ridge).display === 'grid'){
-        layer.innerHTML = ''; ridge.classList.remove('has-paws'); return;
-      }
-      var rb = ridge.getBoundingClientRect();
-      if (!rb.width) return;
-      var pts = [].map.call(ridge.querySelectorAll('.stop'), function(s){
-        var m = s.querySelector('.stop-mark').getBoundingClientRect();
-        return { x:m.left + m.width/2 - rb.left, y:m.top + m.height/2 - rb.top, r:m.width/2 };
-      });
-      if (pts.length < 2) return;
-
-      var segs = pts.length - 1;
-      var html = '', i = 0;
-      for (var seg = 0; seg < segs; seg++){
-        var a = pts[seg], b = pts[seg+1];
-        var dx = b.x - a.x, dy = b.y - a.y;
-        var len = Math.sqrt(dx*dx + dy*dy);
-        var ang = Math.atan2(dy, dx);
-        var from = a.r + 18, to = len - (b.r + 18), span = to - from;
-        if (span < 24) continue;
-        var n = Math.max(2, Math.round(span / 30));
-        for (var k = 0; k < n; k++){
-          var t = (from + span * (k + .5) / n) / len;
-          var px = a.x + dx * t, py = a.y + dy * t;
-          /* real tracks fall either side of the centre line, not on it */
-          var off = (k % 2 ? 1 : -1) * 5.5;
-          var ox = Math.cos(ang + Math.PI/2) * off;
-          var oy = Math.sin(ang + Math.PI/2) * off;
-          /* walking up: segments cascade 45ms apart, prints 34ms apart inside
-             one. Coming back down both orders reverse, so the far end lifts
-             first. Whichever way you go, the first print moves within 90ms. */
-          var da = seg * 45 + k * 34;
-          var dr = (segs - 1 - seg) * 45 + (n - 1 - k) * 34;
-          html += '<span class="paw" data-seg="' + seg + '" style="left:' + (px+ox).toFixed(1)
-                + 'px;top:' + (py+oy).toFixed(1) + 'px;--rot:' + (ang*180/Math.PI + 90).toFixed(1)
-                + 'deg;--da:' + da + 'ms;--dr:' + dr + 'ms">' + HOOF + '</span>';
-          i++;
-        }
-      }
-      layer.innerHTML = html;
-      ridge.classList.add('has-paws');
-    }
-
-    lay();
-    var raf;
-    addEventListener('resize', function(){
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(lay);
-    });
-    /* the stops move once the display face finishes loading */
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(lay);
-  })();
 
   /* ---- headlines: split into lines so each can rise from behind its own edge.
      Measured at runtime rather than hard-coded, because the break points move
