@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="sr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- interna alatka: nikad u pretraživačima -->
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>Deerzign — pregled poslovanja</title>
+<link rel="icon" href="../deer.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="crm.css">
+</head>
+<body>
+
+<!-- ===================== LOGIN ===================== -->
+<section id="loginView" class="login hidden">
+  <div class="login__box">
+    <h1>Deerzign</h1>
+    <p>Interna alatka. Prijavi se da nastaviš.</p>
+    <form id="loginForm">
+      <label class="field">
+        <span>Email</span>
+        <input type="email" id="loginEmail" autocomplete="username" required>
+      </label>
+      <label class="field">
+        <span>Lozinka</span>
+        <input type="password" id="loginPass" autocomplete="current-password" required>
+      </label>
+      <button class="btn btn--wide" type="submit" id="loginBtn">Prijavi se</button>
+      <div class="err" id="loginErr"></div>
+    </form>
+  </div>
+</section>
+
+<!-- ===================== APP ===================== -->
+<div id="appView" class="shell hidden">
+
+  <aside class="side">
+    <a class="side__mark" href="#/">
+      <img src="../deer.png" alt="">
+      <span>Deerzign</span>
+    </a>
+
+    <div class="side__group">
+      <span class="side__label">Poslovanje</span>
+      <a href="#/"          data-route="/"          data-ico="pregled"   class="side__link">Pregled</a>
+      <a href="#/upiti"     data-route="/upiti"     data-ico="upiti"     class="side__link">Upiti<span class="side__badge" id="navUpiti"></span></a>
+      <a href="#/klijenti"  data-route="/klijenti"  data-ico="klijenti"  class="side__link">Klijenti</a>
+      <a href="#/finansije" data-route="/finansije" data-ico="finansije" class="side__link">Finansije<span class="side__badge side__badge--warn" id="navFin"></span></a>
+    </div>
+
+    <div class="side__foot">
+      <span id="whoami"></span>
+      <button id="logoutBtn">Odjava</button>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <label class="searchwrap" id="searchWrap">
+        <input class="search" id="search" type="search" placeholder="Pretraga — ime, firma, mejl…">
+      </label>
+      <button class="btn btn--ghost" id="refreshBtn">Osveži</button>
+    </div>
+    <main id="main"></main>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script src="zip.js"></script>
+<script src="utils.js"></script>
+<script src="charts.js"></script>
+<script src="upiti.js"></script>
+<script src="klijenti.js"></script>
+<script src="finansije.js"></script>
+<script src="pregled.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

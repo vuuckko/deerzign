@@ -1,0 +1,939 @@
+/* Deerzign CRM
+   ------------------------------------------------------------------
+   Pravac: moderna CRM ljuska (izdignute bele površine na toploj sivoj,
+   KPI grupe sa poređenjem, kolone kodirane bojom), ali u paleti sajta —
+   toplo papirno, mastilo, ember crvena, Archivo + Manrope. Bez plave i
+   ljubičaste iz referenci: one bi razbile brend.
+
+   Prethodna verzija je delovala jeftino jer je sve stajalo direktno na
+   pozadini — nijedna površina, nijedna senka, nijedna ikona. Dubina i
+   grupisanje su ovde nosioci, ne dekoracija. */
+
+:root{
+  /* pozadina je namerno tamnija od papira sa sajta (#F4F1EA), da bele
+     površine imaju od čega da se odvoje */
+  --app:#EAE7DE;
+  --surface:#FFFDF9;
+  --surface-2:#F5F2EA;
+  --warm-2:#EFEBE1;
+
+  --ink:#0A0A0A;
+  --ink-2:#131313;
+  --text:#2A2824;
+  --text-dim:#6F6A61;
+  --brown:#8A8177;
+
+  --ember:#EF4025;
+  --ember-deep:#A6210C;
+  --amber:#C9772F;
+  --green:#2F6B4F;
+  --stone:#C3BEB4;
+
+  --line:rgba(10,10,10,.10);
+  --line-soft:rgba(10,10,10,.06);
+
+  --display:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
+
+  --side-w:236px;
+  --r-lg:14px;
+  --r:10px;
+  --r-sm:7px;
+
+  --sh:0 1px 2px rgba(10,10,10,.04), 0 10px 26px -16px rgba(10,10,10,.20);
+  --sh-up:0 2px 4px rgba(10,10,10,.05), 0 14px 30px -14px rgba(10,10,10,.26);
+  --soft:cubic-bezier(.33,1,.68,1);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--app);color:var(--text);
+  font-family:var(--font);font-size:14px;line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0;padding:0}
+a{color:inherit}
+.hidden{display:none!important}
+.muted{color:var(--brown)}
+.ico{flex:none;display:block}
+
+/* ================= ljuska ================= */
+
+.shell{display:grid;grid-template-columns:var(--side-w) minmax(0,1fr);min-height:100vh;gap:0}
+
+/* Crna je PREUZETA sa sajta, ne izmišljena: `.band-forest` u index.html
+   je `linear-gradient(165deg,#171717 0%,#050505 68%)` plus topli radijalni
+   odsjaj u boji papira. Bez odsjaja je ravna crna i izgleda kao default
+   tamna tema; odsjaj je ono što je čini Deerzign crnom. */
+.side{
+  display:flex;flex-direction:column;gap:22px;
+  padding:18px 14px;
+  position:sticky;top:0;height:100vh;
+  background:
+    radial-gradient(76% 34% at 50% -8%,rgba(242,226,208,.15) 0%,rgba(242,226,208,.05) 48%,rgba(242,226,208,0) 80%),
+    linear-gradient(180deg,rgba(255,255,255,0) 44%,rgba(14,8,4,.22) 100%),
+    linear-gradient(165deg,#171717 0%,#050505 68%);
+  color:#F4F1EA;
+}
+.side__mark{
+  display:flex;align-items:center;gap:9px;padding:2px 6px;
+  font-family:var(--display);font-weight:700;font-size:15.5px;
+  color:#F4F1EA;letter-spacing:-.015em;text-decoration:none;
+}
+/* jelen je crn na providnom — na mastilu mora u belo */
+.side__mark img{width:26px;height:26px;object-fit:contain;filter:brightness(0) invert(1)}
+
+.side__group{display:flex;flex-direction:column;gap:2px}
+/* .38 je merilo 3.31:1 — ispod 4.5 za sitan tekst */
+.side__label{
+  font-size:11.5px;color:rgba(244,241,234,.56);letter-spacing:.02em;
+  padding:0 10px 6px;
+}
+
+.side__link{
+  position:relative;
+  display:flex;align-items:center;gap:10px;
+  padding:8px 10px;border-radius:var(--r-sm);
+  color:rgba(244,241,234,.6);text-decoration:none;font-size:13.5px;
+  transition:background .18s var(--soft),color .18s var(--soft);
+}
+.side__link .ico{opacity:.75}
+.side__link:hover{background:rgba(255,255,255,.06);color:#F4F1EA}
+.side__link.is-on{background:rgba(255,255,255,.09);color:#FFFDF9;font-weight:600}
+/* Ember crta levo označava gde si; na mastilu se čita jače nego bilo
+   kakva ispuna, a ne pravi drugu boju u traci. */
+.side__link.is-on::before{
+  content:"";position:absolute;left:-14px;top:6px;bottom:6px;width:3px;
+  border-radius:0 3px 3px 0;background:var(--ember);
+}
+.side__link.is-on .ico{opacity:1}
+
+.side__badge{
+  margin-left:auto;font-size:11.5px;font-weight:600;
+  background:rgba(255,255,255,.13);color:rgba(244,241,234,.78);
+  min-width:20px;height:19px;padding:0 6px;border-radius:var(--r-sm);
+  display:inline-flex;align-items:center;justify-content:center;
+}
+.side__badge:empty{display:none}
+/* Mastilo na emberu, ne belo: belo na #EF4025 meri 3.87:1 i pada.
+   Mastilo na istom emberu je 5.12:1 — i to je isti potez koji sajt
+   već koristi za svetlo dugme na akcentu. */
+.side__badge--warn{background:var(--ember);color:var(--ink)}
+
+.side__foot{
+  margin-top:auto;display:flex;flex-direction:column;gap:3px;
+  font-size:12.5px;color:rgba(244,241,234,.58);   /* .42 = 3.69:1, palo */
+  border-top:1px solid rgba(244,241,234,.14);padding:12px 10px 0;
+}
+.side__foot button{
+  color:rgba(244,241,234,.68);text-align:left;font-size:12.5px;
+  text-decoration:underline;text-underline-offset:3px;
+}
+.side__foot button:hover{color:#F4F1EA}
+
+.main{padding:20px clamp(18px,2.4vw,28px) 40px;max-width:1320px}
+
+/* ================= zaglavlje stranice ================= */
+
+.topbar{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+/* Dugme uvek desno — kad je pretraga sakrivena (Pregled, stranice
+   detalja) ostajalo je samo ono, nasukano u levom uglu. */
+.topbar > .btn{margin-left:auto}
+.searchwrap{
+  position:relative;display:flex;align-items:center;
+  flex:1;max-width:400px;
+}
+.searchwrap .ico{position:absolute;left:11px;color:var(--brown)}
+.search{
+  width:100%;padding:9px 12px 9px 36px;
+  border:1px solid var(--line-soft);border-radius:var(--r);
+  background:var(--surface);box-shadow:var(--sh);
+  font-size:13.5px;
+}
+.search::placeholder{color:var(--brown)}
+.search:focus{outline:none;border-color:rgba(10,10,10,.28)}
+
+.page__head{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.page__head h1{
+  font-family:var(--display);font-size:clamp(1.5rem,2.4vw,2.05rem);
+  font-weight:700;margin:0;letter-spacing:-.025em;color:var(--ink);
+}
+.page__note{color:var(--brown);font-size:13px}
+/* --ember-deep, ne --ember: na papirnoj podlozi #EF4025 daje 3.3:1 */
+.page__warn{color:var(--ember-deep);font-weight:600}
+.page__head .btn{margin-left:auto}
+
+/* ================= prijava ================= */
+
+.login{min-height:100vh;display:grid;place-items:center;padding:24px}
+.login__box{
+  width:100%;max-width:352px;background:var(--surface);
+  border-radius:var(--r-lg);box-shadow:var(--sh-up);padding:28px;
+}
+.login__box h1{font-family:var(--display);font-size:23px;font-weight:700;margin:0 0 4px;letter-spacing:-.02em;color:var(--ink)}
+.login__box p{color:var(--text-dim);margin:0 0 20px;font-size:13px}
+
+/* ================= kontrole ================= */
+
+.field{display:block;margin-bottom:13px}
+.field span{display:block;font-size:12.5px;color:var(--text-dim);margin-bottom:5px}
+.field input,.field select,.field textarea{
+  width:100%;padding:9px 11px;
+  border:1px solid var(--line);border-radius:var(--r-sm);
+  background:var(--surface);
+  transition:border-color .18s var(--soft),box-shadow .18s var(--soft);
+}
+.field textarea{resize:vertical}
+.field input:focus,.field select:focus,.field textarea:focus{
+  outline:none;border-color:rgba(10,10,10,.4);
+  box-shadow:0 0 0 3px rgba(10,10,10,.05);
+}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  padding:9px 15px;border-radius:var(--r-sm);
+  background:var(--ink);color:#FFFDF9;
+  font-weight:600;font-size:13.5px;white-space:nowrap;
+  box-shadow:0 1px 2px rgba(10,10,10,.16);
+  transition:background .18s var(--soft),transform .18s var(--soft);
+}
+.btn:hover{background:var(--ink-2);transform:translateY(-1px)}
+.btn--ghost{
+  background:var(--surface);color:var(--text);
+  border:1px solid var(--line);box-shadow:var(--sh);
+}
+.btn--ghost:hover{background:var(--surface-2)}
+.btn--wide{width:100%}
+.btn[disabled]{opacity:.5;cursor:default;transform:none}
+.linkish{color:var(--ember-deep);font-size:13px;text-decoration:underline;text-underline-offset:3px}
+.err{color:var(--ember-deep);font-size:13px;margin-top:10px;min-height:19px}
+
+/* meki čip — zaobljen pravougaonik, ne pilula */
+.chip{
+  display:inline-flex;align-items:center;
+  padding:2px 7px;border-radius:5px;
+  background:var(--warm-2);color:var(--text-dim);
+  font-size:11.5px;font-weight:600;white-space:nowrap;
+}
+.chip--ember{background:rgba(239,64,37,.12);color:var(--ember-deep)}
+.chip--green{background:rgba(47,107,79,.13);color:var(--green)}
+.chip--amber{background:rgba(201,119,47,.15);color:#8B4E17}
+
+/* ================= površine ================= */
+
+/* Kapirana širina. Bez ovoga se na širokom monitoru između imena i
+   njegove vrednosti otvori 800+px praznine — isti defekt zbog kojeg je
+   puna tabela bila nepregledna na InvKlub portalu. Tabla je izvan
+   panela pa joj ovo ne smeta. */
+.panel{
+  background:var(--surface);border-radius:var(--r-lg);
+  box-shadow:var(--sh);padding:18px;margin-bottom:16px;
+  max-width:940px;
+}
+.panel__head{display:flex;align-items:center;gap:9px;margin-bottom:13px}
+.panel__head h2{
+  font-family:var(--display);font-size:16px;font-weight:700;
+  margin:0;letter-spacing:-.012em;color:var(--ink);
+}
+.panel__count{
+  font-size:11.5px;font-weight:600;color:var(--text-dim);
+  background:var(--warm-2);padding:1px 7px;border-radius:5px;
+}
+
+/* ================= KPI ================= */
+
+/* Grupisano kao u referenci: jedna površina nosi više brojki razdvojenih
+   vlasi, umesto tri odvojene kutije koje se čitaju kao tri nepovezane
+   stvari. Delta linija je ono što brojci daje značenje. */
+.kpi{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+  background:var(--surface);border-radius:var(--r-lg);
+  box-shadow:var(--sh);margin-bottom:16px;overflow:hidden;
+  max-width:940px;
+}
+.kpi__cell{padding:15px 18px;border-left:1px solid var(--line-soft)}
+.kpi__cell:first-child{border-left:0}
+.kpi__l{font-size:12.5px;color:var(--text-dim)}
+.kpi__v{
+  font-family:var(--display);font-size:26px;font-weight:700;
+  letter-spacing:-.03em;color:var(--ink);
+  font-variant-numeric:tabular-nums;margin-top:3px;line-height:1.15;
+}
+.kpi__d{font-size:12px;margin-top:3px;color:var(--brown);display:flex;align-items:center;gap:4px}
+.kpi__d.up{color:var(--green)}
+.kpi__d.down{color:var(--ember-deep)}
+.kpi__cell.is-warn .kpi__v{color:var(--ember-deep)}
+
+/* ================= redovi ================= */
+
+.rows{display:flex;flex-direction:column}
+.row{
+  display:flex;align-items:center;gap:11px;
+  padding:11px 10px;border-radius:var(--r-sm);
+  cursor:pointer;transition:background .16s var(--soft);
+}
+.row + .row{box-shadow:0 -1px 0 var(--line-soft)}
+.row:hover{background:var(--surface-2);box-shadow:none}
+.row:hover + .row{box-shadow:none}
+.row__main{display:flex;flex-wrap:wrap;align-items:baseline;gap:3px 9px;min-width:0;flex:1}
+.row__name{font-weight:600;font-size:14.2px;color:var(--ink)}
+.row__sub{color:var(--text-dim);font-size:12.5px}
+.row__num{font-variant-numeric:tabular-nums;font-size:14px;font-weight:600;color:var(--ink);white-space:nowrap}
+.row__when{color:var(--brown);font-size:12.5px;white-space:nowrap;min-width:118px;text-align:right}
+.row__when.is-warn{color:var(--ember-deep);font-weight:600}
+
+/* ================= meseci ================= */
+
+.months{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:7px}
+.month{
+  border-radius:var(--r-sm);padding:9px 10px;
+  background:var(--surface-2);
+}
+.month__v{font-size:13.5px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--ink)}
+.month__l{color:var(--brown);font-size:11.5px;margin-top:1px}
+.month.is-zero{background:transparent;box-shadow:inset 0 0 0 1px var(--line-soft)}
+.month.is-zero .month__v{color:var(--stone);font-weight:400}
+
+.tabs{display:flex;gap:5px;margin-left:auto}
+.tabs button{
+  padding:5px 11px;border-radius:var(--r-sm);
+  font-size:12.5px;color:var(--text-dim);
+  transition:background .16s var(--soft),color .16s var(--soft);
+}
+.tabs button span{opacity:.55;margin-left:3px}
+.tabs button:hover{background:var(--surface-2);color:var(--text)}
+.tabs button.is-on{background:var(--ink);color:#FFFDF9;font-weight:600}
+.tabs button.is-on span{opacity:.7}
+
+.allclear{display:flex;flex-direction:column;gap:3px;padding:6px 2px}
+.allclear strong{font-family:var(--display);font-size:16px;font-weight:700;color:var(--ink)}
+.allclear span{color:var(--text-dim)}
+
+/* ================= detalj ================= */
+
+.back{
+  display:inline-flex;align-items:center;gap:5px;
+  color:var(--text-dim);font-size:13px;margin-bottom:14px;text-decoration:none;
+}
+.back:hover{color:var(--ink)}
+
+.dhead{
+  background:var(--surface);border-radius:var(--r-lg);box-shadow:var(--sh);
+  padding:20px;margin-bottom:16px;
+}
+.dhead h1{font-family:var(--display);font-size:clamp(1.45rem,2.5vw,1.95rem);font-weight:700;margin:0;letter-spacing:-.025em;color:var(--ink)}
+.dhead__sub{color:var(--text-dim);margin-top:4px}
+.dhead__sub a{text-decoration:none;border-bottom:1px solid var(--line)}
+.dhead__sub a:hover{color:var(--ink)}
+
+.statusbar{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
+.statusbar button{flex:none;
+  padding:6px 12px;border-radius:var(--r-sm);
+  border:1px solid var(--line);font-size:12.8px;color:var(--text-dim);
+  transition:background .18s var(--soft),color .18s var(--soft),border-color .18s var(--soft);
+}
+.statusbar button:hover{border-color:rgba(10,10,10,.34);color:var(--ink)}
+.statusbar button.is-on{background:var(--ink);border-color:var(--ink);color:#FFFDF9;font-weight:600}
+
+.dgrid{display:grid;grid-template-columns:minmax(0,1fr) 316px;gap:16px;align-items:start}
+
+.block{margin:0 0 16px}
+.block h2{font-family:var(--display);font-size:16px;font-weight:700;margin:0 0 10px;letter-spacing:-.012em;color:var(--ink)}
+.block__head{display:flex;align-items:center;gap:9px;margin-bottom:11px}
+.block__head h2{margin:0}
+.block p{margin:0 0 9px;white-space:pre-wrap}
+.block p:last-child{margin-bottom:0}
+
+.facts{display:grid;grid-template-columns:auto 1fr;gap:7px 16px;font-size:13.5px;margin:0}
+.facts dt{color:var(--text-dim)}
+.facts dd{margin:0;color:var(--ink)}
+
+/* podnaslov unutar panela — nosi labelu bez da postane drugi naslov */
+.sub{margin-top:16px;padding-top:14px;border-top:1px solid var(--line-soft)}
+.sub__l{display:block;font-size:12.5px;color:var(--text-dim);margin-bottom:5px}
+.sub p{margin:0;white-space:pre-wrap}
+
+/* Prati skrol — status i „Sačuvaj" su potrebni i kad si dole kod beleški. */
+.rail{
+  background:var(--surface);border-radius:var(--r-lg);box-shadow:var(--sh);
+  padding:18px;position:sticky;top:20px;
+}
+.rail h2{font-family:var(--display);font-size:15px;font-weight:700;margin:0 0 13px;color:var(--ink);letter-spacing:-.01em}
+
+/* ================= materijali ================= */
+
+/* Pločice su namerno krupne: poenta ovog ekrana je da se materijal VIDI,
+   a na 112px se fotografija ne može oceniti — samo prepoznati. */
+.files{display:grid;grid-template-columns:repeat(auto-fill,minmax(228px,1fr));gap:11px}
+.file{
+  border-radius:var(--r);background:var(--surface-2);overflow:hidden;
+  box-shadow:inset 0 0 0 1px var(--line-soft);
+}
+.file img{
+  display:block;width:100%;height:184px;object-fit:cover;background:var(--warm-2);
+  cursor:zoom-in;transition:opacity .18s var(--soft);
+}
+.file img:hover{opacity:.9}
+.file__doc{
+  height:184px;display:grid;place-items:center;
+  background:var(--warm-2);color:var(--brown);
+  font-family:var(--display);font-size:15px;font-weight:700;letter-spacing:.02em;
+}
+.file__row{display:flex;align-items:center;gap:8px;padding:9px 11px;background:var(--surface)}
+.file__name{font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1}
+.file__dl{
+  display:inline-flex;align-items:center;gap:4px;
+  color:var(--ember-deep);font-size:12.3px;font-weight:600;white-space:nowrap;
+}
+.file__dl:hover{text-decoration:underline}
+
+/* ================= beleške ================= */
+
+.notes{display:flex;flex-direction:column;gap:2px}
+.note{padding:10px 11px;border-radius:var(--r-sm);background:var(--surface-2)}
+.note__when{color:var(--brown);font-size:12px;margin-bottom:3px;display:flex;align-items:center;gap:8px}
+.note__body{white-space:pre-wrap}
+.note__del{color:var(--brown);font-size:12px;margin-left:auto}
+.note__del:hover{color:var(--ember-deep)}
+
+/* ================= modal ================= */
+
+.modal{
+  position:fixed;inset:0;z-index:50;
+  background:rgba(20,18,15,.38);backdrop-filter:blur(2px);
+  display:grid;place-items:center;padding:20px;overflow-y:auto;
+}
+.modal__box{
+  width:100%;max-width:480px;background:var(--surface);
+  border-radius:var(--r-lg);padding:22px;
+  box-shadow:0 30px 70px -20px rgba(0,0,0,.42);
+}
+.modal__box h2{font-family:var(--display);font-size:18px;font-weight:700;margin:0 0 16px;letter-spacing:-.015em;color:var(--ink)}
+.modal__foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:6px}
+
+/* ================= razno ================= */
+
+.dot{width:8px;height:8px;border-radius:50%;background:var(--brown);flex:none}
+.dot--placeno{background:var(--green)}
+.dot--kasni{background:var(--ember)}
+.dot--ceka{background:var(--stone)}
+
+.toast{
+  position:fixed;left:50%;bottom:24px;transform:translateX(-50%);
+  background:var(--ink);color:#FFFDF9;
+  padding:10px 17px;border-radius:var(--r-sm);font-size:13.5px;
+  z-index:60;box-shadow:0 10px 30px rgba(0,0,0,.28);
+}
+.empty{padding:8px 2px;color:var(--brown);max-width:58ch}
+
+/* ================= responsive ================= */
+
+@media (max-width:1040px){
+  .dgrid{grid-template-columns:minmax(0,1fr)}
+  /* rail ide gore i PRESTAJE da bude sticky — u jednoj koloni je visok
+     ~460px, pa bi zakačen pojeo pola ekrana i pokrio sadržaj */
+  .rail{order:-1;position:static}
+}
+@media (max-width:820px){
+  /* Sidebar postaje traka na vrhu, u DVA reda: znak + odjava gore, nav
+     preko cele širine ispod. U jednom redu se poslednja stavka seče. */
+  .shell{grid-template-columns:minmax(0,1fr)}
+  .side{
+    position:sticky;top:0;height:auto;z-index:30;
+    flex-direction:row;flex-wrap:wrap;align-items:center;gap:8px 14px;
+    padding:10px 14px;
+  }
+  .side__label{display:none}
+  .side__group{order:3;flex-basis:100%;flex-direction:row;gap:3px;overflow-x:auto;scrollbar-width:none}
+  .side__group::-webkit-scrollbar{display:none}
+  .side__link{white-space:nowrap}
+  .side__link.is-on::before{display:none}
+  /* ikone se sklanjaju u traci — sa njima četiri stavke ne stanu na
+     375px pa nav počne da se skroluje; labela je ono što se čita */
+  .side__link .ico{display:none}
+  .side__foot{margin:0 0 0 auto;border:0;padding:0;flex-direction:row;align-items:center;gap:10px}
+  .side__foot span{display:none}
+  .main{padding-top:16px}
+}
+@media (max-width:560px){
+  .months{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .page__head .btn{margin-left:0;width:100%}
+  .searchwrap{max-width:none}
+  .row2{grid-template-columns:1fr}
+  .row__when{min-width:0}
+  .kpi__cell{border-left:0;box-shadow:0 -1px 0 var(--line-soft)}
+  .kpi__cell:first-child{box-shadow:none}
+}
+
+/* ================= grafikoni ================= */
+
+/* Dva panela rame uz rame: veliki grafikon nosi stranicu, levak stoji
+   pored njega. Panel u ovoj mreži gubi sopstveni max-width — mrežа ga
+   već ograničava. */
+.dash{
+  display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);
+  gap:16px;align-items:start;max-width:940px;
+}
+.dash > .panel{max-width:none;margin-bottom:0}
+
+.panel__sub{font-size:12.5px;color:var(--brown);margin-left:auto}
+
+/* Herojska brojka: >=48px, ista sans porodica kao ostatak — nema
+   dekorativnog reza na broju koji nosi stranicu. */
+.hero{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:2px 0 12px}
+.hero__v{
+  font-family:var(--display);font-size:52px;font-weight:700;
+  letter-spacing:-.035em;line-height:1;color:var(--ink);
+  font-variant-numeric:tabular-nums;
+}
+.hero__d{font-size:13px;color:var(--brown)}
+.hero__d.up{color:var(--green)}
+.hero__d.down{color:var(--ember-deep)}
+
+.chartbox{position:relative}
+.chart{display:block;width:100%;height:auto;overflow:visible}
+/* Tekst na grafikonu nosi tekstualni token, nikad boju serije. */
+.chart .ax{font-family:var(--font);font-size:11px;fill:var(--brown)}
+.chart .hit{cursor:crosshair}
+
+.tip{
+  position:absolute;transform:translate(-50%,calc(-100% - 12px));
+  background:var(--ink);color:#FFFDF9;
+  padding:5px 9px;border-radius:6px;font-size:12px;white-space:nowrap;
+  pointer-events:none;box-shadow:0 6px 18px rgba(0,0,0,.24);
+}
+.tip b{font-weight:600;margin-right:5px}
+
+/* ---- levak ---- */
+
+/* Mreža je JEDNA, na omotaču, a redovi su `display:contents` — da sve
+   trake počinju na istoj koordinati. Kad je svaki red bio sopstvena
+   mreža, širina labele je menjala širinu trake, pa su se dve faze sa
+   istom vrednošću crtale različito dugačko (266 vs 255px). Dužina trake
+   sme da zavisi samo od podatka. */
+.fun{
+  display:grid;grid-template-columns:auto minmax(0,1fr) auto;
+  align-items:center;gap:9px 10px;
+}
+.fun__row{display:contents}
+.fun__l{font-size:12.8px;color:var(--text-dim)}
+.fun__track{
+  height:18px;border-radius:0 4px 4px 0;
+  background:var(--surface-2);position:relative;overflow:hidden;
+}
+/* traka raste iz jedne osnove: ravna levo, zaobljena na kraju podatka */
+.fun__bar{display:block;height:100%;border-radius:0 4px 4px 0;min-width:3px}
+.fun__v{
+  font-size:13.5px;font-weight:600;color:var(--ink);
+  font-variant-numeric:tabular-nums;min-width:18px;text-align:right;
+}
+.fun__note{font-size:12.3px;color:var(--brown);margin:11px 0 0}
+
+.panel__rule{height:1px;background:var(--line-soft);margin:16px 0}
+
+/* ---- meter ---- */
+
+.meter__v{
+  font-family:var(--display);font-size:30px;font-weight:700;
+  letter-spacing:-.03em;color:var(--ink);line-height:1;
+  font-variant-numeric:tabular-nums;
+}
+.meter__track{
+  height:8px;border-radius:4px;background:var(--surface-2);
+  margin:9px 0 7px;overflow:hidden;
+}
+.meter__track span{display:block;height:100%;border-radius:4px;background:#C93619}
+.meter__l{font-size:12.5px;color:var(--text-dim)}
+
+@media (max-width:1040px){
+  .dash{grid-template-columns:minmax(0,1fr)}
+  /* nikad ispod 48px — to je donja granica za herojsku brojku */
+  .hero__v{font-size:48px}
+}
+
+/* ================= HEROJ: „Trag godine" =================
+   Bez kartice. Papir je površina, kao na sajtu. Jedan ogroman broj i
+   jedna staza — sve ostalo na ekranu mora da bude tiše od ovoga. */
+
+.year{margin:6px 0 40px;max-width:1180px}
+
+.year__top{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  gap:24px;flex-wrap:wrap;margin-bottom:6px;
+}
+.year__lab{
+  display:block;font-size:13px;color:var(--brown);
+  margin-bottom:2px;
+}
+.year__v{
+  display:block;
+  font-family:var(--display);font-weight:700;
+  font-size:clamp(56px,9.5vw,124px);
+  line-height:.86;letter-spacing:-.045em;
+  color:var(--ink);font-variant-numeric:tabular-nums;
+}
+
+/* Tiha meta desno — broj pa reč, poravnato po osnovnoj liniji.
+   Namerno NIJE red KPI kutija: to je bio generički potez. */
+.year__meta{
+  display:flex;gap:26px;margin:0 0 10px;flex-wrap:wrap;
+}
+.year__meta dt{
+  font-family:var(--display);font-weight:700;font-size:20px;
+  letter-spacing:-.02em;color:var(--ink);font-variant-numeric:tabular-nums;
+}
+.year__meta dd{margin:0 0 0 6px;font-size:13px;color:var(--text-dim);align-self:flex-end}
+.year__meta dt,.year__meta dd{display:inline-block}
+
+.year__trail{position:relative;margin-top:4px}
+.trail{display:block;width:100%;height:auto;overflow:visible}
+.trail-lab{display:block;width:100%;height:auto;margin-top:2px}
+.trail-lab .tm{font-family:var(--font);font-size:9.5px;fill:var(--brown)}
+
+.thoof{cursor:pointer}
+.thoof g{transition:opacity .18s var(--soft)}
+.thoof:hover g{opacity:.62}
+.tmark{cursor:pointer;transition:stroke .18s var(--soft)}
+.tmark:hover{stroke:var(--ink)}
+
+.ttip{
+  position:absolute;transform:translate(-50%,calc(-100% - 10px));
+  background:var(--ink);color:#FFFDF9;
+  padding:6px 10px;border-radius:6px;font-size:12px;white-space:nowrap;
+  pointer-events:none;box-shadow:0 8px 22px rgba(0,0,0,.26);z-index:5;
+}
+.ttip b{font-weight:600}
+.ttip span{display:block;opacity:.6;font-size:11px;margin-top:1px}
+
+/* legenda — sitna, u jednom redu, ne kutija sa kvadratićima */
+.year__key{
+  display:flex;align-items:center;gap:7px;flex-wrap:wrap;
+  margin:12px 0 0;font-size:12px;color:var(--brown);
+}
+.year__key .k{display:inline-block;flex:none}
+.year__key .k + *{margin-right:12px}
+.k--up,.k--down{width:2px;height:11px;border-radius:1px;background:var(--stone)}
+.k--hoof{
+  width:9px;height:11px;background:var(--ember-deep);
+  -webkit-mask:radial-gradient(circle at 25% 62%,#000 26%,transparent 27%),radial-gradient(circle at 75% 62%,#000 26%,transparent 27%);
+  mask:radial-gradient(circle at 25% 62%,#000 26%,transparent 27%),radial-gradient(circle at 75% 62%,#000 26%,transparent 27%);
+}
+
+@media (max-width:820px){
+  .year{margin-bottom:30px}
+  .year__top{align-items:flex-start;flex-direction:column;gap:10px}
+  .year__meta{gap:18px}
+}
+
+/* --- heroj, drugi krug --- */
+
+.daynote{margin:0 0 4px;font-size:13px;color:var(--brown)}
+
+/* Meta se poravnava po OSNOVNOJ LINIJI ogromnog broja, ne po sredini —
+   inače pluta na pola visine i izgleda kao da je zaboravljena. */
+.year__top{align-items:baseline}
+.year__meta{display:flex;gap:30px;margin:0;flex-wrap:wrap;align-items:baseline}
+.year__meta > div{display:flex;align-items:baseline;gap:6px}
+.year__meta dt{
+  font-family:var(--display);font-weight:700;font-size:21px;
+  letter-spacing:-.02em;color:var(--ink);font-variant-numeric:tabular-nums;
+}
+.year__meta dd{margin:0;font-size:13px;color:var(--text-dim)}
+
+.year__trail{position:relative;margin-top:14px}
+.trail-lab{margin-top:-2px}
+
+/* legenda: tri stavke, svaka sa svojim znakom, bez separatora */
+.year__key{
+  display:flex;align-items:center;gap:20px;flex-wrap:wrap;
+  margin:14px 0 0;font-size:12.5px;color:var(--brown);
+}
+.kk{display:inline-flex;align-items:center;gap:6px}
+.kk svg{display:block}
+
+@media (max-width:820px){
+  .year__meta{gap:20px}
+  .year__meta dt{font-size:18px}
+}
+
+/* --- heroj, treći krug: običan grafikon, umeren broj ---
+   Papak je izbačen na zahtev. Broj je spušten sa clamp(56,9.5vw,124) —
+   na 124px je gutao ceo ekran i grafikon je uz njega izgledao kao
+   fusnota. Zadržano: bez kartice, meta na osnovnoj liniji broja,
+   grafikon preko cele širine. */
+
+.year__v{font-size:clamp(40px,4.6vw,64px);line-height:.95;letter-spacing:-.035em}
+.year__meta dt{font-size:18px}
+
+.year__chart{margin-top:10px}
+.year__chart .chart{width:100%}
+
+/* legenda staze više ne postoji */
+.year__key,.kk{display:none}
+
+@media (max-width:820px){
+  .year__v{font-size:clamp(36px,10vw,48px)}
+  .year__meta dt{font-size:17px}
+}
+
+/* heroj deli istu širinu kao paneli ispod — kad je bio 1180 a oni 940,
+   razlika je izgledala kao greška, ne kao naglasak */
+.year{max-width:940px}
+
+/* ================= KUTIJE: Upiti i Klijenti =================
+   Jedna kutija za obe stranice, jer je to ista vrsta stvari: jedan posao
+   koji se vodi. Upit je crn dok je otvoren, pozeleni kad se dogovori,
+   posivi ako propadne. Klijent je uvek zelen — svaki je već dogovoren
+   posao — a posivi tek kad se arhivira. Sadržaj se ne skuplja po
+   stanjima; menja se podloga, red odluke i mesto u nizu. */
+
+.uboxes{display:flex;flex-direction:column;gap:12px;max-width:940px}
+
+.ubox{
+  border-radius:var(--r-lg);
+  padding:24px 26px 20px;
+  color:#F4F1EA;
+  box-shadow:0 14px 34px -18px rgba(10,10,10,.5);
+  /* podloga se prelazi da se vidi kad kutija pozeleni, tek onda se niz
+     presloži (vidi setStatus u upiti.js) */
+  transition:background .32s var(--soft),box-shadow .32s var(--soft);
+}
+
+/* otvoren — ista crna kao `.band-forest` na sajtu */
+.ubox--open{
+  background:
+    radial-gradient(70% 50% at 78% -18%,rgba(242,226,208,.16) 0%,rgba(242,226,208,.05) 48%,rgba(242,226,208,0) 80%),
+    linear-gradient(180deg,rgba(255,255,255,0) 44%,rgba(14,8,4,.22) 100%),
+    linear-gradient(165deg,#171717 0%,#050505 68%);
+}
+/* zaključen — ista konstrukcija, šumska zelena umesto mastila.
+   Baza je dublja nego što oko traži: na #24503A meta red (.58) daje
+   3.45:1. Na #1E4230 sve preko .72 prolazi, a boja se i dalje čita. */
+.ubox--won,
+.ubox--client{
+  background:
+    radial-gradient(70% 50% at 78% -18%,rgba(226,242,224,.15) 0%,rgba(226,242,224,.05) 48%,rgba(226,242,224,0) 80%),
+    linear-gradient(180deg,rgba(255,255,255,0) 44%,rgba(4,14,8,.22) 100%),
+    linear-gradient(165deg,#1E4230 0%,#0A1E13 68%);
+}
+.ubox--won .ubox__meta,.ubox--client .ubox__meta,
+.ubox--won .ubox__line,.ubox--client .ubox__line,
+.ubox--won .ubox__about,.ubox--client .ubox__about{color:rgba(244,241,234,.74)}
+/* odbijen upit i arhiviran klijent — bez boje, samo utišani */
+.ubox--lost,
+.ubox--sleep{
+  background:linear-gradient(165deg,#2B2825 0%,#16150F 68%);
+  box-shadow:none;
+}
+.ubox--lost .ubox__name,.ubox--lost .ubox__tel,
+.ubox--sleep .ubox__name,.ubox--sleep .ubox__tel{color:rgba(244,241,234,.62)}
+/* .44 ne prolazi ni na čistoj crnoj — asimptota je oko 4.0:1. Utišanost
+   se drži razlikom prema otvorenoj kutiji (.54 naspram .74), ne alfom
+   koja se ne može pročitati. */
+.ubox--lost .ubox__line,.ubox--sleep .ubox__line,
+.ubox--lost .ubox__meta,.ubox--sleep .ubox__meta,
+.ubox--lost .ubox__about,.ubox--sleep .ubox__about{color:rgba(244,241,234,.54)}
+
+.ubox__top{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.ubox__head{min-width:0}
+.ubox__meta{display:block;font-size:12.5px;color:rgba(244,241,234,.58);margin-bottom:5px}
+/* paket izabran na cenovniku pre nego što je forma uopšte otvorena —
+   najjači signal namere koji forma šalje, pa se vidi bez otvaranja */
+.ubox__tag{
+  display:inline-block;margin-left:9px;padding:2px 7px;border-radius:5px;
+  background:rgba(244,241,234,.16);color:#FFFDF9;
+  font-size:11.5px;font-weight:600;letter-spacing:.01em;
+}
+.ubox__name{
+  font-family:var(--display);font-weight:700;
+  font-size:clamp(24px,2.8vw,34px);line-height:1.04;letter-spacing:-.028em;
+  margin:0;color:#FFFDF9;
+}
+.ubox__line{margin:8px 0 0;color:rgba(244,241,234,.74);font-size:14px}
+/* čime se bavi — dva reda i stop; ostatak se čita u detalju. Sečenje je
+   u CSS-u, ne u JS-u, da se reč ne preseče na broju znakova. */
+.ubox__about{
+  margin:7px 0 0;max-width:60ch;
+  color:rgba(244,241,234,.62);font-size:13.5px;line-height:1.45;
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;
+}
+.ubox__right{
+  display:flex;flex-direction:column;align-items:flex-end;
+  font-size:14px;color:rgba(244,241,234,.76);white-space:nowrap;
+  font-variant-numeric:tabular-nums;
+}
+/* zaključen posao i klijent nose novac desno — to je njihova brojka
+   isto kao što je kod otvorenog upita starost */
+.ubox--won .ubox__right,
+.ubox--client .ubox__right,
+.ubox--sleep .ubox__right{
+  font-family:var(--display);font-weight:700;font-size:19px;
+  letter-spacing:-.02em;color:#FFFDF9;
+}
+
+
+.ubox__act{
+  display:flex;align-items:baseline;gap:20px;flex-wrap:wrap;
+  margin-top:18px;padding-top:15px;border-top:1px solid rgba(244,241,234,.14);
+}
+/* telefon je pravi potez ove stranice — jedina stvar u display rezu */
+.ubox__tel{
+  font-family:var(--display);font-weight:700;font-size:21px;
+  letter-spacing:-.02em;color:#FFFDF9;text-decoration:none;
+  font-variant-numeric:tabular-nums;
+}
+a.ubox__tel:hover{color:#FF6B52}
+.ubox__tel--none{color:rgba(244,241,234,.4);font-weight:400;font-size:15px}
+.ubox__mail{color:rgba(244,241,234,.7);font-size:13.5px;text-decoration:none}
+.ubox__mail:hover{color:#F4F1EA}
+.ubox__open{
+  margin-left:auto;color:rgba(244,241,234,.82);font-size:13.5px;
+  text-decoration:none;white-space:nowrap;
+}
+.ubox__open:hover{color:#FFFDF9}
+
+/* Red odluke: faze levo i tiho (gde je upit sada), odluka desno (šta
+   radim s njim). Pet ravnopravnih dugmadi je bio spisak podešavanja. */
+.ubox__do{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-top:16px}
+.ubox__do--done{margin-top:14px}
+.ubox__ph{display:flex;flex-wrap:wrap;gap:6px;margin-right:auto}
+.ubox__ph button{
+  /* flex:none — bez toga se stavka skuplja ispod sadržaja i tekst preseče */
+  flex:none;
+  padding:6px 12px;border-radius:var(--r-sm);
+  border:1px solid rgba(244,241,234,.2);
+  font-size:12.8px;color:rgba(244,241,234,.72);
+  transition:background .18s var(--soft),color .18s var(--soft),border-color .18s var(--soft);
+}
+.ubox__ph button:hover{border-color:rgba(244,241,234,.5);color:#FFFDF9}
+.ubox__ph button.is-on{
+  background:rgba(244,241,234,.13);border-color:rgba(244,241,234,.3);
+  color:#FFFDF9;font-weight:600;
+  box-shadow:inset 3px 0 0 var(--ember);padding-left:15px;
+}
+
+a.udo{text-decoration:none;display:inline-block}
+.udo{
+  flex:none;padding:8px 15px;border-radius:var(--r-sm);font-size:13px;
+  transition:background .18s var(--soft),color .18s var(--soft);
+}
+/* odbijanje mora da bude nadohvat, ali ne sme da izgleda ravnopravno */
+.udo--no,.udo--back{color:rgba(244,241,234,.72)}
+.udo--no:hover{color:#FF6B52}
+.udo--back{padding-left:0}
+.udo--back:hover{color:#FFFDF9}
+/* Jedina odluka koja menja stanje posla — i jedina puna površina na
+   kutiji. Mastilo na emberu, ne belo: belo na #EF4025 je 3.87:1 i pada. */
+.udo--go{
+  background:var(--ember);color:var(--ink);font-weight:700;
+}
+.udo--go:hover{background:#FF5334}
+
+/* Granica između „radi se" i „gotovo". Na šest upita boja je dovoljna,
+   na četrdeset nije. */
+.usplit{display:flex;align-items:center;gap:12px;margin:24px 2px 10px}
+/* --brown je 3.10:1 na --app, --text-dim 4.34 — oba padaju, pa ovde ide
+   izmerena vrednost (5.55:1) umesto tokena */
+.usplit span{font-size:12px;color:#5E5A52;letter-spacing:.02em}
+.usplit i{flex:1;height:1px;background:var(--line)}
+
+/* ================= KARTICA KLIJENTA (mreža) =================
+   Klijenti se ne obrađuju jedan po jedan kao upiti nego se pregledaju
+   svi odjednom, pa idu u mrežu: tri u redu na 940px. Kutija pune širine
+   je trošila 180–250px po klijentu na ime i dve brojke.
+   Podloga i utišavanje su i dalje iz zajedničkog .ubox seta — menja se
+   raspored unutra, ne jezik kutije. */
+
+.kgrid{
+  display:grid;gap:12px;max-width:940px;
+  grid-template-columns:repeat(auto-fill,minmax(272px,1fr));
+  align-items:stretch;
+}
+/* crta „Arhivirani" prelama ceo red, inače bi stala u jednu ćeliju */
+.usplit--full{grid-column:1/-1}
+
+.kcard{
+  display:flex;flex-direction:column;
+  padding:17px 18px 15px;
+}
+.kcard .ubox__meta{margin-bottom:4px}
+.kcard .ubox__name{
+  font-size:clamp(19px,1.7vw,23px);line-height:1.08;
+  overflow-wrap:anywhere;
+}
+.kcard .ubox__name a{text-decoration:none}
+.kcard .ubox__name a:hover{text-decoration:underline;text-underline-offset:3px}
+
+.cbox__contact{
+  margin:6px 0 0;color:rgba(244,241,234,.74);font-size:13px;
+  display:flex;flex-wrap:wrap;align-items:baseline;
+}
+.cbox__contact a{color:inherit;text-decoration:none}
+.cbox__contact a:hover{color:#FFFDF9;text-decoration:underline}
+.cbox__dot{opacity:.5;margin:0 7px}
+.cbox__site{
+  align-self:flex-start;margin-top:3px;
+  color:rgba(244,241,234,.72);text-decoration:none;font-size:12.5px;
+}
+.cbox__site:hover{color:#FFFDF9;text-decoration:underline}
+
+/* margin-top:auto gura novac na dno — tri kartice u redu su iste visine
+   (align-items:stretch), pa im se brojke poravnaju i čitaju kao niz */
+.kcard__money{padding-top:15px}
+.cbox__sum{
+  display:block;font-family:var(--display);font-weight:700;
+  font-size:clamp(22px,2vw,27px);letter-spacing:-.03em;
+  color:#FFFDF9;line-height:1.02;font-variant-numeric:tabular-nums;
+}
+.cbox__l{display:block;font-size:12px;color:rgba(244,241,234,.74);margin-top:3px}
+
+/* Merilo, ne widget: 5px, srazmerno najvećem klijentu na stranici. Iz
+   samih brojki se ne vidi ko je veliki dok se ne pročitaju sve tri. */
+.cbox__bar{
+  display:flex;height:5px;border-radius:3px;overflow:hidden;
+  background:rgba(244,241,234,.07);margin-top:11px;
+}
+.cbox__bar i{background:rgba(244,241,234,.8)}
+.cbox__bar b{background:var(--ember)}
+
+/* Jedina topla stvar. #EF4025 na ovoj zelenoj daje 2.37:1, a #FF6B52
+   (koji na crnoj prolazi sa 5.33) pada na 3.27 — prva varijanta koja
+   prolazi je #FFAF9C. Pun ember ostaje na traci i dugmetu, gde je
+   površina a ne tekst. */
+.cbox__debt{
+  display:block;margin-top:9px;margin-bottom:14px;
+  font-weight:600;font-size:13px;color:#FFAF9C;
+  font-variant-numeric:tabular-nums;
+}
+.kcard__money:last-of-type{margin-bottom:14px}
+
+/* Podnožje: odluka u svom redu (u koloni od 300px ne stane pored tihih
+   radnji), pa tiha linija ispod nje. */
+.kcard__foot{margin-top:auto;padding-top:13px;border-top:1px solid rgba(244,241,234,.14)}
+.kcard__go{display:block;width:100%;text-align:center;margin-bottom:11px}
+.kcard__links{
+  display:flex;flex-wrap:wrap;align-items:baseline;
+  font-size:12.8px;color:rgba(244,241,234,.72);
+}
+.kcard__links button{color:inherit;transition:color .18s var(--soft)}
+.kcard__links button:hover{color:#FFFDF9}
+
+/* arhiviran klijent se utišava ceo — .cbox__* nisu .ubox klase pa ih
+   opšte pravilo za utišavanje ne hvata */
+.ubox--sleep .cbox__contact,
+.ubox--sleep .cbox__l,
+.ubox--sleep .cbox__site,
+.ubox--sleep .kcard__links{color:rgba(244,241,234,.54)}
+
+@media (max-width:720px){
+  .ubox{padding:20px}
+  .ubox__act{gap:14px}
+  .ubox__open{margin-left:0;flex-basis:100%}
+  /* odluka u svoj red: ember dugme pored tri faze bi se na 375px
+     prelomilo nasumično, pa bi „Dogovoreno" završilo pod „Odbij" */
+  .ubox__ph{margin-right:0;flex-basis:100%}
+  .udo--go{margin-left:auto}
+}

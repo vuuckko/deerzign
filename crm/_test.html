@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="sr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Deerzign CRM — test harness</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="crm.css">
+</head>
+<body>
+
+<section id="loginView" class="login hidden">
+  <div class="login__box">
+    <h1>Deerzign</h1>
+    <p>Interna alatka. Prijavi se da nastaviš.</p>
+    <form id="loginForm">
+      <label class="field"><span>Email</span><input type="email" id="loginEmail" required></label>
+      <label class="field"><span>Lozinka</span><input type="password" id="loginPass" required></label>
+      <button class="btn btn--wide" type="submit" id="loginBtn">Prijavi se</button>
+      <div class="err" id="loginErr"></div>
+    </form>
+  </div>
+</section>
+
+<div id="appView" class="shell hidden">
+  <aside class="side">
+    <a class="side__mark" href="#/"><img src="../deer.png" alt=""><span>Deerzign</span></a>
+    <div class="side__group">
+      <span class="side__label">Poslovanje</span>
+      <a href="#/"          data-route="/"          data-ico="pregled"   class="side__link">Pregled</a>
+      <a href="#/upiti"     data-route="/upiti"     data-ico="upiti"     class="side__link">Upiti<span class="side__badge" id="navUpiti"></span></a>
+      <a href="#/klijenti"  data-route="/klijenti"  data-ico="klijenti"  class="side__link">Klijenti</a>
+      <a href="#/finansije" data-route="/finansije" data-ico="finansije" class="side__link">Finansije<span class="side__badge side__badge--warn" id="navFin"></span></a>
+    </div>
+    <div class="side__foot">
+      <span id="whoami"></span>
+      <button id="logoutBtn">Odjava</button>
+    </div>
+  </aside>
+  <div class="main">
+    <div class="topbar">
+      <label class="searchwrap" id="searchWrap">
+        <input class="search" id="search" type="search" placeholder="Pretraga…">
+      </label>
+      <button class="btn btn--ghost" id="refreshBtn">Osveži</button>
+    </div>
+    <main id="main"></main>
+  </div>
+</div>
+
+<script>
+/* ================= lažni Supabase klijent — samo za harness ================= */
+const D = 86400000, now = Date.now();
+const iso  = (d) => new Date(now - d * D).toISOString();
+const dstr = (d) => new Date(now - d * D).toISOString().slice(0, 10);
+
+const DB = {
+  leads: [
+    { id:'1', created_at:iso(0), updated_at:iso(0), source:'brief', status:'Nov upit',
+      ime:'Marko Marković', firma:'Blue store', telefon:'064 414 24 24', email:'marko@bluestore.rs',
+      sta_treba:'Redizajn postojećeg sajta', rok:'1–2 meseca', budzet:'400–700 €',
+      cime_se_bavite:'Prodajemo radnu i zaštitnu opremu, uglavnom firmama u građevini. Postojimo 11 godina, imamo magacin u Zemunu i troje ljudi na terenu.\n\nSajt nam je star, pravljen 2016, ne otvara se lepo na telefonu i ljudi zovu da pitaju stvari koje su na sajtu.',
+      linkovi:'instagram.com/bluestore\nmaps.app.goo.gl/xyz', adresa:'Zemunska 14, pon–pet 08–16h',
+      paket:'Poslovni sajt', cena:649, stranica:'/sr#cenovnik', jezik:'sr',
+      paket_sa_cenovnika:'Poslovni sajt',
+      drive_folder:'https://drive.google.com/drive/folders/abc',
+      analiza:'Preporučen paket: Poslovni sajt (€649).\nBudžet 400–700 € i opis koji traži katalog, lokaciju i kontakt formu — jedna strana nije dovoljna.\n\nPitati na pozivu: da li imaju spisak artikala u nekom fajlu, i ko će održavati sadržaj posle predaje.' },
+    { id:'2', created_at:iso(3), updated_at:iso(3), source:'meta', status:'Nov upit',
+      ime:'Jelena Petrović', firma:'Kafe Mokra', telefon:'063 111 222', email:'jelena@mokra.rs',
+      sta_treba:'Nov sajt', rok:'ASAP — u roku od 30 dana', budzet:'do 400 €',
+      paket:'Landing', cena:399, sledeci_kontakt:dstr(1) },
+    { id:'3', created_at:iso(9), updated_at:iso(6), source:'brief', status:'Kontaktiran',
+      ime:'Nikola Ilić', firma:'Ilić transport', telefon:'060 555 777', email:'office@ilictransport.rs',
+      sta_treba:'Nov sajt', rok:'2–3 meseca', budzet:'700–1.500 €', paket:'Poslovni sajt', cena:649,
+      sledeci_kontakt:dstr(0) },
+    { id:'4', created_at:iso(14), updated_at:iso(2), source:'brief', status:'Ponuda poslata',
+      ime:'Ana Đorđević', firma:'HK Baufit GmbH', telefon:'+49 170 1234567', email:'a.djordjevic@hkbaufit.de',
+      sta_treba:'Redizajn postojećeg sajta', rok:'3+ meseca', budzet:'preko 3.000 €',
+      paket:'Signature', cena:2400, jezik:'en' },
+    { id:'5', created_at:iso(40), updated_at:iso(11), source:'brief', status:'Dobijen posao',
+      ime:'Stefan Nikolić', firma:'Nocte', telefon:'065 987 654', email:'stefan@nocte.rs',
+      sta_treba:'Landing page', rok:'1–2 meseca', budzet:'400–700 €',
+      paket:'Landing', cena:399, vrednost:450, meta_signal_at:iso(11) },
+    { id:'6', created_at:iso(52), updated_at:iso(30), source:'partial', status:'Odbijen',
+      ime:'Bez imena', firma:'', telefon:'069 000 111', email:'', sta_treba:'Nisam siguran/na' },
+  ],
+  clients: [
+    { id:'c1', created_at:iso(11), lead_id:'5', firma:'Nocte', ime:'Stefan Nikolić',
+      telefon:'065 987 654', email:'stefan@nocte.rs', sajt:'https://parfem.vercel.app', aktivan:true },
+    { id:'c2', created_at:iso(140), lead_id:null, firma:'HK Baufit GmbH', ime:'Ana Đorđević',
+      telefon:'+49 170 1234567', email:'a.djordjevic@hkbaufit.de',
+      napomena:'Došli preko preporuke, ne preko forme. Plaćaju u evrima, uvek na vreme.', aktivan:true },
+    { id:'c3', created_at:iso(200), lead_id:null, firma:'Tri Lafa', ime:'Miloš Jovanović',
+      telefon:'061 222 333', aktivan:false },
+    /* još troje da mreža ima šta da pokaže — sa tri klijenta se raspored u
+       tri kolone ne može ni videti, a ni redosled po dugu */
+    { id:'c4', created_at:iso(95), lead_id:null, firma:'Zlatar Marković', ime:'Dragan Marković',
+      telefon:'063 404 505', email:'zlatar@markovic.rs', sajt:'https://zlatar-markovic.rs', aktivan:true },
+    { id:'c5', created_at:iso(58), lead_id:null, firma:'Sector One', ime:'Ivana Perić',
+      telefon:'062 818 090', email:'ivana@sectorone.rs', aktivan:true },
+    { id:'c6', created_at:iso(30), lead_id:null, firma:'Bisque Audio', ime:'Vuk Lazić',
+      telefon:'064 707 121', email:'vuk@bisque.audio', sajt:'https://bisque.audio', aktivan:true },
+  ],
+  invoices: [
+    { id:'f1', client_id:'c1', broj:'2026-014', opis:'Landing — izrada', iznos:450, valuta:'EUR',
+      izdato:dstr(10), rok_placanja:dstr(-4), placeno_datum:dstr(3), created_at:iso(10) },
+    { id:'f2', client_id:'c2', broj:'2026-011', opis:'Signature — prva rata', iznos:1200, valuta:'EUR',
+      izdato:dstr(48), rok_placanja:dstr(33), placeno_datum:dstr(30), created_at:iso(48) },
+    { id:'f3', client_id:'c2', broj:'2026-015', opis:'Signature — druga rata', iznos:1200, valuta:'EUR',
+      izdato:dstr(22), rok_placanja:dstr(7), placeno_datum:null, created_at:iso(22) },
+    { id:'f4', client_id:'c3', broj:'2026-016', opis:'Održavanje — Q3', iznos:180, valuta:'EUR',
+      izdato:dstr(5), rok_placanja:dstr(-9), placeno_datum:null, created_at:iso(5) },
+    /* ranije u godini — da grafikon prihoda ima oblik, ne dve tačke */
+    { id:'f5', client_id:'c3', broj:'2026-003', opis:'Landing — izrada', iznos:399, valuta:'EUR',
+      izdato:dstr(180), rok_placanja:dstr(166), placeno_datum:dstr(168), created_at:iso(180) },
+    { id:'f6', client_id:'c1', broj:'2026-006', opis:'Poslovni sajt — izrada', iznos:649, valuta:'EUR',
+      izdato:dstr(128), rok_placanja:dstr(114), placeno_datum:dstr(110), created_at:iso(128) },
+    { id:'f7', client_id:'c2', broj:'2026-008', opis:'Landing — DACH', iznos:850, valuta:'EUR',
+      izdato:dstr(96), rok_placanja:dstr(82), placeno_datum:dstr(80), created_at:iso(96) },
+    { id:'f8', client_id:'c3', broj:'2026-010', opis:'Održavanje — Q2', iznos:180, valuta:'EUR',
+      izdato:dstr(64), rok_placanja:dstr(50), placeno_datum:dstr(52), created_at:iso(64) },
+    /* druga neplaćena kod istog klijenta — pokriva granu „Naplati (2)",
+       gde se ne zna koju fakturu bi jedan klik naplatio */
+    { id:'f9', client_id:'c3', broj:'2026-017', opis:'Održavanje — Q4', iznos:240, valuta:'EUR',
+      izdato:dstr(3), rok_placanja:dstr(-12), placeno_datum:null, created_at:iso(3) },
+    { id:'f10', client_id:'c4', broj:'2026-004', opis:'Poslovni sajt — izrada', iznos:780, valuta:'EUR',
+      izdato:dstr(88), rok_placanja:dstr(74), placeno_datum:dstr(72), created_at:iso(88) },
+    { id:'f11', client_id:'c4', broj:'2026-013', opis:'Fotografije i unos', iznos:400, valuta:'EUR',
+      izdato:dstr(20), rok_placanja:dstr(6), placeno_datum:dstr(4), created_at:iso(20) },
+    /* kasni 22 dana — mora da završi IZNAD HK Baufita, koji kasni 7 */
+    { id:'f12', client_id:'c5', broj:'2026-009', opis:'Landing + integracija', iznos:890, valuta:'EUR',
+      izdato:dstr(36), rok_placanja:dstr(22), placeno_datum:null, created_at:iso(36) },
+    { id:'f13', client_id:'c6', broj:'2026-012', opis:'Landing page', iznos:520, valuta:'EUR',
+      izdato:dstr(26), rok_placanja:dstr(12), placeno_datum:dstr(9), created_at:iso(26) },
+  ],
+  lead_files: [
+    { id:'x1', lead_id:'1', polje:'Logo', name:'blue-store-logo.pdf', storage_path:'1/1-blue-store-logo.pdf', mime_type:'application/pdf', file_size:840000, created_at:iso(0) },
+    { id:'x2', lead_id:'1', polje:'Fotografije', name:'magacin.jpg', storage_path:'1/2-magacin.jpg', mime_type:'image/jpeg', file_size:410000, created_at:iso(0) },
+    { id:'x3', lead_id:'1', polje:'Fotografije', name:'izlog šđčćž.jpg', storage_path:'1/3-izlog.jpg', mime_type:'image/jpeg', file_size:388000, created_at:iso(0) },
+  ],
+  lead_notes: [
+    { id:'n1', lead_id:'1', body:'Zvao u 11h, nije se javio. Poslao SMS.', created_at:iso(0) },
+  ],
+};
+
+const SWATCH = (hex) => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="200"><rect width="300" height="200" fill="' + hex + '"/></svg>');
+
+let uid = 100;
+
+function chain(table) {
+  let op = 'select', eqs = {}, payload = null, wantSingle = false;
+  const api = {
+    select(){ return api; },
+    order(){ return api; },
+    single(){ wantSingle = true; return api; },
+    eq(col, v){ eqs[col] = v; return api; },
+    update(p){ op = 'update'; payload = p; return api; },
+    insert(p){ op = 'insert'; payload = p; return api; },
+    delete(){ op = 'delete'; return api; },
+    then(res, rej){
+      const rows = DB[table] || [];
+      let out;
+      if (op === 'insert') {
+        const rec = Object.assign({ id: 'g' + (++uid), created_at: new Date().toISOString() }, payload);
+        rows.unshift(rec); out = { data: rec, error: null };
+      } else if (op === 'update') {
+        const rec = rows.find(r => r.id === eqs.id);
+        if (rec) { Object.assign(rec, payload); rec.updated_at = new Date().toISOString(); }
+        out = { data: rec || null, error: rec ? null : { message: 'nema reda' } };
+      } else if (op === 'delete') {
+        DB[table] = rows.filter(r => r.id !== eqs.id); out = { data: null, error: null };
+      } else {
+        let list = rows.filter(r => Object.keys(eqs).every(k => r[k] === eqs[k]));
+        out = { data: wantSingle ? (list[0] || null) : list, error: null };
+      }
+      return Promise.resolve(out).then(res, rej);
+    },
+    catch(){ return api; },
+  };
+  return api;
+}
+
+window.supabase = {
+  createClient() {
+    return {
+      auth: {
+        getSession: () => Promise.resolve({ data: { session: { user: { email: 'test@deerzign.com' } } } }),
+        signInWithPassword: () => Promise.resolve({ data: { session: { user: { email: 'test@deerzign.com' } } }, error: null }),
+        signOut: () => Promise.resolve({}),
+      },
+      from: chain,
+      storage: {
+        from: () => ({
+          createSignedUrl: (path) => Promise.resolve({
+            data: { signedUrl: path.indexOf('magacin') > -1 ? SWATCH('#8A8177') : SWATCH('#263D32') },
+            error: null,
+          }),
+        }),
+      },
+    };
+  },
+};
+</script>
+<script src="config.js"></script>
+<script src="zip.js"></script>
+<script src="utils.js"></script>
+<script src="charts.js"></script>
+<script src="upiti.js"></script>
+<script src="klijenti.js"></script>
+<script src="finansije.js"></script>
+<script src="pregled.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
